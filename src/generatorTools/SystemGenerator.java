@@ -367,8 +367,7 @@ public class SystemGenerator {
 				SporadicTask task = tasks.get(i).get(j);
 				String usage = "T" + task.id + ": ";
 				for (int k = 0; k < task.resource_required_index.size(); k++) {
-					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k)
-							+ ";  ";
+					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k) + ";  ";
 				}
 				usage += "\n";
 				if (task.resource_required_index.size() > 0)

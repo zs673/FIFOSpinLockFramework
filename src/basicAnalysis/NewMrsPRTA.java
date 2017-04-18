@@ -68,8 +68,8 @@ public class NewMrsPRTA {
 				if (oldRi[i][j] != newRi[i][j]) {
 					is_equal = false;
 					System.out.println("not equal: " + oldRi[i][j] + " vs " + newRi[i][j]);
-					System.out.println("T" + tasks.get(i).get(j).id + " old: S = " + tasks.get(i).get(j).spin + ", I = "
-							+ tasks.get(i).get(j).interference + ", Local =" + tasks.get(i).get(j).local);
+					System.out.println("T" + tasks.get(i).get(j).id + " old: S = " + tasks.get(i).get(j).spin + ", I = " + tasks.get(i).get(j).interference
+							+ ", Local =" + tasks.get(i).get(j).local);
 					problemtask = tasks.get(i).get(j);
 				}
 			}
@@ -163,8 +163,7 @@ public class NewMrsPRTA {
 	 * Calculate the local high priority tasks' interference for a given task t.
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long Ri, long[][] Ris,
-			ArrayList<Resource> resources) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long Ri, long[][] Ris, ArrayList<Resource> resources) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -194,8 +193,7 @@ public class NewMrsPRTA {
 			Resource resource = resources.get(hpTask.resource_required_index.get(i));
 
 			int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ris[hpTask.partition], Ri);
-			int number_of_request_with_btb = (int) Math
-					.ceil((double) (Ri + (use_deadline_insteadof_Ri ? hpTask.deadline : Rihp)) / (double) hpTask.period)
+			int number_of_request_with_btb = (int) Math.ceil((double) (Ri + (use_deadline_insteadof_Ri ? hpTask.deadline : Rihp)) / (double) hpTask.period)
 					* hpTask.number_of_access_in_one_release.get(i);
 
 			BTBhit += number_of_request_with_btb * resource.csl;
@@ -205,8 +203,7 @@ public class NewMrsPRTA {
 					int remote_partition = resource.partitions.get(j);
 					int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ris[remote_partition], Ri);
 
-					int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
-							: number_of_remote_request - number_of_higher_request;
+					int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0 : number_of_remote_request - number_of_higher_request;
 
 					int spin_delay_with_btb = Integer.min(possible_spin_delay, number_of_request_with_btb);
 

@@ -36,8 +36,8 @@ public class NewMrsPRTAWithMCNP {
 					if (response_time[i][j] != response_time_plus[i][j]) {
 						if (count > 10000) {
 							System.out.println("task T" + tasks.get(i).get(j).id + " : " + response_time_plus[i][j] + " " + response_time[i][j]);
-							System.out.println("task T" + tasks.get(i).get(j).id + " : " + tasks.get(i).get(j).spin + " " + tasks.get(i).get(j).local
-									+ " " + tasks.get(i).get(j).interference);
+							System.out.println("task T" + tasks.get(i).get(j).id + " : " + tasks.get(i).get(j).spin + " " + tasks.get(i).get(j).local + " "
+									+ tasks.get(i).get(j).interference);
 						}
 						isEqual = false;
 					}
@@ -65,8 +65,7 @@ public class NewMrsPRTAWithMCNP {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, long oneMig,
-			long np) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, long oneMig, long np) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -114,8 +113,8 @@ public class NewMrsPRTAWithMCNP {
 	/*
 	 * Calculate the local blocking for task t.
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
-			long oneMig, long np) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, long oneMig,
+			long np) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -160,8 +159,8 @@ public class NewMrsPRTAWithMCNP {
 	 * Calculate the local high priority tasks' interference for a given task t.
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris,
-			ArrayList<Resource> resources, long oneMig, long np) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris, ArrayList<Resource> resources,
+			long oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -176,15 +175,14 @@ public class NewMrsPRTAWithMCNP {
 		return interference;
 	}
 
-	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris,
-			long time, long jitter, long oneMig, long np) {
+	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			long jitter, long oneMig, long np) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
 			Resource resource = resources.get(task.resource_required_index.get(i));
 
-			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period)
-					* task.number_of_access_in_one_release.get(i);
+			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period) * task.number_of_access_in_one_release.get(i);
 
 			for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 				long oneAccess = 0;
@@ -217,8 +215,7 @@ public class NewMrsPRTAWithMCNP {
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0
-						: number_of_request_by_Remote_P - getNoRFromHP - n + 1;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP - n + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
 			}
 		}
@@ -234,8 +231,8 @@ public class NewMrsPRTAWithMCNP {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks);
 	}
 
-	private long migrationCostForSpin(long oneMig, long np, SporadicTask task, int request_number, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris) {
+	private long migrationCostForSpin(long oneMig, long np, SporadicTask task, int request_number, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
+			long time, long[][] Ris) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -255,8 +252,7 @@ public class NewMrsPRTAWithMCNP {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks);
 	}
 
-	private long migrationCost(long oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks) {
+	private long migrationCost(long oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks) {
 		long migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 
@@ -428,8 +424,8 @@ public class NewMrsPRTAWithMCNP {
 				if (oldRi[i][j] != newRi[i][j]) {
 					is_equal = false;
 					System.out.println("not equal: " + oldRi[i][j] + " vs " + newRi[i][j]);
-					System.out.println("T" + tasks.get(i).get(j).id + " old: S = " + tasks.get(i).get(j).spin + ", I = "
-							+ tasks.get(i).get(j).interference + ", Local =" + tasks.get(i).get(j).local);
+					System.out.println("T" + tasks.get(i).get(j).id + " old: S = " + tasks.get(i).get(j).spin + ", I = " + tasks.get(i).get(j).interference
+							+ ", Local =" + tasks.get(i).get(j).local);
 					problemtask = tasks.get(i).get(j);
 				}
 			}
