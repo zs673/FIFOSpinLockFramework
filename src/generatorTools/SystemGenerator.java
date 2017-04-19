@@ -142,7 +142,7 @@ public class SystemGenerator {
 		}
 
 		/* assign priorities */
-		new PriorityUtil().deadlineMonotonicPriorityAssignment(tasks, number_of_tasks_per_processor);
+		new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks, number_of_tasks_per_processor);
 		return tasks;
 	}
 
