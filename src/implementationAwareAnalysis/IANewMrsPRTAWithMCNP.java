@@ -7,11 +7,11 @@ import entity.SporadicTask;
 import generatorTools.Utils;
 
 public class IANewMrsPRTAWithMCNP {
-	long count = 0;
-	public long np = 0;
+	private long count = 0;
+	private long np = 0;
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean printDebug) {
+			boolean testSchedulability, boolean printDebug) {
 		long[][] responsetime = null;
 
 		// get np section
@@ -29,7 +29,7 @@ public class IANewMrsPRTAWithMCNP {
 		// } else
 		// this.np--;
 		// }
-		responsetime = NewMrsPRTATest(tasks, resources, this.np, printDebug);
+		responsetime = NewMrsPRTATest(tasks, resources, this.np, testSchedulability, printDebug);
 		return responsetime;
 	}
 
@@ -43,13 +43,13 @@ public class IANewMrsPRTAWithMCNP {
 		return true;
 	}
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np,
-			boolean printDebug) {
+	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np,
+			boolean testSchedulability, boolean printDebug) {
 
 		long[][] init_Ri = Utils.initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missDeadline = false;
+		boolean isEqual = false, missdeadline = false;
 		count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
@@ -61,32 +61,38 @@ public class IANewMrsPRTAWithMCNP {
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
+			boolean should_finish = true;
 			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					Utils.MrsP_PREEMPTION_AND_MIGRATION, np);
+					Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
 					if (response_time[i][j] != response_time_plus[i][j])
 						isEqual = false;
-					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
-						missDeadline = true;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline)
+							should_finish = false;
+					}
 				}
 			}
 
 			count++;
 			Utils.cloneList(response_time_plus, response_time);
 
-			if (missDeadline)
-				break;
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
 		}
 
 		if (printDebug) {
-			if (missDeadline)
-				System.out.println("NewMrsPRTAWithMigration    after " + count
-						+ " tims of recursion, the tasks miss the deadline.");
-			else
-				System.out.println(
-						"NewMrsPRTAWithMigration    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
 			Utils.printResponseTime(response_time, tasks);
 		}
 
@@ -94,7 +100,7 @@ public class IANewMrsPRTAWithMCNP {
 	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] response_time, double oneMig, long np) {
+			long[][] response_time, double oneMig, long np, boolean testSchedulability) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -140,8 +146,13 @@ public class IANewMrsPRTAWithMCNP {
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
 						+ implementation_overheads;
 
-				if (task.Ri > task.deadline)
-					return response_time_plus;
+				if (task.Ri > task.deadline) {
+					if (testSchedulability) {
+						return response_time_plus;
+					} else {
+						continue;
+					}
+				}
 
 			}
 		}

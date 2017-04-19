@@ -14,7 +14,7 @@ import implementationAwareAnalysis.IANewMrsPRTAWithMCNP;
 public class IdenticalTest {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
-	public static int TOTAL_PARTITIONS = 8;
+	public static int TOTAL_PARTITIONS = 10;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
@@ -46,25 +46,32 @@ public class IdenticalTest {
 				resources.get(j).protocol = 3;
 			}
 
-			r1 = mrsp.getResponseTime(tasks, resources, false);
+			r1 = mrsp.getResponseTime(tasks, resources, false, false);
 			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
-			if (!isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
+			if (!isEqual /*
+							 * && isSystemSchedulable(tasks, r1) &&
+							 * isSystemSchedulable(tasks, r2)
+							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, true);
+				r1 = mrsp.getResponseTime(tasks, resources, false, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
 				System.exit(0);
 			}
-			if (isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
-				System.out.println(i);
-				i++;
-			}
+			// if (isEqual && isSystemSchedulable(tasks, r1) &&
+			// isSystemSchedulable(tasks, r2)) {
+			// System.out.println(i);
+			// i++;
+			// }
 
-			if (!isSystemSchedulable(tasks, r1) || !isSystemSchedulable(tasks, r2))
-				System.out.println("miss");
+			// if (!isSystemSchedulable(tasks, r1) ||
+			// !isSystemSchedulable(tasks, r2))
+			// System.out.println("miss");
+			i++;
+			System.out.println(i);
 		}
 		System.out.println("MrsP TEST DONE");
 
@@ -78,22 +85,32 @@ public class IdenticalTest {
 				resources.get(j).protocol = 1;
 			}
 
-			r1 = fnp.NewMrsPRTATest(tasks, resources, false);
+			r1 = fnp.NewMrsPRTATest(tasks, resources, false, false);
 			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
-			if (!isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
+			if (!isEqual /*
+							 * && isSystemSchedulable(tasks, r1) &&
+							 * isSystemSchedulable(tasks, r2)
+							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = fnp.NewMrsPRTATest(tasks, resources, true);
+				r1 = mrsp.getResponseTime(tasks, resources, false, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
 				System.exit(0);
 			}
-			if (isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
-				System.out.println(i);
-				i++;
-			}
+			// if (isEqual && isSystemSchedulable(tasks, r1) &&
+			// isSystemSchedulable(tasks, r2)) {
+			// System.out.println(i);
+			// i++;
+			// }
+
+			// if (!isSystemSchedulable(tasks, r1) ||
+			// !isSystemSchedulable(tasks, r2))
+			// System.out.println("miss");
+			i++;
+			System.out.println(i);
 		}
 		System.out.println("FIFO-NP TEST DONE");
 
@@ -107,22 +124,32 @@ public class IdenticalTest {
 				resources.get(j).protocol = 2;
 			}
 
-			r1 = fp.NewMrsPRTATest(tasks, resources, false);
+			r1 = fp.NewMrsPRTATest(tasks, resources, false, false);
 			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
-			if (!isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
+			if (!isEqual /*
+							 * && isSystemSchedulable(tasks, r1) &&
+							 * isSystemSchedulable(tasks, r2)
+							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = fp.NewMrsPRTATest(tasks, resources, true);
+				r1 = mrsp.getResponseTime(tasks, resources, false, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
 				System.exit(0);
 			}
-			if (isEqual && isSystemSchedulable(tasks, r1) && isSystemSchedulable(tasks, r2)) {
-				System.out.println(i);
-				i++;
-			}
+			// if (isEqual && isSystemSchedulable(tasks, r1) &&
+			// isSystemSchedulable(tasks, r2)) {
+			// System.out.println(i);
+			// i++;
+			// }
+
+			// if (!isSystemSchedulable(tasks, r1) ||
+			// !isSystemSchedulable(tasks, r2))
+			// System.out.println("miss");
+			i++;
+			System.out.println(i);
 		}
 		System.out.println("FIFO-P TEST DONE");
 	}
