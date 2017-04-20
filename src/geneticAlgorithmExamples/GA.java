@@ -15,7 +15,7 @@ public class GA {
 		while (myPop.getFittest().getFitness() < FitnessCalc.getMaxFitness()) {
 			generationCount++;
 			System.out.println("Generation: " + generationCount + " Fittest: " + myPop.getFittest().getFitness() + "  |  " + myPop.getFittest());
-			
+
 			myPop = Algorithm.evolvePopulation(myPop);
 		}
 		System.out.println("Solution found!");

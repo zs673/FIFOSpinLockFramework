@@ -14,12 +14,13 @@ import implementationAwareAnalysis.IANewMrsPRTAWithMCNP;
 public class IdenticalTest {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
-	public static int TOTAL_PARTITIONS = 10;
+	public static int TOTAL_PARTITIONS = 16;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
-	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
+	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 8;
 	public static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	public static double RESOURCE_SHARING_FACTOR = .4;
+	public static boolean testSchedulability = true;
 
 	static long maxC = 0;
 
@@ -45,8 +46,8 @@ public class IdenticalTest {
 				resources.get(j).protocol = 3;
 			}
 
-			r1 = mrsp.getResponseTime(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
+			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -56,8 +57,8 @@ public class IdenticalTest {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&
@@ -84,8 +85,8 @@ public class IdenticalTest {
 				resources.get(j).protocol = 1;
 			}
 
-			r1 = fnp.NewMrsPRTATest(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
+			r1 = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -95,8 +96,8 @@ public class IdenticalTest {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&
@@ -123,8 +124,8 @@ public class IdenticalTest {
 				resources.get(j).protocol = 2;
 			}
 
-			r1 = fp.NewMrsPRTATest(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
+			r1 = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -134,8 +135,8 @@ public class IdenticalTest {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&

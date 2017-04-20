@@ -11,12 +11,11 @@ public class SporadicTask {
 	public int id;
 
 	public long pure_resource_execution_time = 0;
+	public long spin_delay_by_preemptions = 0;
 	public long Ri = 0, spin = 0, interference = 0, local = 0, indirectspin = 0, total_blocking = 0;
 
 	public ArrayList<Integer> resource_required_index;
 	public ArrayList<Integer> number_of_access_in_one_release;
-
-	public long spin_delay_by_preemptions = 0;
 
 	public double implementation_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
 	public double migration_overheads_plus = 0;
