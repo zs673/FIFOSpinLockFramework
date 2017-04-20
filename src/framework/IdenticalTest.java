@@ -1,4 +1,4 @@
-package FIFOSpinFramework;
+package framework;
 
 import java.util.ArrayList;
 
@@ -27,14 +27,13 @@ public class IdenticalTest {
 		IAFIFOP fp = new IAFIFOP();
 		IAFIFONP fnp = new IAFIFONP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		CombinedAnalysis combined_analysis = new CombinedAnalysis();
+		FIFOSpinLocksFramework combined_analysis = new FIFOSpinLocksFramework();
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
@@ -47,7 +46,7 @@ public class IdenticalTest {
 			}
 
 			r1 = mrsp.getResponseTime(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -58,7 +57,7 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&
@@ -86,7 +85,7 @@ public class IdenticalTest {
 			}
 
 			r1 = fnp.NewMrsPRTATest(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -97,7 +96,7 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&
@@ -125,7 +124,7 @@ public class IdenticalTest {
 			}
 
 			r1 = fp.NewMrsPRTATest(tasks, resources, false, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, false);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, false, false);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual /*
@@ -136,7 +135,7 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, false, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, true);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, false, true);
 				System.exit(0);
 			}
 			// if (isEqual && isSystemSchedulable(tasks, r1) &&
@@ -160,8 +159,7 @@ public class IdenticalTest {
 			for (int j = 0; j < r1[i].length; j++) {
 				if (r1[i][j] != r2[i][j]) {
 					if (print)
-						System.out.println(
-								"not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
+						System.out.println("not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
 					isequal = false;
 				}
 			}

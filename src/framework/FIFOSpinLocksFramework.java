@@ -1,4 +1,4 @@
-package FIFOSpinFramework;
+package framework;
 
 import java.util.ArrayList;
 
@@ -6,24 +6,24 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.Utils;
 
-public class CombinedAnalysis {
-	long count = 0;
-	public long np = 0;
+public class FIFOSpinLocksFramework {
+	private long count = 0; // The number of calculations
+	private long np = 0; // The NP section length if MrsP is applied
 
 	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean printDebug) {
+			boolean testSchedulability, boolean printDebug) {
+
 		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
-			if (resource.protocol == 3 && npsection < resources.get(i).csl)
+			if (resource.protocol == 3 && npsection < resource.csl)
 				npsection = resources.get(i).csl;
 		}
 		this.np = npsection;
-
+		
 		long[][] init_Ri = Utils.initResponseTime(tasks);
-
 		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false;
+		boolean isEqual = false, missdeadline = false;
 		count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
@@ -37,30 +37,36 @@ public class CombinedAnalysis {
 			isEqual = true;
 			boolean should_finish = true;
 			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					Utils.MrsP_PREEMPTION_AND_MIGRATION, this.np);
+					Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
 					if (response_time[i][j] != response_time_plus[i][j])
 						isEqual = false;
-					if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline){
-						should_finish = false;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline)
+							should_finish = false;
 					}
 				}
-			}
-			
-			if(count > 1000){
-				Utils.printResponseTime(response_time, tasks);
 			}
 
 			count++;
 			Utils.cloneList(response_time_plus, response_time);
-			if (should_finish)
-				break;
+
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
 		}
 
 		if (printDebug) {
-			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
 			Utils.printResponseTime(response_time, tasks);
 		}
 
@@ -68,7 +74,7 @@ public class CombinedAnalysis {
 	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] response_time, double oneMig, long np) {
+			long[][] response_time, double oneMig, long np, boolean testSchedulability) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -94,9 +100,13 @@ public class CombinedAnalysis {
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
 						+ implementation_overheads;
 
-				if (task.Ri > task.deadline)
-					continue;
-
+				if (task.Ri > task.deadline) {
+					if (testSchedulability) {
+						return response_time_plus;
+					} else {
+						continue;
+					}
+				}
 			}
 		}
 		return response_time_plus;
@@ -428,18 +438,6 @@ public class CombinedAnalysis {
 			localblocking = npsection;
 		}
 
-		// if ((double) npsection > (double) MrsP_localblocking +
-		// t.mrsp_arrivalblocking_overheads) {
-		// t.np_section = npsection;
-		// localblocking = npsection;
-		// } else {
-		// t.np_section = 0;
-		// t.implementation_overheads += t.mrsp_arrivalblocking_overheads;
-		// localblocking = MrsP_localblocking;
-		// }
-
-		// System.out.println("arriv overheads :" +
-		// t.mrsp_arrivalblocking_overheads);
 		return localblocking;
 	}
 
@@ -617,17 +615,19 @@ public class CombinedAnalysis {
 					}
 				}
 				overheads.add((local_blocking / res.csl) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK));
+				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);
 
 					long mc_long = (long) Math.floor(mc);
-					t.migration_overheads_plus += mc - mc_long;
+					mc_plus += mc - mc_long;
 					if (mc - mc_long < 0) {
 						System.err.println("MrsP mig error");
 						System.exit(-1);
 					}
 					local_blocking += mc_long;
 				}
+				overheads.add(overheads.get(overheads.size() - 1) + mc_plus);
 			}
 
 			local_blocking_each_resource.add(local_blocking);

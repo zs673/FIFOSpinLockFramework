@@ -33,16 +33,6 @@ public class IANewMrsPRTAWithMCNP {
 		return responsetime;
 	}
 
-	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < Ris[i][j])
-					return false;
-			}
-		}
-		return true;
-	}
-
 	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np,
 			boolean testSchedulability, boolean printDebug) {
 
@@ -92,7 +82,7 @@ public class IANewMrsPRTAWithMCNP {
 		}
 
 		if (printDebug) {
-			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("MrsP NP    after " + count + " tims of recursion, we got the response time.");
 			Utils.printResponseTime(response_time, tasks);
 		}
 
@@ -213,18 +203,19 @@ public class IANewMrsPRTAWithMCNP {
 				}
 
 				overheads.add((local_blocking / res.csl) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK));
-
+				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);
 
 					long mc_long = (long) Math.floor(mc);
-					t.migration_overheads_plus += mc - mc_long;
+					mc_plus += mc - mc_long;
 					if (mc - mc_long < 0) {
 						System.err.println("MrsP mig error");
 						System.exit(-1);
 					}
 					local_blocking += mc_long;
 				}
+				overheads.add(overheads.get(overheads.size() - 1) + mc_plus);
 			}
 
 			local_blocking_each_resource.add(local_blocking);
@@ -534,5 +525,16 @@ public class IANewMrsPRTAWithMCNP {
 			}
 		}
 		return indexR;
+	}
+	
+
+	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < Ris[i][j])
+					return false;
+			}
+		}
+		return true;
 	}
 }

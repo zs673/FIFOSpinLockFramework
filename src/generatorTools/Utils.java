@@ -77,7 +77,8 @@ public class Utils {
 			for (int j = 0; j < Ris[i].length; j++) {
 				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = " + tasks.get(i).get(j).spin + ", L = "
 						+ tasks.get(i).get(j).local + ", I = " + tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
-						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin + ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
+						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin + ", implementation_overheads: "
+						+ tasks.get(i).get(j).implementation_overheads);
 				task_id++;
 			}
 			System.out.println();
