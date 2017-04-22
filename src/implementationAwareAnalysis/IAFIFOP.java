@@ -85,6 +85,11 @@ public class IAFIFOP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
+				if (response_time[i][j] > task.deadline){
+					response_time_plus[i][j] = response_time[i][j];
+					continue;
+				}
+				
 				task.spin_delay_by_preemptions = 0;
 				task.implementation_overheads = 0;
 				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
@@ -96,14 +101,9 @@ public class IAFIFOP {
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads);
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
 
-				if (task.Ri > task.deadline) {
-					if (testSchedulability) {
-						return response_time_plus;
-					} else {
-						continue;
-					}
-				}
-
+				if (testSchedulability && task.Ri > task.deadline) {
+					return response_time_plus;
+				} 
 			}
 		}
 		return response_time_plus;

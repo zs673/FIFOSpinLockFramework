@@ -13,14 +13,14 @@ import implementationAwareAnalysis.IANewMrsPRTAWithMCNP;
 
 public class IdenticalTest {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
-	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 8;
+	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
 	public static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	public static double RESOURCE_SHARING_FACTOR = .4;
-	public static boolean testSchedulability = true;
+	public static boolean testSchedulability = false;
 
 	static long maxC = 0;
 

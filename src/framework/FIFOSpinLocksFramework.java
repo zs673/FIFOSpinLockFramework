@@ -83,8 +83,13 @@ public class FIFOSpinLocksFramework {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
+				if (response_time[i][j] > task.deadline){
+					response_time_plus[i][j] = response_time[i][j];
+					continue;
+				}
+				
 				task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
-				task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
+				task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
 
 				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
 				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, task);
@@ -93,19 +98,17 @@ public class FIFOSpinLocksFramework {
 
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
-				task.total_blocking = task.spin + task.indirectspin + task.local + implementation_overheads - task.pure_resource_execution_time;
+				
+				task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
+						+ (long) Math.ceil(task.blocking_overheads);
 				if (task.total_blocking < 0) {
 					System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
 					System.exit(-1);
 				}
 
-				if (task.Ri > task.deadline) {
-					if (testSchedulability) {
-						return response_time_plus;
-					} else {
-						continue;
-					}
-				}
+				if (testSchedulability && task.Ri > task.deadline) {
+					return response_time_plus;
+				} 
 			}
 		}
 		return response_time_plus;
@@ -135,6 +138,7 @@ public class FIFOSpinLocksFramework {
 				spin_delay += NoS * resource.csl;
 				t.implementation_overheads += (NoS + t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
 						* (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+				t.blocking_overheads += NoS * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 
 				spin_delay += resource.csl * t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1));
 			}
@@ -155,7 +159,7 @@ public class FIFOSpinLocksFramework {
 			if (res.protocol == 2) {
 				requestsLeftOnRemoteP.add(new ArrayList<Long>());
 				fifo_resources.add(res);
-				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris, requestsLeftOnRemoteP.get(i));
+				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris, requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size()-1));
 			}
 		}
 
@@ -169,6 +173,7 @@ public class FIFOSpinLocksFramework {
 				}
 			}
 			task.implementation_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
+			task.blocking_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
 
 			while (preemptions > 0) {
 
@@ -241,6 +246,10 @@ public class FIFOSpinLocksFramework {
 		}
 
 		task.implementation_overheads += (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+		task.blocking_overheads += (spin + ncs
+				- (task.resource_required_index.contains(resource.id - 1)
+						? task.number_of_access_in_one_release.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
+				* (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
 
@@ -307,6 +316,7 @@ public class FIFOSpinLocksFramework {
 		number_of_access++;
 
 		calTask.implementation_overheads += number_of_access * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
+		calTask.blocking_overheads += (number_of_access - 1) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}
@@ -352,6 +362,7 @@ public class FIFOSpinLocksFramework {
 
 				BTBhit += number_of_request_with_btb * resource.csl;
 				calTask.implementation_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+				calTask.blocking_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 
 				for (int j = 0; j < resource.partitions.size(); j++) {
 					if (resource.partitions.get(j) != hpTask.partition) {
@@ -365,6 +376,7 @@ public class FIFOSpinLocksFramework {
 
 						BTBhit += spin_delay_with_btb * resource.csl;
 						calTask.implementation_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+						calTask.blocking_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 					}
 				}
 			}
@@ -401,14 +413,17 @@ public class FIFOSpinLocksFramework {
 			t.np_section = 0;
 			localblocking = fifonp_localblocking;
 			t.implementation_overheads += t.fifonp_arrivalblocking_overheads;
+			t.blocking_overheads += t.fifonp_arrivalblocking_overheads;
 		} else if (blocking.get(0) == fifop) {
 			t.np_section = 0;
 			localblocking = fifop_localblocking;
 			t.implementation_overheads += t.fifop_arrivalblocking_overheads;
+			t.blocking_overheads += t.fifonp_arrivalblocking_overheads;
 		} else if (blocking.get(0) == mrsp) {
 			t.np_section = 0;
 			localblocking = MrsP_localblocking;
 			t.implementation_overheads += t.mrsp_arrivalblocking_overheads;
+			t.blocking_overheads += t.fifonp_arrivalblocking_overheads;
 		} else if (blocking.get(0) == (double) npsection) {
 			t.np_section = npsection;
 			localblocking = npsection;
@@ -721,7 +736,7 @@ public class FIFOSpinLocksFramework {
 		return migrationCost;
 	}
 
-	public double migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, double oneMig, Resource resource,
+	private double migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, double oneMig, Resource resource,
 			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
 		double migCost = 0;
 
@@ -739,7 +754,7 @@ public class FIFOSpinLocksFramework {
 		return migCost;
 	}
 
-	public double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration, Resource resource,
+	private double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration, Resource resource,
 			ArrayList<ArrayList<SporadicTask>> tasks) {
 		double migCost = 0;
 

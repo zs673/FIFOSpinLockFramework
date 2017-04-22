@@ -17,7 +17,7 @@ public class SporadicTask {
 	public ArrayList<Integer> resource_required_index;
 	public ArrayList<Integer> number_of_access_in_one_release;
 
-	public double implementation_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
+	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
 	public double migration_overheads_plus = 0;
 
 	/* Used by LP solver from C code */
