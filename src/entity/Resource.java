@@ -21,13 +21,13 @@ public class Resource {
 		requested_tasks = new ArrayList<>();
 		partitions = new ArrayList<>();
 		ceiling = new ArrayList<>();
-		this.protocol = 0;
+		this.protocol = 1;
 	}
 
 	@Override
 	public String toString() {
-		return "R" + this.id + " : cs len = " + this.csl + ", partitions: " + partitions.size() + ", tasks: " + requested_tasks.size() + ", isGlobal: "
-				+ isGlobal;
+		return "R" + this.id + " : cs len = " + this.csl + ", partitions: " + partitions.size() + ", tasks: "
+				+ requested_tasks.size() + ", isGlobal: " + isGlobal;
 	}
 
 }

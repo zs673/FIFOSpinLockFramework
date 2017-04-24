@@ -9,7 +9,8 @@ import generatorTools.Utils;
 public class RTAWithoutBlocking {
 	long count = 0;
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
+	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean printBebug) {
 		long[][] init_Ri = Utils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missDeadline = false;
@@ -50,7 +51,8 @@ public class RTAWithoutBlocking {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] response_time) {
 		long[][] response_time_plus = new long[tasks.size()][];
 		for (int i = 0; i < response_time.length; i++)
 			response_time_plus[i] = new long[response_time[i].length];
@@ -80,7 +82,8 @@ public class RTAWithoutBlocking {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
-				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET + hpTask.pure_resource_execution_time);
+				interference += Math.ceil((double) (Ri) / (double) hpTask.period)
+						* (hpTask.WCET + hpTask.pure_resource_execution_time);
 			}
 		}
 		return interference;

@@ -55,8 +55,10 @@ public class IOASchedulabilityTest {
 		IAFIFOP IOAfp = new IAFIFOP();
 		IAFIFONP IOAfnp = new IAFIFONP();
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
+				0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		String result = "";
 		int siamrsp = 0;
@@ -83,7 +85,8 @@ public class IOASchedulabilityTest {
 			System.out.println(1 + "" + bigSet + " " + smallSet + " times: " + i);
 		}
 
-		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 		writeSystem(("ioa 1" + " " + bigSet + " " + smallSet), result);
 	}
@@ -98,8 +101,10 @@ public class IOASchedulabilityTest {
 		IAFIFOP IOAfp = new IAFIFOP();
 		IAFIFONP IOAfnp = new IAFIFONP();
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
+				0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		String result = "";
 		int siamrsp = 0;
@@ -126,7 +131,8 @@ public class IOASchedulabilityTest {
 			System.out.println(4 + "" + bigSet + " " + smallSet + " times: " + i);
 		}
 
-		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 		writeSystem(("ioa 4" + " " + bigSet + " " + smallSet), result);
 	}
@@ -139,8 +145,9 @@ public class IOASchedulabilityTest {
 		if (cs_len == 0)
 			cs_len = 1;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
+				0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 				cs_len);
 		long[][] Ris;
 
@@ -173,7 +180,8 @@ public class IOASchedulabilityTest {
 			System.out.println(2 + "" + tasksNumConfig + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa 2" + " " + tasksNumConfig + " " + cs_len), result);
@@ -184,8 +192,9 @@ public class IOASchedulabilityTest {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = smallSet;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 3 + 1 * (bigSet - 1);
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
+				0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
@@ -219,7 +228,8 @@ public class IOASchedulabilityTest {
 			System.out.println(3 + "" + bigSet + " " + smallSet + " times: " + i);
 		}
 
-		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa 3" + " " + bigSet + " " + smallSet), result);
