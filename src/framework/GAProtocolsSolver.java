@@ -103,17 +103,29 @@ public class GAProtocolsSolver {
 		ArrayList<SporadicTask> unschedulableTasks = new ArrayList<>();
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if(taskschedule_mrsp[i][j] == 0){
+				if (taskschedule_mrsp[i][j] == 0) {
 					unschedulableTasks.add(tasks.get(i).get(j));
 				}
 			}
 		}
-		
+
 		System.out.println("unschedulable tasks:");
-		for(int i=0;i<unschedulableTasks.size();i++){
+		for (int i = 0; i < unschedulableTasks.size(); i++) {
 			System.out.print("T" + unschedulableTasks.get(i).id + "    ");
 		}
 		System.out.println();
+
+		double[][][] resourceBlocking = new double[resources.size()][expect_result][PROTOCOL_SIZE];
+
+		for (int k = 0; k < resources.size(); k++) {
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					resourceBlocking[i][tasks.get(i).get(j).id -1][0] = tasks.get(i).get(j).fifonp[k];
+					resourceBlocking[i][tasks.get(i).get(j).id -1][1] = tasks.get(i).get(j).fifop[k];
+					resourceBlocking[i][tasks.get(i).get(j).id -1][2] = tasks.get(i).get(j).mrsp[k];
+				}
+			}
+		}
 
 		return 0;
 	}
