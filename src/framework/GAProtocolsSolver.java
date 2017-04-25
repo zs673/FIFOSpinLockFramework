@@ -1,5 +1,6 @@
 package framework;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -18,14 +19,18 @@ public class GAProtocolsSolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;
 	ArrayList<Resource> resources;
 
+	DecimalFormat df = new DecimalFormat("##.00");
 	FIFOSpinLocksFramework framework = new FIFOSpinLocksFramework();;
 	IAFIFONP fifonp = new IAFIFONP();
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	ArrayList<Integer> protocols = new ArrayList<>();
 	int[] candidate_solution;
 	int expect_result;
+
+	ArrayList<SporadicTask> unschedulableTasks = new ArrayList<>();
+	ArrayList<SporadicTask> schedulableTasks = new ArrayList<>();
+	double[][][] resourceBlocking;
 
 	public GAProtocolsSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		this.tasks = tasks;
@@ -36,17 +41,21 @@ public class GAProtocolsSolver {
 				expect_result++;
 			}
 		}
+		resourceBlocking = new double[resources.size()][expect_result][PROTOCOL_SIZE];
 	}
 
 	public int findSchedulableProtocols() {
+		// response time of each protocol
 		long[][] fifonp_rt = fifonp.NewMrsPRTATest(tasks, resources, false, false);
 		long[][] fifop_rt = fifop.NewMrsPRTATest(tasks, resources, false, false);
 		long[][] mrsp_rt = mrsp.getResponseTime(tasks, resources, false, false);
 
+		// task schedulability of each protocol
 		int[][] taskschedule_fifonp = checkTaskSchedulability(fifonp_rt);
 		int[][] taskschedule_fifop = checkTaskSchedulability(fifop_rt);
 		int[][] taskschedule_mrsp = checkTaskSchedulability(mrsp_rt);
 
+		// number of schedulable tasks by each protocol
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
@@ -63,8 +72,8 @@ public class GAProtocolsSolver {
 					mrsp_sched++;
 				}
 
-				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
-						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
+				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j] && taskschedule_fifop[i][j] == taskschedule_mrsp[i][j]
+						&& taskschedule_mrsp[i][j] == 0) {
 					isPossible = false;
 
 				}
@@ -97,33 +106,34 @@ public class GAProtocolsSolver {
 			if (mrsp_sched >= fifonp_sched && mrsp_sched >= fifop_sched)
 				candidate_solution[i] = 3;
 		}
-
 		System.out.println("candidate: " + Arrays.toString(candidate_solution));
 
-		ArrayList<SporadicTask> unschedulableTasks = new ArrayList<>();
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				if (taskschedule_mrsp[i][j] == 0) {
 					unschedulableTasks.add(tasks.get(i).get(j));
+				} else {
+					schedulableTasks.add(tasks.get(i).get(j));
+				}
+			}
+		}
+
+		for (int k = 0; k < resources.size(); k++) {
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][0] = Double.parseDouble(df.format(tasks.get(i).get(j).fifonp[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][1] = Double.parseDouble(df.format(tasks.get(i).get(j).fifop[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][2] = Double.parseDouble(df.format(tasks.get(i).get(j).mrsp[k]));
 				}
 			}
 		}
 
 		System.out.println("unschedulable tasks:");
 		for (int i = 0; i < unschedulableTasks.size(); i++) {
-			System.out.print("T" + unschedulableTasks.get(i).id + "    ");
-		}
-		System.out.println();
-
-		double[][][] resourceBlocking = new double[resources.size()][expect_result][PROTOCOL_SIZE];
-
-		for (int k = 0; k < resources.size(); k++) {
-			for (int i = 0; i < tasks.size(); i++) {
-				for (int j = 0; j < tasks.get(i).size(); j++) {
-					resourceBlocking[i][tasks.get(i).get(j).id -1][0] = tasks.get(i).get(j).fifonp[k];
-					resourceBlocking[i][tasks.get(i).get(j).id -1][1] = tasks.get(i).get(j).fifop[k];
-					resourceBlocking[i][tasks.get(i).get(j).id -1][2] = tasks.get(i).get(j).mrsp[k];
-				}
+			System.out.println("T" + unschedulableTasks.get(i).id + ": ");
+			for (int k = 0; k < resourceBlocking.length; k++) {
+				System.out.println("R" + (k + 1) + ".  fifonp: " + resourceBlocking[k][unschedulableTasks.get(i).id - 1][0] + "    fifop: "
+						+ resourceBlocking[k][unschedulableTasks.get(i).id - 1][1] + "    mrsp: " + resourceBlocking[k][unschedulableTasks.get(i).id - 1][2]);
 			}
 		}
 
@@ -152,20 +162,18 @@ public class GAProtocolsSolver {
 		CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.Random;
 		double RSF = 0.2;
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 6;
-		int NUMBER_OF_SYSTEMS = 1;
+		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 5;
+		int result = -1;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
-		for (int i = 0; i < NUMBER_OF_SYSTEMS; i++) {
+		while (result != 0) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 			GAProtocolsSolver finder = new GAProtocolsSolver(tasks, resources);
-			finder.findSchedulableProtocols();
+			result = finder.findSchedulableProtocols();
 
 		}
 	}

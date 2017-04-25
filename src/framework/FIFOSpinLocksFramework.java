@@ -10,8 +10,8 @@ public class FIFOSpinLocksFramework {
 	private long count = 0; // The number of calculations
 	private long np = 0; // The NP section length if MrsP is applied
 
-	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug) {
+	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
+			boolean printDebug) {
 
 		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
@@ -36,8 +36,7 @@ public class FIFOSpinLocksFramework {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -66,16 +65,15 @@ public class FIFOSpinLocksFramework {
 		}
 
 		if (printDebug) {
-			System.out.println(
-					"FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
 			Utils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] response_time, double oneMig, long np, boolean testSchedulability) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig, long np,
+			boolean testSchedulability) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -94,22 +92,17 @@ public class FIFOSpinLocksFramework {
 				task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
 
 				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
-				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig,
-						np, task);
-				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources,
-						oneMig, np);
+				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, task);
+				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig, np);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np);
 
-				long implementation_overheads = (long) Math
-						.ceil(task.implementation_overheads + task.migration_overheads_plus);
-				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
-						+ implementation_overheads;
+				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
 
 				task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
 						+ (long) Math.ceil(task.blocking_overheads);
 				if (task.total_blocking < 0) {
-					System.err
-							.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
+					System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
 					System.exit(-1);
 				}
 
@@ -124,9 +117,8 @@ public class FIFOSpinLocksFramework {
 	/*
 	 * Direct Spin delay
 	 */
-	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np,
-			SporadicTask calT) {
+	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			long jitter, double oneMig, long np, SporadicTask calT) {
 		long resourceTime = 0;
 		resourceTime += FIFONPResourceTime(task, tasks, resources, Ris, time);
 		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time, Ris);
@@ -137,21 +129,18 @@ public class FIFOSpinLocksFramework {
 	/**
 	 * FIFO-NP resource accessing time.
 	 */
-	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
 			if (resource.protocol != 2 && resource.protocol != 3) {
 				long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri);
 				spin_delay += NoS * resource.csl;
-				t.implementation_overheads += (NoS
-						+ t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
+				t.implementation_overheads += (NoS + t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
 						* (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 				t.blocking_overheads += NoS * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 
-				spin_delay += resource.csl
-						* t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1));
+				spin_delay += resource.csl * t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1));
 			}
 
 		}
@@ -161,8 +150,7 @@ public class FIFOSpinLocksFramework {
 	/**
 	 * FIFO-P resource accessing time.
 	 */
-	private long FIFOPResourceAccessTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long time, long[][] Ris) {
+	private long FIFOPResourceAccessTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long time, long[][] Ris) {
 		long spin = 0;
 		ArrayList<ArrayList<Long>> requestsLeftOnRemoteP = new ArrayList<>();
 		ArrayList<Resource> fifo_resources = new ArrayList<>();
@@ -171,8 +159,7 @@ public class FIFOSpinLocksFramework {
 			if (res.protocol == 2) {
 				requestsLeftOnRemoteP.add(new ArrayList<Long>());
 				fifo_resources.add(res);
-				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris,
-						requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1));
+				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris, requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1));
 			}
 		}
 
@@ -202,8 +189,7 @@ public class FIFOSpinLocksFramework {
 				if (max_delay > 0) {
 					spin += max_delay;
 					for (int i = 0; i < requestsLeftOnRemoteP.get(max_delay_resource_index).size(); i++) {
-						requestsLeftOnRemoteP.get(max_delay_resource_index).set(i,
-								requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) - 1);
+						requestsLeftOnRemoteP.get(max_delay_resource_index).set(i, requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) - 1);
 						if (requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) < 1) {
 							requestsLeftOnRemoteP.get(max_delay_resource_index).remove(i);
 							i--;
@@ -221,8 +207,8 @@ public class FIFOSpinLocksFramework {
 		return spin;
 	}
 
-	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			Resource resource, long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP) {
+	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource, long time, long[][] Ris,
+			ArrayList<Long> requestsLeftOnRemoteP) {
 		long spin = 0;
 		long ncs = 0;
 
@@ -230,8 +216,7 @@ public class FIFOSpinLocksFramework {
 			SporadicTask hpTask = tasks.get(task.partition).get(i);
 			if (hpTask.priority > task.priority && hpTask.resource_required_index.contains(resource.id - 1)) {
 				ncs += (int) Math.ceil((double) (time + Ris[hpTask.partition][i]) / (double) hpTask.period)
-						* hpTask.number_of_access_in_one_release
-								.get(hpTask.resource_required_index.indexOf(resource.id - 1));
+						* hpTask.number_of_access_in_one_release.get(hpTask.resource_required_index.indexOf(resource.id - 1));
 			}
 		}
 
@@ -247,10 +232,8 @@ public class FIFOSpinLocksFramework {
 						if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 							SporadicTask remote_task = tasks.get(i).get(j);
 							int indexR = getIndexRInTask(remote_task, resource);
-							int number_of_release = (int) Math
-									.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
-							number_of_request_by_Remote_P += number_of_release
-									* remote_task.number_of_access_in_one_release.get(indexR);
+							int number_of_release = (int) Math.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
+							number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
 						}
 					}
 
@@ -264,8 +247,8 @@ public class FIFOSpinLocksFramework {
 
 		task.implementation_overheads += (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
 		task.blocking_overheads += (spin + ncs
-				- (task.resource_required_index.contains(resource.id - 1) ? task.number_of_access_in_one_release
-						.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
+				- (task.resource_required_index.contains(resource.id - 1)
+						? task.number_of_access_in_one_release.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
 				* (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
@@ -273,17 +256,15 @@ public class FIFOSpinLocksFramework {
 	/**
 	 * MrsP resource accessing time.
 	 */
-	private long MrsPresourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np,
-			SporadicTask calT) {
+	private long MrsPresourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			long jitter, double oneMig, long np, SporadicTask calT) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
 			Resource resource = resources.get(task.resource_required_index.get(i));
 
 			if (resource.protocol == 3) {
-				int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period)
-						* task.number_of_access_in_one_release.get(i);
+				int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period) * task.number_of_access_in_one_release.get(i);
 
 				for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 					long oneAccess = 0;
@@ -309,9 +290,8 @@ public class FIFOSpinLocksFramework {
 		return resource_accessing_time;
 	}
 
-	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long time, long jitter, int n,
-			SporadicTask calTask) {
+	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long time,
+			long jitter, int n, SporadicTask calTask) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -322,15 +302,12 @@ public class FIFOSpinLocksFramework {
 					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math
-								.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
-						number_of_request_by_Remote_P += number_of_release
-								* remote_task.number_of_access_in_one_release.get(indexR);
+						int number_of_release = (int) Math.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
+						number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0
-						: number_of_request_by_Remote_P - getNoRFromHP - n + 1;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP - n + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
 			}
 		}
@@ -347,8 +324,8 @@ public class FIFOSpinLocksFramework {
 	/*
 	 * Indirect Spin delay
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time,
-			long[][] Ris, ArrayList<Resource> resources, double oneMig, long np) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris, ArrayList<Resource> resources,
+			double oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -357,13 +334,10 @@ public class FIFOSpinLocksFramework {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
-						* (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
 
-				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources,
-						t);
-				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i],
-						oneMig, np, t);
+				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t);
+				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np, t);
 				t.indirectspin += btb_interference;
 				interference += btb_interference;
 			}
@@ -374,8 +348,8 @@ public class FIFOSpinLocksFramework {
 	/**
 	 * FIFO-NP indirect spin delay.
 	 */
-	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris,
-			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask) {
+	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris, ArrayList<ArrayList<SporadicTask>> allTasks,
+			ArrayList<Resource> resources, SporadicTask calTask) {
 		long BTBhit = 0;
 
 		for (int i = 0; i < hpTask.resource_required_index.size(); i++) {
@@ -383,21 +357,17 @@ public class FIFOSpinLocksFramework {
 			Resource resource = resources.get(hpTask.resource_required_index.get(i));
 
 			if (resource.protocol != 2 && resource.protocol != 3) {
-				int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition),
-						Ris[hpTask.partition], Ri);
-				int number_of_request_with_btb = (int) Math.ceil((double) (Ri + Rihp) / (double) hpTask.period)
-						* hpTask.number_of_access_in_one_release.get(i);
+				int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ris[hpTask.partition], Ri);
+				int number_of_request_with_btb = (int) Math.ceil((double) (Ri + Rihp) / (double) hpTask.period) * hpTask.number_of_access_in_one_release.get(i);
 
 				BTBhit += number_of_request_with_btb * resource.csl;
-				calTask.implementation_overheads += number_of_request_with_btb
-						* (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+				calTask.implementation_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 				calTask.blocking_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 
 				for (int j = 0; j < resource.partitions.size(); j++) {
 					if (resource.partitions.get(j) != hpTask.partition) {
 						int remote_partition = resource.partitions.get(j);
-						int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition),
-								Ris[remote_partition], Ri);
+						int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ris[remote_partition], Ri);
 
 						int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
 								: number_of_remote_request - number_of_higher_request;
@@ -405,8 +375,7 @@ public class FIFOSpinLocksFramework {
 						int spin_delay_with_btb = Integer.min(possible_spin_delay, number_of_request_with_btb);
 
 						BTBhit += spin_delay_with_btb * resource.csl;
-						calTask.implementation_overheads += spin_delay_with_btb
-								* (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+						calTask.implementation_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 						calTask.blocking_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
 					}
 				}
@@ -419,8 +388,8 @@ public class FIFOSpinLocksFramework {
 	/*
 	 * Arrival Blocking
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, double oneMig, long np) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, double oneMig,
+			long np) {
 		long localblocking = 0;
 		long fifonp_localblocking = FIFONPlocalBlocking(t, tasks, resources, Ris, time);
 		long fifop_localblocking = FIFOPlocalBlocking(t, tasks, resources, Ris, time);
@@ -463,8 +432,7 @@ public class FIFOSpinLocksFramework {
 		return localblocking;
 	}
 
-	private boolean isTaskIncurNPSection(SporadicTask task, ArrayList<SporadicTask> tasksOnItsParititon,
-			ArrayList<Resource> resources) {
+	private boolean isTaskIncurNPSection(SporadicTask task, ArrayList<SporadicTask> tasksOnItsParititon, ArrayList<Resource> resources) {
 		int partition = task.partition;
 		int priority = task.priority;
 		int minCeiling = 1000;
@@ -483,8 +451,7 @@ public class FIFOSpinLocksFramework {
 			return false;
 	}
 
-	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = FIFONPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -554,8 +521,7 @@ public class FIFOSpinLocksFramework {
 		return localBlockingResources;
 	}
 
-	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = FIFOPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -609,8 +575,8 @@ public class FIFOSpinLocksFramework {
 		return localBlockingResources;
 	}
 
-	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, double oneMig, long np) {
+	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			double oneMig, long np) {
 		ArrayList<Resource> LocalBlockingResources = MrsPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -687,13 +653,13 @@ public class FIFOSpinLocksFramework {
 		return localBlockingResources;
 	}
 
-	private double migrationCostForArrival(double oneMig, long np, ArrayList<Integer> migration_targets,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
+	private double migrationCostForArrival(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
 	}
 
-	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT) {
+	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -703,8 +669,7 @@ public class FIFOSpinLocksFramework {
 			if (i != task.partition) {
 				int number_requests_left = 0;
 				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time)
-						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time)
-						- request_number + 1;
+						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time) - request_number + 1;
 
 				if (number_requests_left > 0)
 					migration_targets.add(i);
@@ -714,8 +679,8 @@ public class FIFOSpinLocksFramework {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
 	}
 
-	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
+	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
+			SporadicTask calT) {
 		double migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 
@@ -742,15 +707,13 @@ public class FIFOSpinLocksFramework {
 			// 1. If there is no preemptors on the task's partition OR there is
 			// no
 			// other migration targets
-			if (!migration_targets_with_P.contains(partition)
-					|| (migration_targets.size() == 1 && migration_targets.get(0) == partition))
+			if (!migration_targets_with_P.contains(partition) || (migration_targets.size() == 1 && migration_targets.get(0) == partition))
 				migration_cost_for_one_access = 0;
 
 			// 2. If there is preemptors on the task's partition AND there are
 			// no
 			// preemptors on other migration targets
-			else if (migration_targets_with_P.size() == 1 && migration_targets_with_P.get(0) == partition
-					&& migration_targets.size() > 1)
+			else if (migration_targets_with_P.size() == 1 && migration_targets_with_P.get(0) == partition && migration_targets.size() > 1)
 				migration_cost_for_one_access = 2 * oneMig;
 
 			// 3. If there exist multiple migration targets with preemptors.
@@ -759,12 +722,10 @@ public class FIFOSpinLocksFramework {
 			else {
 				if (np > 0) {
 					double migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
-					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks,
-							calT, migCostWithNP);
+					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, migCostWithNP);
 					migration_cost_for_one_access = Math.min(migCostWithHP, migCostWithNP);
 				} else {
-					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource,
-							tasks, calT, -1);
+					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, -1);
 				}
 			}
 
@@ -778,8 +739,7 @@ public class FIFOSpinLocksFramework {
 			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT, double migByNP) {
 		double migCost = 0;
 
-		double newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource,
-				tasks);
+		double newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource, tasks);
 
 		while (migCost != newMigCost) {
 			migCost = newMigCost;
@@ -796,8 +756,8 @@ public class FIFOSpinLocksFramework {
 		return migCost;
 	}
 
-	private double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks) {
+	private double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks) {
 		double migCost = 0;
 
 		for (int i = 0; i < migration_targets_with_P.size(); i++) {
@@ -819,8 +779,7 @@ public class FIFOSpinLocksFramework {
 	 * gives the number of requests from remote partitions for a resource that
 	 * is required by the given task.
 	 */
-	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			long[][] Ris, long Ri) {
+	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long Ri) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -831,15 +790,12 @@ public class FIFOSpinLocksFramework {
 					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math
-								.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
-						number_of_request_by_Remote_P += number_of_release
-								* remote_task.number_of_access_in_one_release.get(indexR);
+						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
+						number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
-						: number_of_request_by_Remote_P - getNoRFromHP;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP;
 
 				int NoRFromT = task.number_of_access_in_one_release.get(getIndexRInTask(task, resource));
 				number_of_spin_dealy += Integer.min(possible_spin_delay, NoRFromT);
@@ -860,8 +816,7 @@ public class FIFOSpinLocksFramework {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math.ceil((double) (Ri + Ris[i]) / (double) hpTask.period)
-						* hpTask.number_of_access_in_one_release.get(indexR);
+				number_of_request_by_HP += Math.ceil((double) (Ri + Ris[i]) / (double) hpTask.period) * hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;

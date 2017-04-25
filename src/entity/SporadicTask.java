@@ -17,8 +17,8 @@ public class SporadicTask {
 	public ArrayList<Integer> resource_required_index;
 	public ArrayList<Integer> number_of_access_in_one_release;
 
-	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0,
-			fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
+	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0,
+			fifop_arrivalblocking_overheads = 0;
 	public double migration_overheads_plus = 0;
 
 	/* Used by LP solver from C code */
@@ -54,14 +54,13 @@ public class SporadicTask {
 
 	@Override
 	public String toString() {
-		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: "
-				+ this.pure_resource_execution_time + ", D = " + this.deadline + ", Priority = " + this.priority
-				+ ", Partition = " + this.partition;
+		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time + ", D = " + this.deadline
+				+ ", Priority = " + this.priority + ", Partition = " + this.partition;
 	}
 
 	public String RTA() {
-		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = "
-				+ this.local + ". is schedulable: " + (Ri <= deadline);
+		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = " + this.local + ". is schedulable: "
+				+ (Ri <= deadline);
 	}
 
 }

@@ -41,15 +41,14 @@ public class Utils {
 	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
 	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
 
-	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT
-			+ PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE + PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
+	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
+			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
 
 	public static void main(String args[]) {
 		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK);
-		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK
-				+ "   RE-REQUEST:   " + (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST));
-		System.out.println(" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   "
-				+ MrsP_PREEMPTION_AND_MIGRATION);
+		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK + "   RE-REQUEST:   "
+				+ (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST));
+		System.out.println(" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
 		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);
 	}
 
@@ -76,11 +75,10 @@ public class Utils {
 		int task_id = 1;
 		for (int i = 0; i < Ris.length; i++) {
 			for (int j = 0; j < Ris[i].length; j++) {
-				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline
-						+ ", S = " + tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = "
-						+ tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
-						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin
-						+ ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
+				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = " + tasks.get(i).get(j).spin + ", L = "
+						+ tasks.get(i).get(j).local + ", I = " + tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
+						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin + ", implementation_overheads: "
+						+ tasks.get(i).get(j).implementation_overheads);
 				task_id++;
 			}
 			System.out.println();

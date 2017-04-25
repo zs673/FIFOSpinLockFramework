@@ -47,8 +47,8 @@ public class BackUpGAProtocolsFinder {
 	int maxGeneration;
 	int currentGeneration = 0;
 
-	public BackUpGAProtocolsFinder(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			int population, int maxGene, float Pc, float Pm, boolean print) {
+	public BackUpGAProtocolsFinder(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGene, float Pc, float Pm,
+			boolean print) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.print = print;
@@ -223,8 +223,7 @@ public class BackUpGAProtocolsFinder {
 			}
 		}
 
-		System.out.println("Generation: " + currentGeneration + " max fitness: " + maxFitness + " gene: "
-				+ Arrays.toString(gene[maxIndex]));
+		System.out.println("Generation: " + currentGeneration + " max fitness: " + maxFitness + " gene: " + Arrays.toString(gene[maxIndex]));
 	}
 
 	private void countRate() {
@@ -371,10 +370,8 @@ public class BackUpGAProtocolsFinder {
 		int schedulablesystem = 0;
 		boolean print = true;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		for (int i = 0; i < NUMBER_OF_SYSTEMS; i++) {
 			System.err.println(i);

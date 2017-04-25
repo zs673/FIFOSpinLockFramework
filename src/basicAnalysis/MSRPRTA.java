@@ -9,8 +9,7 @@ import generatorTools.Utils;
 public class MSRPRTA {
 	long count = 0;
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean printBebug) {
+	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
 		long[][] init_Ri = Utils.initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
@@ -56,8 +55,7 @@ public class MSRPRTA {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] response_time) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time) {
 		long[][] response_time_plus = new long[tasks.size()][];
 		for (int i = 0; i < response_time.length; i++)
 			response_time_plus[i] = new long[response_time[i].length];
@@ -112,8 +110,7 @@ public class MSRPRTA {
 	/*
 	 * Calculate the local blocking for task t.
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -140,8 +137,7 @@ public class MSRPRTA {
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
 
-			if (resource.partitions.size() == 1 && resource.partitions.get(0) == task.partition
-					&& resource.ceiling.get(0) >= task.priority) {
+			if (resource.partitions.size() == 1 && resource.partitions.get(0) == task.partition && resource.ceiling.get(0) >= task.priority) {
 				for (int j = 0; j < resource.requested_tasks.size(); j++) {
 					SporadicTask LP_task = resource.requested_tasks.get(j);
 					if (LP_task.partition == partition && LP_task.priority < task.priority) {
