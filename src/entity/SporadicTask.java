@@ -31,6 +31,7 @@ public class SporadicTask {
 	public double[] mrsp = null;
 
 	public double np_section = 0;
+	
 
 	public SporadicTask(int priority, long t, long c, int partition, int id) {
 		this.priority = priority;

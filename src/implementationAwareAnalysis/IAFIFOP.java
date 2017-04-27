@@ -8,6 +8,7 @@ import generatorTools.Utils;
 
 public class IAFIFOP {
 	long count = 0;
+	private int extendCal = 5;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 
@@ -38,7 +39,7 @@ public class IAFIFOP {
 						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 							missdeadline = true;
 					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline)
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
 							should_finish = false;
 					}
 				}
@@ -76,7 +77,7 @@ public class IAFIFOP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline) {
+				if (response_time[i][j] > task.deadline * extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}

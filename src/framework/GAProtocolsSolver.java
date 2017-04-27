@@ -3,6 +3,7 @@ package framework;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import entity.Resource;
 import entity.SporadicTask;
@@ -30,7 +31,25 @@ public class GAProtocolsSolver {
 
 	ArrayList<SporadicTask> unschedulableTasks = new ArrayList<>();
 	ArrayList<SporadicTask> schedulableTasks = new ArrayList<>();
-	double[][][] resourceBlocking;
+	double[][][][] resourceBlocking;
+
+	/****** GA Properties ******/
+	int population = 1000;
+	int elitismSize = 2;
+	int maxGeneration = 500;
+	int currentGeneration = 0;
+
+	Random ran = new Random(System.currentTimeMillis());
+	int randomBound = 65535;
+
+	int[][] parent_generation;
+	int[][] next_generation;
+	int[] fitness;
+
+	int bestFitness = 0;
+	int bestGeneration = 0;
+	int[] bestGene;
+	int[] bestSolution = null;
 
 	public GAProtocolsSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		this.tasks = tasks;
@@ -41,7 +60,15 @@ public class GAProtocolsSolver {
 				expect_result++;
 			}
 		}
-		resourceBlocking = new double[resources.size()][expect_result][PROTOCOL_SIZE];
+
+		resourceBlocking = new double[resources.size()][expect_result][PROTOCOL_SIZE][2];
+		parent_generation = new int[population][resources.size()];
+		next_generation = new int[population][resources.size()];
+		bestGene = new int[resources.size()];
+		fitness = new int[population];
+		for (int i = 0; i < population; i++) {
+			fitness[i] = 0;
+		}
 	}
 
 	public int findSchedulableProtocols() {
@@ -99,45 +126,59 @@ public class GAProtocolsSolver {
 		}
 
 		for (int i = 0; i < resources.size(); i++) {
-			if (fifonp_sched >= fifop_sched && fifonp_sched >= mrsp_sched)
-				candidate_solution[i] = 1;
-			if (fifop_sched >= fifonp_sched && fifop_sched >= mrsp_sched)
-				candidate_solution[i] = 2;
 			if (mrsp_sched >= fifonp_sched && mrsp_sched >= fifop_sched)
 				candidate_solution[i] = 3;
+			if (fifop_sched >= fifonp_sched && fifop_sched >= mrsp_sched)
+				candidate_solution[i] = 2;
+			if (fifonp_sched >= fifop_sched && fifonp_sched >= mrsp_sched)
+				candidate_solution[i] = 1;
 		}
 		System.out.println("candidate: " + Arrays.toString(candidate_solution));
 
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (taskschedule_mrsp[i][j] == 0) {
+				if (taskschedule_mrsp[i][j] == 0)
 					unschedulableTasks.add(tasks.get(i).get(j));
-				} else {
+				else
 					schedulableTasks.add(tasks.get(i).get(j));
-				}
 			}
 		}
 
 		for (int k = 0; k < resources.size(); k++) {
 			for (int i = 0; i < tasks.size(); i++) {
 				for (int j = 0; j < tasks.get(i).size(); j++) {
-					resourceBlocking[k][tasks.get(i).get(j).id - 1][0] = Double.parseDouble(df.format(tasks.get(i).get(j).fifonp[k]));
-					resourceBlocking[k][tasks.get(i).get(j).id - 1][1] = Double.parseDouble(df.format(tasks.get(i).get(j).fifop[k]));
-					resourceBlocking[k][tasks.get(i).get(j).id - 1][2] = Double.parseDouble(df.format(tasks.get(i).get(j).mrsp[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][0][0] = Double.parseDouble(df.format(tasks.get(i).get(j).fifonp[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][0][1] = 1;
+
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][1][0] = Double.parseDouble(df.format(tasks.get(i).get(j).fifop[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][1][1] = 2;
+
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][2][0] = Double.parseDouble(df.format(tasks.get(i).get(j).mrsp[k]));
+					resourceBlocking[k][tasks.get(i).get(j).id - 1][2][1] = 3;
 				}
 			}
 		}
+		return solve();
+	}
 
-		System.out.println("unschedulable tasks:");
-		for (int i = 0; i < unschedulableTasks.size(); i++) {
-			System.out.println("T" + unschedulableTasks.get(i).id + ": ");
-			for (int k = 0; k < resourceBlocking.length; k++) {
-				System.out.println("R" + (k + 1) + ".  fifonp: " + resourceBlocking[k][unschedulableTasks.get(i).id - 1][0] + "    fifop: "
-						+ resourceBlocking[k][unschedulableTasks.get(i).id - 1][1] + "    mrsp: " + resourceBlocking[k][unschedulableTasks.get(i).id - 1][2]);
+	int solve() {
+		initAndGetFirstGene();
+		getFitness(parent_generation);
+		return 0;
+	}
+
+	private void initAndGetFirstGene() {
+		for (int i = 0; i < parent_generation.length; i++) {
+			if (i < PROTOCOL_SIZE) {
+				for (int j = 0; j < parent_generation[i].length; j++) {
+					parent_generation[i][j] = i + 1;
+				}
+			} else {
+				for (int j = 0; j < parent_generation[i].length; j++) {
+					parent_generation[i][j] = ran.nextInt(randomBound) % 3 + 1;
+				}
 			}
 		}
-
-		return 0;
 	}
 
 	int[][] checkTaskSchedulability(long[][] rt) {
@@ -153,6 +194,41 @@ public class GAProtocolsSolver {
 		}
 
 		return tasksrt;
+	}
+
+	void getFitness(int[][] gene) {
+		int maxFitness = 0, maxIndex = 0;
+		for (int i = 0; i < gene.length; i++) {
+			fitness[i] = isSystemSchedulable(gene[i]);
+
+			if (maxFitness < fitness[i]) {
+				maxFitness = fitness[i];
+				maxIndex = i;
+			}
+
+			if (fitness[i] == expect_result) {
+				bestSolution = gene[i];
+			}
+		}
+
+		System.out.println("Generation: " + currentGeneration + " max fitness: " + maxFitness + " gene: " + Arrays.toString(gene[maxIndex]));
+	}
+
+	private int isSystemSchedulable(int[] gene) {
+		for (int i = 0; i < resources.size(); i++) {
+			resources.get(i).protocol = gene[i];
+		}
+
+		long[][] Ris = framework.calculateResponseTime(tasks, resources, false, false);
+
+		int fitness = 0;
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline >= Ris[i][j])
+					fitness++;
+			}
+		}
+		return fitness;
 	}
 
 	public static void main(String args[]) {
@@ -174,7 +250,6 @@ public class GAProtocolsSolver {
 			generator.generateResourceUsage(tasks, resources);
 			GAProtocolsSolver finder = new GAProtocolsSolver(tasks, resources);
 			result = finder.findSchedulableProtocols();
-
 		}
 	}
 }
