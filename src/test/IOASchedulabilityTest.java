@@ -8,14 +8,14 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import Analysis.IAFIFONP;
+import Analysis.IAFIFOP;
+import Analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
 import generatorTools.SystemGenerator.CS_LENGTH_RANGE;
 import generatorTools.SystemGenerator.RESOURCES_RANGE;
-import implementationAwareAnalysis.IAFIFONP;
-import implementationAwareAnalysis.IAFIFOP;
-import implementationAwareAnalysis.IANewMrsPRTAWithMCNP;
 
 public class IOASchedulabilityTest {
 

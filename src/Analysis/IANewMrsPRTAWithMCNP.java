@@ -1,4 +1,4 @@
-package implementationAwareAnalysis;
+package Analysis;
 
 import java.util.ArrayList;
 

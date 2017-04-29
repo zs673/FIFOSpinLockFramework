@@ -1,4 +1,4 @@
-package basicAnalysis;
+package Analysis;
 
 import java.util.ArrayList;
 
@@ -6,16 +6,16 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.Utils;
 
-public class FIFOP {
+public class IAFIFOP {
 	long count = 0;
-	SporadicTask problemtask = null;
-	int isTestPrint = 0;
+	private int extendCal = 5;
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
+	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
+
 		long[][] init_Ri = Utils.initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missDeadline = false;
+		boolean isEqual = false, missdeadline = false;
 		count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
@@ -27,43 +27,47 @@ public class FIFOP {
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time);
+			boolean should_finish = true;
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
 					if (response_time[i][j] != response_time_plus[i][j]) {
-						if (count > 10000) {
-							System.out.println("task T" + tasks.get(i).get(j).id + " : " + response_time_plus[i][j] + " " + response_time[i][j]);
-							System.out.println("task T" + tasks.get(i).get(j).id + " : " + tasks.get(i).get(j).spin + " " + tasks.get(i).get(j).local + " "
-									+ tasks.get(i).get(j).interference);
-						}
 						isEqual = false;
 					}
-
-					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
-						missDeadline = true;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+							should_finish = false;
+					}
 				}
 			}
-
+			if (count > 1000) {
+				Utils.printResponseTime(response_time, tasks);
+			}
 			count++;
 			Utils.cloneList(response_time_plus, response_time);
 
-			if (missDeadline)
-				break;
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
 		}
 
 		if (printDebug) {
-			if (missDeadline)
-				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, the tasks miss the deadline.");
-			else
-				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
 			Utils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, boolean testSchedulability) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -73,15 +77,29 @@ public class FIFOP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
+				if (response_time[i][j] > task.deadline * extendCal) {
+					response_time_plus[i][j] = response_time[i][j];
+					continue;
+				}
+
+				task.fifop = new double[resources.size()];
+				for (int k = 0; k < task.fifop.length; k++) {
+					task.fifop[k] = 0;
+				}
 				task.spin_delay_by_preemptions = 0;
+				task.implementation_overheads = 0;
+				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
+
 				task.spin = getSpinDelay(task, tasks, resources, response_time[i][j], response_time);
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j]);
-				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local;
 
-				if (task.Ri > task.deadline)
+				long implementation_overheads = (long) Math.ceil(task.implementation_overheads);
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
+
+				if (testSchedulability && task.Ri > task.deadline) {
 					return response_time_plus;
-
+				}
 			}
 		}
 		return response_time_plus;
@@ -90,8 +108,10 @@ public class FIFOP {
 	private long getSpinDelay(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long time, long[][] Ris) {
 		long spin = 0;
 		ArrayList<ArrayList<Long>> requestsLeftOnRemoteP = new ArrayList<>();
+		ArrayList<Resource> fifop_resources = new ArrayList<>();
 		for (int i = 0; i < resources.size(); i++) {
 			requestsLeftOnRemoteP.add(new ArrayList<Long>());
+			fifop_resources.add(resources.get(i));
 			Resource res = resources.get(i);
 			spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris, requestsLeftOnRemoteP.get(i));
 		}
@@ -105,19 +125,24 @@ public class FIFOP {
 			}
 		}
 
+		task.implementation_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
+
 		while (preemptions > 0) {
 
 			long max_delay = 0;
+			Resource resource = null;
 			int max_delay_resource_index = -1;
-			for (int i = 0; i < resources.size(); i++) {
-				if (max_delay < resources.get(i).csl * requestsLeftOnRemoteP.get(i).size()) {
-					max_delay = resources.get(i).csl * requestsLeftOnRemoteP.get(i).size();
+			for (int i = 0; i < fifop_resources.size(); i++) {
+				if (max_delay < fifop_resources.get(i).csl * requestsLeftOnRemoteP.get(i).size()) {
+					max_delay = fifop_resources.get(i).csl * requestsLeftOnRemoteP.get(i).size();
 					max_delay_resource_index = i;
+					resource = fifop_resources.get(i);
 				}
 			}
 
 			if (max_delay > 0) {
 				spin += max_delay;
+				task.fifop[resource.id - 1] += max_delay;
 				for (int i = 0; i < requestsLeftOnRemoteP.get(max_delay_resource_index).size(); i++) {
 					requestsLeftOnRemoteP.get(max_delay_resource_index).set(i, requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) - 1);
 					if (requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) < 1) {
@@ -174,6 +199,9 @@ public class FIFOP {
 			}
 		}
 
+		task.implementation_overheads += (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+
+		task.fifop[resource.id - 1] += spin * resource.csl + ncs * resource.csl + (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
 
@@ -190,6 +218,7 @@ public class FIFOP {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 		return interference;
@@ -203,10 +232,14 @@ public class FIFOP {
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
 			local_blocking_each_resource.add(local_blocking);
+			t.fifop[res.id - 1] += res.csl + Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK;
 		}
 
 		if (local_blocking_each_resource.size() > 1)
 			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
+
+		if (local_blocking_each_resource.size() > 0)
+			t.implementation_overheads += Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK;
 
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
@@ -257,23 +290,5 @@ public class FIFOP {
 			}
 		}
 		return indexR;
-	}
-
-	public boolean isResponseTimeEqual(long[][] oldRi, long[][] newRi, ArrayList<ArrayList<SporadicTask>> tasks) {
-		boolean is_equal = true;
-
-		for (int i = 0; i < oldRi.length; i++) {
-			for (int j = 0; j < oldRi[i].length; j++) {
-				if (oldRi[i][j] != newRi[i][j]) {
-					is_equal = false;
-					System.out.println("not equal: " + oldRi[i][j] + " vs " + newRi[i][j]);
-					System.out.println("T" + tasks.get(i).get(j).id + " old: S = " + tasks.get(i).get(j).spin + ", I = " + tasks.get(i).get(j).interference
-							+ ", Local =" + tasks.get(i).get(j).local);
-					problemtask = tasks.get(i).get(j);
-				}
-			}
-		}
-		System.out.println();
-		return is_equal;
 	}
 }

@@ -1,4 +1,4 @@
-package framework;
+package Analysis;
 
 import java.util.ArrayList;
 
@@ -7,9 +7,6 @@ import entity.SporadicTask;
 import generatorTools.SystemGenerator;
 import generatorTools.SystemGenerator.CS_LENGTH_RANGE;
 import generatorTools.SystemGenerator.RESOURCES_RANGE;
-import implementationAwareAnalysis.IAFIFONP;
-import implementationAwareAnalysis.IAFIFOP;
-import implementationAwareAnalysis.IANewMrsPRTAWithMCNP;
 
 public class IdenticalTest {
 
@@ -20,7 +17,7 @@ public class IdenticalTest {
 	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
 	public static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	public static double RESOURCE_SHARING_FACTOR = .4;
-	public static boolean testSchedulability = false;
+	public static boolean testSchedulability = true;
 
 	static long maxC = 0;
 
@@ -28,7 +25,7 @@ public class IdenticalTest {
 		IAFIFOP fp = new IAFIFOP();
 		IAFIFONP fnp = new IAFIFONP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		FIFOSpinLocksFramework combined_analysis = new FIFOSpinLocksFramework();
+		IACombinedProtocol combined_analysis = new IACombinedProtocol();
 		long[][] r1, r2;
 		int i = 0;
 

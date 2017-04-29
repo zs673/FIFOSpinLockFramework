@@ -1,4 +1,4 @@
-package framework;
+package Analysis;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.Utils;
 
-public class FIFOSpinLocksFramework {
+public class IACombinedProtocol {
 	private long count = 0; // The number of calculations
 	private long np = 0; // The NP section length if MrsP is applied
 	private int extendCal = 5;
