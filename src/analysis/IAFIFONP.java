@@ -1,4 +1,4 @@
-package Analysis;
+package analysis;
 
 import java.util.ArrayList;
 
@@ -7,15 +7,14 @@ import entity.SporadicTask;
 import generatorTools.Utils;
 
 public class IAFIFONP {
-	long count = 0;
 	private int extendCal = 5;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 		long[][] init_Ri = Utils.initResponseTime(tasks);
-
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
-		count = 0;
+
+		long count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
 			response_time[i] = new long[init_Ri[i].length];

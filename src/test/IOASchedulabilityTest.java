@@ -8,9 +8,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import Analysis.IAFIFONP;
-import Analysis.IAFIFOP;
-import Analysis.IANewMrsPRTAWithMCNP;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -23,8 +23,8 @@ public class IOASchedulabilityTest {
 	public static int TOTAL_PARTITIONS = 16;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
-	public static CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
-	public static double RSF = 0.2;
+	public static CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	public static double RSF = 0.4;
 
 	public static void main(String[] args) throws InterruptedException {
 		// for (int j = 1; j < 10; j++) {
@@ -35,13 +35,13 @@ public class IOASchedulabilityTest {
 		// experimentIncreasingContention(2, j);
 		// }
 
-		// for (int j = 0; j < 51; j++) {
-		// experimentIncreasingCriticalSectionLength(2, j);
+		//for (int j = 0; j < 51; j++) {
+			experimentIncreasingCriticalSectionLength(2, 1);
+		//}
+		//
+		// for (int j = 2; j <= 32; j++) {
+		// experimentIncreasingParallel(3, j);
 		// }
-
-		for (int j = 2; j <= 32; j++) {
-			experimentIncreasingParallel(3, j);
-		}
 
 		IOAResultReader.schedreader();
 	}
@@ -132,16 +132,14 @@ public class IOASchedulabilityTest {
 	}
 
 	public static void experimentIncreasingCriticalSectionLength(int tasksNumConfig, int cs_len) {
-		double RESOURCE_SHARING_FACTOR = 0.4;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 5;
+		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 3 + tasksNumConfig - 1;
 		cs_len = cs_len * 10;
 		if (cs_len == 0)
 			cs_len = 1;
 
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
-				cs_len);
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 		long[][] Ris;
 
 		IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();

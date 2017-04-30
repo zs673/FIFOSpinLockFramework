@@ -1,9 +1,10 @@
 package geneticAlgoritmSolver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
-import Analysis.IACombinedProtocol;
+import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -27,7 +28,7 @@ public class GASolver {
 	double crossoverRate = 0.5;
 	double mutationRate = 0.1;
 	int mutationBound = 5;
-	int toumamentSize1 = 2, toumamentSize2 = 5;
+	int toumamentSize1 = 5, toumamentSize2 = 5;
 
 	int currentGeneration = 0;
 	int[][] elitismGene;
@@ -48,23 +49,30 @@ public class GASolver {
 
 		schedFitness = new long[population];
 		rtFitness = new long[population];
-		for (int i = 0; i < population; i++) {
-			schedFitness[i] = 0;
-			rtFitness[i] = 0;
-		}
+//		for (int i = 0; i < population; i++) {
+//			schedFitness[i] = 0;
+//			rtFitness[i] = 0;
+//		}
 		elitismGene = new int[elitismSize][resources.size()];
+		
+//		for(int i=0;i<resources.size();i++){
+//			System.out.print("R" + resources.get(i).id +": " + resources.get(i).csl + "    ");
+//		}
+//		System.out.println();
 	}
 
-	public int findSchedulableProtocols() {
+	public int findSchedulableProtocols(boolean useGA) {
 		int initial = new PreGASolver(tasks, resources, false).initialCheck();
 		if (initial != 0)
 			return initial;
 
-		int result = solve();
-		return result;
+//		int result = solve(useGA);
+//		return result;
+		
+		return -1;
 	}
 
-	int solve() {
+	int solve(boolean useGA) {
 		getFirstGene();
 		getFitness(nextGenes);
 		if (bestGene != null) {
@@ -74,79 +82,84 @@ public class GASolver {
 
 		while (currentGeneration <= maxGeneration) {
 			currentGeneration++;
-
 			for (int i = 0; i < population; i++) {
 				for (int j = 0; j < resources.size(); j++) {
 					parentGenes[i][j] = nextGenes[i][j];
 				}
 			}
-
-			int nextGeneIndex = elitismSize;
-			for (int i = 0; i < elitismSize; i++) {
-				for (int j = 0; j < resources.size(); j++) {
-					nextGenes[i][j] = elitismGene[i][j];
-				}
-			}
-			for (int i = nextGeneIndex; i < population; i++) {
-				ArrayList<ArrayList<Long>> toumament1 = new ArrayList<>();
-				ArrayList<ArrayList<Long>> toumament2 = new ArrayList<>();
-
-				for (int j = 0; j < toumamentSize1; j++) {
-					int randomIndex = ran.nextInt(population);
-					ArrayList<Long> randomGeneFitness = new ArrayList<>();
-					randomGeneFitness.add(schedFitness[randomIndex]);
-					randomGeneFitness.add(rtFitness[randomIndex]);
-					randomGeneFitness.add((long) randomIndex);
-					toumament1.add(randomGeneFitness);
-				}
-				for (int j = 0; j < toumamentSize2; j++) {
-					int randomIndex = ran.nextInt(population);
-					ArrayList<Long> randomGeneFitness = new ArrayList<>();
-					randomGeneFitness.add(schedFitness[randomIndex]);
-					randomGeneFitness.add(rtFitness[randomIndex]);
-					randomGeneFitness.add((long) randomIndex);
-					toumament2.add(randomGeneFitness);
-				}
-				toumament1.sort((l1, l2) -> compareFitness(l1, l2));
-				toumament2.sort((l1, l2) -> compareFitness(l1, l2));
-				long index1 = toumament1.get(0).get(2), index2 = toumament2.get(0).get(2);
-
-				double crossover = ran.nextDouble();
-				if (crossover <= crossoverRate) {
-					int crosspoint = ran.nextInt(resources.size() - 1) + 1;
-					int[] newGene = new int[resources.size()];
+			if (useGA) {
+				int nextGeneIndex = elitismSize;
+				for (int i = 0; i < elitismSize; i++) {
 					for (int j = 0; j < resources.size(); j++) {
-						if (j < crosspoint)
-							newGene[j] = parentGenes[(int) index1][j];
-						else
-							newGene[j] = parentGenes[(int) index2][j];
-					}
-					nextGenes[i] = newGene;
-
-				} else {
-					if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
-						long index = toumament1.get(0).get(2);
-						nextGenes[i] = parentGenes[(int) index];
-					} else {
-						long index = toumament2.get(0).get(2);
-						nextGenes[i] = parentGenes[(int) index];
+						nextGenes[i][j] = elitismGene[i][j];
 					}
 				}
+				for (int i = nextGeneIndex; i < population; i++) {
+					ArrayList<ArrayList<Long>> toumament1 = new ArrayList<>();
+					ArrayList<ArrayList<Long>> toumament2 = new ArrayList<>();
 
-				double mute = ran.nextDouble();
-				if (mute < mutationRate) {
-					int muteCount = ran.nextInt(mutationBound);
-					for (int j = 0; j < muteCount; j++) {
-						int muteindex1 = ran.nextInt(resources.size());
-						int muteindex2 = ran.nextInt(resources.size());
-						int temp = nextGenes[i][muteindex1];
-						nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
-						nextGenes[i][muteindex2] = temp;
+					for (int j = 0; j < toumamentSize1; j++) {
+						int randomIndex = ran.nextInt(population);
+						ArrayList<Long> randomGeneFitness = new ArrayList<>();
+						randomGeneFitness.add(schedFitness[randomIndex]);
+						randomGeneFitness.add(rtFitness[randomIndex]);
+						randomGeneFitness.add((long) randomIndex);
+						toumament1.add(randomGeneFitness);
+					}
+					for (int j = 0; j < toumamentSize2; j++) {
+						int randomIndex = ran.nextInt(population);
+						ArrayList<Long> randomGeneFitness = new ArrayList<>();
+						randomGeneFitness.add(schedFitness[randomIndex]);
+						randomGeneFitness.add(rtFitness[randomIndex]);
+						randomGeneFitness.add((long) randomIndex);
+						toumament2.add(randomGeneFitness);
+					}
+					toumament1.sort((l1, l2) -> compareFitness(l1, l2));
+					toumament2.sort((l1, l2) -> compareFitness(l1, l2));
+					long index1 = toumament1.get(0).get(2), index2 = toumament2.get(0).get(2);
 
+					double crossover = ran.nextDouble();
+					if (crossover <= crossoverRate) {
+						int crosspoint = ran.nextInt(resources.size() - 1) + 1;
+						int[] newGene = new int[resources.size()];
+						for (int j = 0; j < resources.size(); j++) {
+							if (j < crosspoint)
+								newGene[j] = parentGenes[(int) index1][j];
+							else
+								newGene[j] = parentGenes[(int) index2][j];
+						}
+						nextGenes[i] = newGene;
+
+					} else {
+						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
+							long index = toumament1.get(0).get(2);
+							nextGenes[i] = parentGenes[(int) index];
+						} else {
+							long index = toumament2.get(0).get(2);
+							nextGenes[i] = parentGenes[(int) index];
+						}
+					}
+
+					double mute = ran.nextDouble();
+					if (mute < mutationRate) {
+						int muteCount = ran.nextInt(mutationBound);
+						for (int j = 0; j < muteCount; j++) {
+							int muteindex1 = ran.nextInt(resources.size());
+							int muteindex2 = ran.nextInt(resources.size());
+							int temp = nextGenes[i][muteindex1];
+							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
+							nextGenes[i][muteindex2] = temp;
+
+						}
+					}
+				}
+			} else {
+				for (int i = 0; i < nextGenes.length; i++) {
+					for (int j = 0; j < nextGenes[i].length; j++) {
+						nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
 					}
 				}
 			}
-
 			getFitness(nextGenes);
 			if (bestGene != null) {
 				System.out.println("new combination schedulable");
@@ -199,7 +212,9 @@ public class GASolver {
 			elitismGene[i] = nextGenes[(int) index];
 		}
 
-		System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1));
+		long maxindex = fitness.get(0).get(2);
+		System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
+				+ Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {
@@ -263,9 +278,9 @@ public class GASolver {
 		int MIN_PERIOD = 1;
 		int MAX_PERIOD = 1000;
 		CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-		double RSF = 0.2;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 5;
+		double RSF = 0.4;
+		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
+		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
 		int NUMBER_OF_SYSTEMS = 1000;
 
 		int fifop = 0, fifonp = 0, mrsp = 0, combine = 0;
@@ -278,7 +293,7 @@ public class GASolver {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 			GASolver finder = new GASolver(tasks, resources);
-			int result = finder.findSchedulableProtocols();
+			int result = finder.findSchedulableProtocols(true);
 
 			if (result == 1) {
 				fifonp++;
@@ -294,6 +309,7 @@ public class GASolver {
 			}
 			if (result == 0)
 				combine++;
+			System.out.println(i);
 		}
 		System.out.println(NUMBER_OF_SYSTEMS + "system:   fifonp: " + fifonp + "   fifop: " + fifop + "   mrsp: " + mrsp + "   combine: " + combine);
 	}

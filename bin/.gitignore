@@ -1,6 +1,7 @@
 /native/
-/framework/
-/GAexample/
-/Analysis/
-/test/
 /geneticAlgoritmSolver/
+/test/
+/Analysis/
+/generatorTools/
+/analysis/
+/basicAnalysis/

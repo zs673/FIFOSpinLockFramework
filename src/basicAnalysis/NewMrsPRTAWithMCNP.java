@@ -1,15 +1,13 @@
-package Analysis;
+package basicAnalysis;
 
 import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.Utils;
 
-public class IANewMrsPRTAWithMCNP {
-	private long count = 0;
+public class NewMrsPRTAWithMCNP {
+	long count = 0;
 	private long np = 0;
-	private int extendCal = 5;
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 		long[][] responsetime = null;
@@ -22,74 +20,57 @@ public class IANewMrsPRTAWithMCNP {
 		}
 		this.np = npsection;
 
-		// while (this.np > 0) {
-		// responsetime = NewMrsPRTATest(tasks, resources, this.np, printDebug);
-		// if (isSystemSchedulable(tasks, responsetime)) {
-		// break;
-		// } else
-		// this.np--;
-		// }
-		responsetime = NewMrsPRTATest(tasks, resources, this.np, testSchedulability, printDebug);
+		responsetime = NewMrsPRTATest(tasks, resources, 6, this.np, printDebug);
 		return responsetime;
 	}
 
-	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np, boolean testSchedulability,
-			boolean printDebug) {
-
-		long[][] init_Ri = Utils.initResponseTime(tasks);
+	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, long np, boolean printDebug) {
+		long[][] init_Ri = new Utils().initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missdeadline = false;
+		boolean isEqual = false, missDeadline = false;
 		count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		Utils.cloneList(init_Ri, response_time);
+		new Utils().cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
-			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, mig, np);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
 					if (response_time[i][j] != response_time_plus[i][j])
 						isEqual = false;
-					if (testSchedulability) {
-						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
-							missdeadline = true;
-					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
-							should_finish = false;
-					}
+
+					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+						missDeadline = true;
 				}
 			}
 
 			count++;
-			Utils.cloneList(response_time_plus, response_time);
+			new Utils().cloneList(response_time_plus, response_time);
 
-			if (testSchedulability) {
-				if (missdeadline)
-					break;
-			} else {
-				if (should_finish)
-					break;
-			}
+			if (missDeadline)
+				break;
 		}
 
 		if (printDebug) {
-			System.out.println("MrsP NP    after " + count + " tims of recursion, we got the response time.");
-			Utils.printResponseTime(response_time, tasks);
+			if (missDeadline)
+				System.out.println("NewMrsPRTAWithMigration    after " + count + " tims of recursion, the tasks miss the deadline.");
+			else
+				System.out.println("NewMrsPRTAWithMigration    after " + count + " tims of recursion, we got the response time.");
+			new Utils().printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig, long np,
-			boolean testSchedulability) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, long oneMig, long np) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -99,42 +80,18 @@ public class IANewMrsPRTAWithMCNP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * extendCal) {
-					response_time_plus[i][j] = response_time[i][j];
-					continue;
-				}
-
-				task.mrsp = new double[resources.size()];
-				for (int k = 0; k < task.mrsp.length; k++) {
-					task.mrsp[k] = 0;
-				}
-
-				task.indirectspin = 0;
-				task.implementation_overheads = 0;
-				task.migration_overheads_plus = 0;
-				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
-
-				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, task);
+				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np);
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig, np);
+
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np);
 				long npsection = (isTaskIncurNPSection(task, tasks.get(task.partition), resources) ? np : 0);
+				task.local = Long.max(task.local, npsection);
 
-				if ((double) npsection > (double) task.local + task.mrsp_arrivalblocking_overheads) {
-					task.np_section = npsection;
-					task.local = npsection;
-				} else {
-					task.np_section = 0;
-					// task.local Remains.
-					task.implementation_overheads += task.mrsp_arrivalblocking_overheads;
-				}
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local;
 
-				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
-
-				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
-
-				if (testSchedulability && task.Ri > task.deadline) {
+				if (task.Ri > task.deadline)
 					return response_time_plus;
-				}
+
 			}
 		}
 		return response_time_plus;
@@ -161,18 +118,16 @@ public class IANewMrsPRTAWithMCNP {
 	/*
 	 * Calculate the local blocking for task t.
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, double oneMig,
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, long oneMig,
 			long np) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
-		ArrayList<Double> overheads = new ArrayList<>();
 
 		for (int i = 0; i < LocalBlockingResources.size(); i++) {
 			ArrayList<Integer> migration_targets = new ArrayList<>();
 
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
-			t.mrsp[res.id - 1] += res.csl + Utils.MrsP_LOCK + Utils.MrsP_UNLOCK;
 
 			migration_targets.add(t.partition);
 
@@ -186,37 +141,23 @@ public class IANewMrsPRTAWithMCNP {
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
-						t.mrsp[res.id - 1] += res.csl + Utils.MrsP_LOCK + Utils.MrsP_UNLOCK;
 						migration_targets.add(partition);
 					}
 				}
 
-				overheads.add((local_blocking / res.csl) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK));
-				double mc_plus = 0;
 				if (oneMig != 0) {
-					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);
-
-					long mc_long = (long) Math.floor(mc);
-					mc_plus += mc - mc_long;
-					if (mc - mc_long < 0) {
-						System.err.println("MrsP mig error");
-						System.exit(-1);
-					}
-					local_blocking += mc_long;
+					local_blocking += migrationCostForArrival(oneMig, np, migration_targets, res, tasks);
 				}
-				overheads.add(overheads.get(overheads.size() - 1) + mc_plus);
 			}
 
 			local_blocking_each_resource.add(local_blocking);
 		}
 
-		if (local_blocking_each_resource.size() >= 1) {
+		if (local_blocking_each_resource.size() > 1)
 			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
-			overheads.sort((l1, l2) -> -Double.compare(l1, l2));
-			t.mrsp_arrivalblocking_overheads = overheads.get(0);
-		}
 
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
+
 	}
 
 	/*
@@ -224,7 +165,7 @@ public class IANewMrsPRTAWithMCNP {
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
 	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris, ArrayList<Resource> resources,
-			double oneMig, long np) {
+			long oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -233,17 +174,14 @@ public class IANewMrsPRTAWithMCNP {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				long indriectblocking = resourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np, t);
-				interference += indriectblocking;
-				t.indirectspin += indriectblocking;
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
+				interference += resourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np);
 			}
 		}
 		return interference;
 	}
 
 	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
-			long jitter, double oneMig, long np, SporadicTask calT) {
+			long jitter, long oneMig, long np) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
@@ -253,18 +191,10 @@ public class IANewMrsPRTAWithMCNP {
 
 			for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 				long oneAccess = 0;
-				oneAccess += resourceAccessingTimeInOne(task, resource, tasks, Ris, time, jitter, j, calT);
+				oneAccess += resourceAccessingTimeInOne(task, resource, tasks, Ris, time, jitter, j);
 
-				if (oneMig != 0) {
-					double mc = migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, Ris, calT);
-					long mc_long = (long) Math.floor(mc);
-					calT.migration_overheads_plus += mc - mc_long;
-					if (mc - mc_long < 0) {
-						System.err.println("MrsP mig error");
-						System.exit(-1);
-					}
-					oneAccess += mc_long;
-				}
+				if (oneMig != 0)
+					oneAccess += migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, Ris);
 
 				resource_accessing_time += oneAccess;
 			}
@@ -274,7 +204,7 @@ public class IANewMrsPRTAWithMCNP {
 	}
 
 	private long resourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long time,
-			long jitter, int n, SporadicTask calTask) {
+			long jitter, int n) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -298,22 +228,16 @@ public class IANewMrsPRTAWithMCNP {
 		// account for the request of the task itself
 		number_of_access++;
 
-		calTask.implementation_overheads += number_of_access * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
-
-		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl + number_of_access * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
-
 		return number_of_access * resource.csl;
 	}
 
-	private double migrationCostForArrival(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
-		double mcarrival = migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
-		calT.mrsp[resource.id - 1] += mcarrival;
-		return mcarrival;
+	private long migrationCostForArrival(long oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks) {
+		return migrationCost(oneMig, np, migration_targets, resource, tasks);
 	}
 
-	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT) {
+	private long migrationCostForSpin(long oneMig, long np, SporadicTask task, int request_number, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
+			long time, long[][] Ris) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -330,14 +254,11 @@ public class IANewMrsPRTAWithMCNP {
 			}
 		}
 
-		double mcspin = migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
-		calT.mrsp[resource.id - 1] += mcspin;
-		return mcspin;
+		return migrationCost(oneMig, np, migration_targets, resource, tasks);
 	}
 
-	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			SporadicTask calT) {
-		double migrationCost = 0;
+	private long migrationCost(long oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks) {
+		long migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 
 		// identify the migration targets with preemptors
@@ -355,7 +276,7 @@ public class IANewMrsPRTAWithMCNP {
 
 		// now we compute the migration cost for each request
 		for (int i = 0; i < migration_targets.size(); i++) {
-			double migration_cost_for_one_access = 0;
+			long migration_cost_for_one_access = 0;
 			int partition = migration_targets.get(i); // the request issued
 														// from.
 
@@ -376,34 +297,30 @@ public class IANewMrsPRTAWithMCNP {
 			// With NP
 			// section applied.
 			else {
-				if (np > 0) {
-					double migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
-					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, migCostWithNP);
-					migration_cost_for_one_access = Math.min(migCostWithHP, migCostWithNP);
-				} else {
-					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, -1);
-				}
+				long migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, np, resource, tasks);
+				long migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
+
+				migration_cost_for_one_access = Math.min(migCostWithHP, migCostWithNP);
 			}
+
 			migrationCost += migration_cost_for_one_access;
 		}
 
 		return migrationCost;
 	}
 
-	public double migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, double oneMig, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT, double migByNP) {
-		double migCost = 0;
+	public long migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, long oneMig, long np, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks) {
+		long migCost = 0;
 
-		double newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource, tasks);
+		long migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
+		long newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource, tasks);
 
 		while (migCost != newMigCost) {
 			migCost = newMigCost;
 			newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource, tasks);
 
-			if (newMigCost > calT.deadline) {
-				return newMigCost;
-			}
-			if (migByNP > 0 && newMigCost > migByNP) {
+			if (newMigCost >= migCostWithNP) {
 				return newMigCost;
 			}
 		}
@@ -411,9 +328,9 @@ public class IANewMrsPRTAWithMCNP {
 		return migCost;
 	}
 
-	public double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration, Resource resource,
+	public long migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, long oneMig, long duration, Resource resource,
 			ArrayList<ArrayList<SporadicTask>> tasks) {
-		double migCost = 0;
+		long migCost = 0;
 
 		for (int i = 0; i < migration_targets_with_P.size(); i++) {
 			int partition_with_p = migration_targets_with_P.get(i);
@@ -500,15 +417,5 @@ public class IANewMrsPRTAWithMCNP {
 			}
 		}
 		return indexR;
-	}
-
-	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < Ris[i][j])
-					return false;
-			}
-		}
-		return true;
 	}
 }
