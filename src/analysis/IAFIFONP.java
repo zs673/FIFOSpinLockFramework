@@ -6,7 +6,6 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class IAFIFONP {
-	private int extendCal = 1;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
@@ -35,7 +34,7 @@ public class IAFIFONP {
 						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 							missdeadline = true;
 					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * IOAAnalysisUtils.extendCal)
 							should_finish = false;
 					}
 				}
@@ -71,7 +70,7 @@ public class IAFIFONP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * extendCal) {
+				if (response_time[i][j] > task.deadline * IOAAnalysisUtils.extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}
@@ -111,7 +110,8 @@ public class IAFIFONP {
 			t.implementation_overheads += (NoS + t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
 					* (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 
-			t.fifonp[resource.id - 1] += (NoS + t.number_of_access_in_one_release.get(k)) * (resource.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+			t.fifonp[resource.id - 1] += (NoS + t.number_of_access_in_one_release.get(k))
+					* (resource.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 		}
 		return spin_delay;
 	}
@@ -129,7 +129,8 @@ public class IAFIFONP {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period) * (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period)
+						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 
 				long btb_interference = getIndirectSpinDelay(hpTask, Ri, Ris[partition][i], Ris, allTasks, resources, t);
 				t.indirectspin += btb_interference;
@@ -171,7 +172,8 @@ public class IAFIFONP {
 					BTBhit += spin_delay_with_btb * resource.csl;
 					calTask.implementation_overheads += spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 
-					calTask.fifonp[resource.id - 1] += spin_delay_with_btb * resource.csl + spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+					calTask.fifonp[resource.id - 1] += spin_delay_with_btb * resource.csl
+							+ spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 				}
 			}
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import entity.SporadicTask;
 
 public class IOAAnalysisUtils {
+	public static int extendCal = 5;
 
 	// private static double CACHE_OVERHEADS = (double) (1905) / (double) 1000;
 	public static double LINUX_SCHED = (double) (845) / (double) 1000;
@@ -19,51 +20,43 @@ public class IOAAnalysisUtils {
 	public static double PFP_SCHED_REQUEUE = (double) (603) / (double) 1000;
 	public static double PFP_SCHED_SET_NEXT = (double) (308) / (double) 1000;
 
-	// private static double PFP_SCHED_TAKE_NEXT = (double) (274) / (double)
-	// 1000;
-	// private static double FINISH_SWITCH = (double) (1113 + 1165) / (double)
-	// 1000;
+	public static double PFP_SCHED_TAKE_NEXT = (double) (274) / (double) 1000;
+	public static double FINISH_SWITCH = (double) (1113 + 1165) / (double) 1000;
 
-//	public static double FIFONP_LOCK = (double) (501 + 259 + 219) / (double) 1000;
-//	public static double FIFONP_UNLOCK = (double) 602 / (double) 1000;
-//
-//	public static double FIFOP_LOCK = (double) (744 + 216 + 295) / (double) 1000;
-//	public static double FIFOP_UNLOCK = (double) 602 / (double) 1000;
-//	public static double FIFOP_DEQUEUE_IN_SCHEDULE = (double) 703 / (double) 1000;
-//	public static double FIFOP_RE_REQUEST = (double) (744 + 216) / (double) 1000;
-//
-//	public static double MrsP_LOCK = (double) (794 + 259 + 219) / (double) 1000;
-//	public static double MrsP_UNLOCK = (double) (744 + 65 + 571 + 262) / (double) 1000;
-//	public static double MrsP_HELP_IN_LOCK = (double) 2431 / (double) 1000;
-//	public static double MrsP_INSERT = (double) 2347 / (double) 1000;
-//	public static double MrsP_HELP_IN_SCHEDULE = (double) 745 / (double) 1000;
-//
-//	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
-//	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
-//
-//	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
-//			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
-	
-	
-	
-	
-	public static double FIFONP_LOCK = 0;
-	public static double FIFONP_UNLOCK = 0;
-	public static double FIFOP_LOCK = 0;
-	public static double FIFOP_UNLOCK = 0;
-	public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
-	public static double FIFOP_RE_REQUEST = 0;
-	public static double MrsP_LOCK = 0;
-	public static double MrsP_UNLOCK = 0;
-	public static double MrsP_HELP_IN_LOCK = 0;
-	public static double MrsP_INSERT = 0;
-	public static double MrsP_HELP_IN_SCHEDULE = 0;
-	public static double FULL_CONTEXT_SWTICH1 = 0;
-	public static double FULL_CONTEXT_SWTICH2 = 0;
-	public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
-	
-	
-	
+	public static double FIFONP_LOCK = (double) (501 + 259 + 219) / (double) 1000;
+	public static double FIFONP_UNLOCK = (double) 602 / (double) 1000;
+
+	public static double FIFOP_LOCK = (double) (744 + 216 + 295) / (double) 1000;
+	public static double FIFOP_UNLOCK = (double) 602 / (double) 1000;
+	public static double FIFOP_DEQUEUE_IN_SCHEDULE = (double) 703 / (double) 1000;
+	public static double FIFOP_RE_REQUEST = (double) (744 + 216) / (double) 1000;
+
+	public static double MrsP_LOCK = (double) (794 + 259 + 219) / (double) 1000;
+	public static double MrsP_UNLOCK = (double) (744 + 65 + 571 + 262) / (double) 1000;
+	public static double MrsP_HELP_IN_LOCK = (double) 2431 / (double) 1000;
+	public static double MrsP_INSERT = (double) 2347 / (double) 1000;
+	public static double MrsP_HELP_IN_SCHEDULE = (double) 745 / (double) 1000;
+
+	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
+	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
+
+	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
+			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
+
+	// public static double FIFONP_LOCK = 0;
+	// public static double FIFONP_UNLOCK = 0;
+	// public static double FIFOP_LOCK = 0;
+	// public static double FIFOP_UNLOCK = 0;
+	// public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
+	// public static double FIFOP_RE_REQUEST = 0;
+	// public static double MrsP_LOCK = 0;
+	// public static double MrsP_UNLOCK = 0;
+	// public static double MrsP_HELP_IN_LOCK = 0;
+	// public static double MrsP_INSERT = 0;
+	// public static double MrsP_HELP_IN_SCHEDULE = 0;
+	// public static double FULL_CONTEXT_SWTICH1 = 0;
+	// public static double FULL_CONTEXT_SWTICH2 = 0;
+	// public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
 
 	public static void main(String args[]) {
 		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK);

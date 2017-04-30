@@ -16,9 +16,9 @@ import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import generatorTools.*;
 
 public class IOASchedulabilityTest {
 
@@ -87,7 +87,7 @@ public class IOASchedulabilityTest {
 		result = (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
-		System.out.println(result + "\n");
+		System.out.println(result);
 
 		result = (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";

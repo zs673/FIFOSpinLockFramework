@@ -6,12 +6,12 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class IACombinedProtocol {
-	private long count = 0; // The number of calculations
-	private long np = 0; // The NP section length if MrsP is applied
-	private int extendCal = 1;
+
 
 	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
 			boolean printDebug) {
+		long count = 0; // The number of calculations
+		long np = 0; // The NP section length if MrsP is applied
 
 		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
@@ -19,7 +19,7 @@ public class IACombinedProtocol {
 			if (resource.protocol == 3 && npsection < resource.csl)
 				npsection = resources.get(i).csl;
 		}
-		this.np = npsection;
+		np = npsection;
 
 		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
@@ -46,7 +46,7 @@ public class IACombinedProtocol {
 						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 							missdeadline = true;
 					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * IOAAnalysisUtils.extendCal)
 							should_finish = false;
 					}
 				}
@@ -83,7 +83,7 @@ public class IACombinedProtocol {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * extendCal) {
+				if (response_time[i][j] > task.deadline * IOAAnalysisUtils.extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}
@@ -334,7 +334,8 @@ public class IACombinedProtocol {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
+						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 
 				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t);
 				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np, t);
