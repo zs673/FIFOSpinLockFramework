@@ -21,7 +21,7 @@ public class IACombinedProtocol {
 		}
 		this.np = npsection;
 
-		long[][] init_Ri = Utils.initResponseTime(tasks);
+		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
 		count = 0;
@@ -30,13 +30,13 @@ public class IACombinedProtocol {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		Utils.cloneList(init_Ri, response_time);
+		IOAAnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, Utils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -53,7 +53,7 @@ public class IACombinedProtocol {
 			}
 
 			count++;
-			Utils.cloneList(response_time_plus, response_time);
+			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
 
 			if (testSchedulability) {
 				if (missdeadline)
@@ -66,7 +66,7 @@ public class IACombinedProtocol {
 
 		if (printDebug) {
 			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
-			Utils.printResponseTime(response_time, tasks);
+			IOAAnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
@@ -91,7 +91,7 @@ public class IACombinedProtocol {
 				task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
 				task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
 
-				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
+				task.implementation_overheads += IOAAnalysisUtils.FULL_CONTEXT_SWTICH1;
 				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, task);
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig, np);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np);
@@ -137,8 +137,8 @@ public class IACombinedProtocol {
 				long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri);
 				spin_delay += NoS * resource.csl;
 				t.implementation_overheads += (NoS + t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
-						* (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
-				t.blocking_overheads += NoS * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+						* (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+				t.blocking_overheads += NoS * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 
 				spin_delay += resource.csl * t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1));
 			}
@@ -172,8 +172,8 @@ public class IACombinedProtocol {
 					preemptions += (int) Math.ceil((double) (time) / (double) tasks.get(task.partition).get(i).period);
 				}
 			}
-			task.implementation_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
-			task.blocking_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
+			task.implementation_overheads += preemptions * (IOAAnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + IOAAnalysisUtils.FIFOP_RE_REQUEST);
+			task.blocking_overheads += preemptions * (IOAAnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + IOAAnalysisUtils.FIFOP_RE_REQUEST);
 
 			while (preemptions > 0) {
 
@@ -245,11 +245,11 @@ public class IACombinedProtocol {
 			}
 		}
 
-		task.implementation_overheads += (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+		task.implementation_overheads += (spin + ncs) * (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 		task.blocking_overheads += (spin + ncs
 				- (task.resource_required_index.contains(resource.id - 1)
 						? task.number_of_access_in_one_release.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
-				* (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+				* (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
 
@@ -315,8 +315,8 @@ public class IACombinedProtocol {
 		// account for the request of the task itself
 		number_of_access++;
 
-		calTask.implementation_overheads += number_of_access * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
-		calTask.blocking_overheads += (number_of_access - 1) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK);
+		calTask.implementation_overheads += number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+		calTask.blocking_overheads += (number_of_access - 1) * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}
@@ -334,7 +334,7 @@ public class IACombinedProtocol {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 
 				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t);
 				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np, t);
@@ -361,8 +361,8 @@ public class IACombinedProtocol {
 				int number_of_request_with_btb = (int) Math.ceil((double) (Ri + Rihp) / (double) hpTask.period) * hpTask.number_of_access_in_one_release.get(i);
 
 				BTBhit += number_of_request_with_btb * resource.csl;
-				calTask.implementation_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
-				calTask.blocking_overheads += number_of_request_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+				calTask.implementation_overheads += number_of_request_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+				calTask.blocking_overheads += number_of_request_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 
 				for (int j = 0; j < resource.partitions.size(); j++) {
 					if (resource.partitions.get(j) != hpTask.partition) {
@@ -375,8 +375,8 @@ public class IACombinedProtocol {
 						int spin_delay_with_btb = Integer.min(possible_spin_delay, number_of_request_with_btb);
 
 						BTBhit += spin_delay_with_btb * resource.csl;
-						calTask.implementation_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
-						calTask.blocking_overheads += spin_delay_with_btb * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK);
+						calTask.implementation_overheads += spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+						calTask.blocking_overheads += spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
 					}
 				}
 			}
@@ -474,7 +474,7 @@ public class IACombinedProtocol {
 				}
 			}
 			local_blocking_each_resource.add(local_blocking);
-			overheads.add((local_blocking / res.csl) * (Utils.FIFONP_LOCK + Utils.FIFONP_UNLOCK));
+			overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK));
 		}
 
 		if (local_blocking_each_resource.size() >= 1) {
@@ -535,7 +535,7 @@ public class IACombinedProtocol {
 			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
 
 		if (local_blocking_each_resource.size() > 0)
-			t.fifop_arrivalblocking_overheads = Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK;
+			t.fifop_arrivalblocking_overheads = IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK;
 
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
@@ -602,7 +602,7 @@ public class IACombinedProtocol {
 						migration_targets.add(partition);
 					}
 				}
-				overheads.add((local_blocking / res.csl) * (Utils.MrsP_LOCK + Utils.MrsP_UNLOCK));
+				overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK));
 				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);

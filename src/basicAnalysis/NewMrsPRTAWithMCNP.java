@@ -25,7 +25,7 @@ public class NewMrsPRTAWithMCNP {
 	}
 
 	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, long np, boolean printDebug) {
-		long[][] init_Ri = new Utils().initResponseTime(tasks);
+		long[][] init_Ri = new BasicAnalysisUtils().initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missDeadline = false;
@@ -35,7 +35,7 @@ public class NewMrsPRTAWithMCNP {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		new Utils().cloneList(init_Ri, response_time);
+		new BasicAnalysisUtils().cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
@@ -53,7 +53,7 @@ public class NewMrsPRTAWithMCNP {
 			}
 
 			count++;
-			new Utils().cloneList(response_time_plus, response_time);
+			new BasicAnalysisUtils().cloneList(response_time_plus, response_time);
 
 			if (missDeadline)
 				break;
@@ -64,7 +64,7 @@ public class NewMrsPRTAWithMCNP {
 				System.out.println("NewMrsPRTAWithMigration    after " + count + " tims of recursion, the tasks miss the deadline.");
 			else
 				System.out.println("NewMrsPRTAWithMigration    after " + count + " tims of recursion, we got the response time.");
-			new Utils().printResponseTime(response_time, tasks);
+			new BasicAnalysisUtils().printResponseTime(response_time, tasks);
 		}
 
 		return response_time;

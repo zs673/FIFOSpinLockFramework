@@ -16,9 +16,9 @@ import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator2;
-import generatorTools.SystemGenerator2.CS_LENGTH_RANGE;
-import generatorTools.SystemGenerator2.RESOURCES_RANGE;
+import generatorTools.SystemGenerator;
+import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
+import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
 public class IOASchedulabilityTest {
 
@@ -37,7 +37,7 @@ public class IOASchedulabilityTest {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
-		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 		long[][] Ris;
 
@@ -91,7 +91,7 @@ public class IOASchedulabilityTest {
 
 		result = (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-		
+
 		System.out.println(result);
 	}
 
@@ -104,7 +104,7 @@ public class IOASchedulabilityTest {
 		IAFIFOP IOAfp = new IAFIFOP();
 		IAFIFONP IOAfnp = new IAFIFONP();
 
-		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		String result = "";
@@ -147,7 +147,7 @@ public class IOASchedulabilityTest {
 		IAFIFOP IOAfp = new IAFIFOP();
 		IAFIFONP IOAfnp = new IAFIFONP();
 
-		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		String result = "";
@@ -185,7 +185,7 @@ public class IOASchedulabilityTest {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = smallSet;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 3 + 1 * (bigSet - 1);
 
-		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 

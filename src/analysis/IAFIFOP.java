@@ -11,7 +11,7 @@ public class IAFIFOP {
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 
-		long[][] init_Ri = Utils.initResponseTime(tasks);
+		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
@@ -21,7 +21,7 @@ public class IAFIFOP {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		Utils.cloneList(init_Ri, response_time);
+		IOAAnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
@@ -44,10 +44,10 @@ public class IAFIFOP {
 				}
 			}
 			if (count > 1000) {
-				Utils.printResponseTime(response_time, tasks);
+				IOAAnalysisUtils.printResponseTime(response_time, tasks);
 			}
 			count++;
-			Utils.cloneList(response_time_plus, response_time);
+			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
 
 			if (testSchedulability) {
 				if (missdeadline)
@@ -60,7 +60,7 @@ public class IAFIFOP {
 
 		if (printDebug) {
 			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
-			Utils.printResponseTime(response_time, tasks);
+			IOAAnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
@@ -87,7 +87,7 @@ public class IAFIFOP {
 				}
 				task.spin_delay_by_preemptions = 0;
 				task.implementation_overheads = 0;
-				task.implementation_overheads += Utils.FULL_CONTEXT_SWTICH1;
+				task.implementation_overheads += IOAAnalysisUtils.FULL_CONTEXT_SWTICH1;
 
 				task.spin = getSpinDelay(task, tasks, resources, response_time[i][j], response_time);
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources);
@@ -124,7 +124,7 @@ public class IAFIFOP {
 			}
 		}
 
-		task.implementation_overheads += preemptions * (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST);
+		task.implementation_overheads += preemptions * (IOAAnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + IOAAnalysisUtils.FIFOP_RE_REQUEST);
 
 		while (preemptions > 0) {
 
@@ -198,9 +198,9 @@ public class IAFIFOP {
 			}
 		}
 
-		task.implementation_overheads += (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+		task.implementation_overheads += (spin + ncs) * (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 
-		task.fifop[resource.id - 1] += spin * resource.csl + ncs * resource.csl + (spin + ncs) * (Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK);
+		task.fifop[resource.id - 1] += spin * resource.csl + ncs * resource.csl + (spin + ncs) * (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
 
@@ -217,7 +217,7 @@ public class IAFIFOP {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (Utils.FULL_CONTEXT_SWTICH1 + Utils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 		return interference;
@@ -231,14 +231,14 @@ public class IAFIFOP {
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
 			local_blocking_each_resource.add(local_blocking);
-			t.fifop[res.id - 1] += res.csl + Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK;
+			t.fifop[res.id - 1] += res.csl + IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK;
 		}
 
 		if (local_blocking_each_resource.size() > 1)
 			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
 
 		if (local_blocking_each_resource.size() > 0)
-			t.implementation_overheads += Utils.FIFOP_LOCK + Utils.FIFOP_UNLOCK;
+			t.implementation_overheads += IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK;
 
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}

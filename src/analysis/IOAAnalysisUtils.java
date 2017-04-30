@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import entity.SporadicTask;
 
-public class Utils {
+public class IOAAnalysisUtils {
 
 	// private static double CACHE_OVERHEADS = (double) (1905) / (double) 1000;
 	public static double LINUX_SCHED = (double) (845) / (double) 1000;
@@ -68,7 +68,7 @@ public class Utils {
 	public static void main(String args[]) {
 		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK);
 		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK + "   RE-REQUEST:   "
-				+ (Utils.FIFOP_DEQUEUE_IN_SCHEDULE + Utils.FIFOP_RE_REQUEST));
+				+ (IOAAnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + IOAAnalysisUtils.FIFOP_RE_REQUEST));
 		System.out.println(" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
 		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);
 	}

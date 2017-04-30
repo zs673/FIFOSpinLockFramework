@@ -8,8 +8,8 @@ import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator2;
-import generatorTools.SystemGenerator2.CS_LENGTH_RANGE;
-import generatorTools.SystemGenerator2.RESOURCES_RANGE;
+import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
+import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
 public class GASolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;

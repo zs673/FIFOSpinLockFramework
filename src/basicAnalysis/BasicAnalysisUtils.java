@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import entity.SporadicTask;
 
-public class Utils {
+public class BasicAnalysisUtils {
 
 	public long[][] initResponseTime(ArrayList<ArrayList<SporadicTask>> tasks) {
 		long[][] response_times = new long[tasks.size()][];
