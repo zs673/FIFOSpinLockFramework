@@ -8,7 +8,7 @@ import entity.SporadicTask;
 public class IANewMrsPRTAWithMCNP {
 	private long count = 0;
 	private long np = 0;
-	private int extendCal = 5;
+	private int extendCal = 1;
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 		long[][] responsetime = null;

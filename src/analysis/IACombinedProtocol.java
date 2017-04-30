@@ -8,7 +8,7 @@ import entity.SporadicTask;
 public class IACombinedProtocol {
 	private long count = 0; // The number of calculations
 	private long np = 0; // The NP section length if MrsP is applied
-	private int extendCal = 5;
+	private int extendCal = 1;
 
 	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
 			boolean printDebug) {

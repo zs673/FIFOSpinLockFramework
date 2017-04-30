@@ -1,7 +1,10 @@
-package analysis;
+package basicAnalysis;
 
 import java.util.ArrayList;
 
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator2;
@@ -10,7 +13,7 @@ import generatorTools.SystemGenerator2.RESOURCES_RANGE;
 
 public class IdenticalTest {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 8;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
@@ -25,7 +28,11 @@ public class IdenticalTest {
 		IAFIFOP fp = new IAFIFOP();
 		IAFIFONP fnp = new IAFIFONP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		IACombinedProtocol combined_analysis = new IACombinedProtocol();
+
+		FIFOP simple_fp = new FIFOP();
+		FIFONP simple_fnp = new FIFONP();
+		NewMrsPRTAWithMCNP simple_mrsp = new NewMrsPRTAWithMCNP();
+
 		long[][] r1, r2;
 		int i = 0;
 
@@ -38,117 +45,66 @@ public class IdenticalTest {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
-
-			for (int j = 0; j < resources.size(); j++) {
-				resources.get(j).protocol = 3;
-			}
-
-			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
-			boolean isEqual = isEqual(r1, r2, false);
-
-			if (!isEqual /*
-							 * && isSystemSchedulable(tasks, r1) &&
-							 * isSystemSchedulable(tasks, r2)
-							 */) {
-				System.out.println("not equal");
-				isEqual(r1, r2, true);
-				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
-				System.exit(0);
-			}
-			// if (isEqual && isSystemSchedulable(tasks, r1) &&
-			// isSystemSchedulable(tasks, r2)) {
-			// System.out.println(i);
-			// i++;
-			// }
-
-			// if (!isSystemSchedulable(tasks, r1) ||
-			// !isSystemSchedulable(tasks, r2))
-			// System.out.println("miss");
-			i++;
-			System.out.println(i);
-		}
-		System.out.println("MrsP TEST DONE");
-
-		i = 0;
-		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
-
-			for (int j = 0; j < resources.size(); j++) {
-				resources.get(j).protocol = 1;
-			}
-
-			r1 = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
-			boolean isEqual = isEqual(r1, r2, false);
-
-			if (!isEqual /*
-							 * && isSystemSchedulable(tasks, r1) &&
-							 * isSystemSchedulable(tasks, r2)
-							 */) {
-				System.out.println("not equal");
-				isEqual(r1, r2, true);
-				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
-				System.exit(0);
-			}
-			// if (isEqual && isSystemSchedulable(tasks, r1) &&
-			// isSystemSchedulable(tasks, r2)) {
-			// System.out.println(i);
-			// i++;
-			// }
-
-			// if (!isSystemSchedulable(tasks, r1) ||
-			// !isSystemSchedulable(tasks, r2))
-			// System.out.println("miss");
-			i++;
-			System.out.println(i);
-		}
-		System.out.println("FIFO-NP TEST DONE");
-
-		i = 0;
-		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
-
-			for (int j = 0; j < resources.size(); j++) {
-				resources.get(j).protocol = 2;
-			}
-
 			r1 = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
+			r2 = simple_fp.NewMrsPRTATest(tasks, resources, false);
+
 			boolean isEqual = isEqual(r1, r2, false);
 
-			if (!isEqual /*
-							 * && isSystemSchedulable(tasks, r1) &&
-							 * isSystemSchedulable(tasks, r2)
-							 */) {
+			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
 			}
-			// if (isEqual && isSystemSchedulable(tasks, r1) &&
-			// isSystemSchedulable(tasks, r2)) {
-			// System.out.println(i);
-			// i++;
-			// }
-
-			// if (!isSystemSchedulable(tasks, r1) ||
-			// !isSystemSchedulable(tasks, r2))
-			// System.out.println("miss");
 			i++;
 			System.out.println(i);
 		}
-		System.out.println("FIFO-P TEST DONE");
+		System.out.println(" FIFO-P DONE");
+		
+		i = 0;
+		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasks, resources);
+			r1 = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			r2 = simple_fnp.NewMrsPRTATest(tasks, resources, false);
+
+			boolean isEqual = isEqual(r1, r2, false);
+
+			if (!isEqual) {
+				System.out.println("not equal");
+				isEqual(r1, r2, true);
+				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
+				System.exit(0);
+			}
+			i++;
+			System.out.println(i);
+		}
+		System.out.println(" FIFO-NP DONE");
+		
+		i = 0;
+		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasks, resources);
+			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			r2 = simple_mrsp.getResponseTime(tasks, resources, false);
+
+			boolean isEqual = isEqual(r1, r2, false);
+
+			if (!isEqual) {
+				System.out.println("not equal");
+				isEqual(r1, r2, true);
+				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
+				System.exit(0);
+			}
+			i++;
+			System.out.println(i);
+		}
+		System.out.println(" MrsP DONE");
 	}
 
 	public static boolean isEqual(long[][] r1, long[][] r2, boolean print) {

@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class IAFIFONP {
-	private int extendCal = 5;
+	private int extendCal = 1;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 		long[][] init_Ri = Utils.initResponseTime(tasks);

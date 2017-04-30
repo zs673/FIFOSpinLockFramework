@@ -7,7 +7,7 @@ import entity.SporadicTask;
 
 public class IAFIFOP {
 	long count = 0;
-	private int extendCal = 5;
+	private int extendCal = 1;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
 

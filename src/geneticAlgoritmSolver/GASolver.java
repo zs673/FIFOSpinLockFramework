@@ -7,9 +7,9 @@ import java.util.Random;
 import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator;
-import generatorTools.SystemGenerator.CS_LENGTH_RANGE;
-import generatorTools.SystemGenerator.RESOURCES_RANGE;
+import generatorTools.SystemGenerator2;
+import generatorTools.SystemGenerator2.CS_LENGTH_RANGE;
+import generatorTools.SystemGenerator2.RESOURCES_RANGE;
 
 public class GASolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;
@@ -285,7 +285,7 @@ public class GASolver {
 
 		int fifop = 0, fifonp = 0, mrsp = 0, combine = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		for (int i = 0; i < NUMBER_OF_SYSTEMS; i++) {

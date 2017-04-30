@@ -9,7 +9,7 @@ public class NewMrsPRTAWithMCNP {
 	long count = 0;
 	private long np = 0;
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
 		long[][] responsetime = null;
 
 		// get np section
