@@ -24,7 +24,7 @@ public class IOASchedulabilityTest {
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 	public static CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-	public static double RSF = 0.4;
+	public static double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
 		experimentIncreasingCriticalSectionLength();

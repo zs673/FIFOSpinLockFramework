@@ -210,7 +210,6 @@ public class SystemGenerator {
 			long number_of_resource_requested_tasks = 0;
 			try {
 				number_of_resource_requested_tasks = Math.round(rsf * tasks.get(i).size());
-				System.out.println("nort: " + number_of_resource_requested_tasks);
 			} catch (NullPointerException e) {
 				System.out.println("i" + i);
 			}
