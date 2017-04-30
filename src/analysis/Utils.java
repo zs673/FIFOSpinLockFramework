@@ -1,4 +1,4 @@
-package generatorTools;
+package analysis;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class Utils {
 	public static double MrsP_HELP_IN_SCHEDULE = 0;
 	public static double FULL_CONTEXT_SWTICH1 = 0;
 	public static double FULL_CONTEXT_SWTICH2 = 0;
-	public static double MrsP_PREEMPTION_AND_MIGRATION = 0;
+	public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
 	
 	
 	

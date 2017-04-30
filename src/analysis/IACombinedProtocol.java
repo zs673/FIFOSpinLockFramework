@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.Utils;
 
 public class IACombinedProtocol {
 	private long count = 0; // The number of calculations

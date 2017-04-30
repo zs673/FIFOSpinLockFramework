@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.Utils;
 
 public class IANewMrsPRTAWithMCNP {
 	private long count = 0;
