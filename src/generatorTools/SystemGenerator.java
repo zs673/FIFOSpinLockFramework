@@ -207,15 +207,16 @@ public class SystemGenerator {
 
 		for (int i = 0; i < tasks.size(); i++) {
 			int failed = 0;
-			int number_of_resource_requested_tasks = 0;
+			long number_of_resource_requested_tasks = 0;
 			try {
-				number_of_resource_requested_tasks = (int) (rsf * tasks.get(i).size());
+				number_of_resource_requested_tasks = Math.round(rsf * tasks.get(i).size());
+				System.out.println("nort: " + number_of_resource_requested_tasks);
 			} catch (NullPointerException e) {
 				System.out.println("i" + i);
 			}
 
 			/* Generate resource usage */
-			for (int l = 0; l < number_of_resource_requested_tasks; l++) {
+			for (long l = 0; l < number_of_resource_requested_tasks; l++) {
 				if (failed > 1000) {
 					// System.out.println("hi" + " i = " + i);
 					ArrayList<SporadicTask> taskoni = generateTaskset(i);
@@ -357,8 +358,7 @@ public class SystemGenerator {
 				SporadicTask task = tasks.get(i).get(j);
 				String usage = "T" + task.id + ": ";
 				for (int k = 0; k < task.resource_required_index.size(); k++) {
-					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k)
-							+ ";  ";
+					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k) + ";  ";
 				}
 				usage += "\n";
 				if (task.resource_required_index.size() > 0)

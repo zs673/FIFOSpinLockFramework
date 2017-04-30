@@ -11,14 +11,11 @@ import java.util.ArrayList;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
-import basicAnalysis.FIFONP;
-import basicAnalysis.FIFOP;
-import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.*;
+import generatorTools.SystemGenerator;
 
 public class IOASchedulabilityTest {
 
@@ -45,17 +42,10 @@ public class IOASchedulabilityTest {
 		IAFIFOP IOAfp = new IAFIFOP();
 		IAFIFONP IOAfnp = new IAFIFONP();
 
-		NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-		FIFOP fp = new FIFOP();
-		FIFONP fnp = new FIFONP();
-
 		String result = "";
 		int siamrsp = 0;
 		int siafp = 0;
 		int siafnp = 0;
-		int smrsp = 0;
-		int sfp = 0;
-		int sfnp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
@@ -72,26 +62,11 @@ public class IOASchedulabilityTest {
 			if (isSystemSchedulable(tasks, Ris))
 				siafnp++;
 
-			Ris = mrsp.getResponseTime(tasks, resources, false);
-			if (isSystemSchedulable(tasks, Ris))
-				smrsp++;
-			Ris = fp.NewMrsPRTATest(tasks, resources, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfp++;
-			Ris = fnp.NewMrsPRTATest(tasks, resources, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfnp++;
 			System.out.println(i);
 		}
 
 		result = (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		System.out.println(result);
-
-		result = (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
 		System.out.println(result);
 	}
 

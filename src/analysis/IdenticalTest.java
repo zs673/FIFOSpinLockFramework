@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator2;
+import generatorTools.SystemGenerator;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
@@ -29,7 +29,7 @@ public class IdenticalTest {
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGenerator2 generator = new SystemGenerator2(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
@@ -53,7 +53,7 @@ public class IdenticalTest {
 							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
+				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
@@ -92,7 +92,7 @@ public class IdenticalTest {
 							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
+				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
@@ -131,7 +131,7 @@ public class IdenticalTest {
 							 */) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				SystemGenerator2.testifyGeneratedTasksetAndResource(tasks, resources);
+				SystemGenerator.testifyGeneratedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
 				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
 				System.exit(0);
