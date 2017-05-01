@@ -11,6 +11,7 @@ import entity.SporadicTask;
 public class PreGASolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;
 	ArrayList<Resource> resources;
+	boolean print;
 
 	IAFIFOP fifop = new IAFIFOP();
 	IAFIFONP fifonp = new IAFIFONP();
@@ -19,6 +20,7 @@ public class PreGASolver {
 	public PreGASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean print) {
 		this.tasks = tasks;
 		this.resources = resources;
+		this.print = print;
 	}
 
 	public int initialCheck() {
@@ -28,7 +30,7 @@ public class PreGASolver {
 
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
-		
+
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(0).size(); j++) {
 				if (taskschedule_fifonp[i][j] == 0)
@@ -37,7 +39,7 @@ public class PreGASolver {
 					fifop_sched++;
 				if (taskschedule_mrsp[i][j] == 0)
 					mrsp_sched++;
-				
+
 				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j] && taskschedule_fifop[i][j] == taskschedule_mrsp[i][j]
 						&& taskschedule_mrsp[i][j] == 0) {
 					isPossible = false;
@@ -45,21 +47,25 @@ public class PreGASolver {
 				}
 			}
 		}
-		
+
 		if (!isPossible) {
-			System.out.println("not schedulable");
+			if (print)
+				System.out.println("not schedulable");
 			return -1;
 		}
 		if (fifonp_sched == 0) {
-			System.out.println("fifonp schedulable");
+			if (print)
+				System.out.println("fifonp schedulable");
 			return 1;
 		}
 		if (fifop_sched == 0) {
-			System.out.println("fifop schedulable");
+			if (print)
+				System.out.println("fifop schedulable");
 			return 2;
 		}
 		if (mrsp_sched == 0) {
-			System.out.println("mrsp schedulable");
+			if (print)
+				System.out.println("mrsp schedulable");
 			return 3;
 		}
 

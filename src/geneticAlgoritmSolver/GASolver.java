@@ -63,7 +63,7 @@ public class GASolver {
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		int initial = new PreGASolver(tasks, resources, false).initialCheck();
+		int initial = new PreGASolver(tasks, resources, isPrint).initialCheck();
 		if (initial != 0)
 			return initial;
 

@@ -56,6 +56,7 @@ public class IOASchedulabilityTestParallel {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 		final double RSF = 0.3;
+		final int cs_len = cslen;
 		final CS_LENGTH_RANGE range;
 		switch (cslen) {
 		case 1:
@@ -86,8 +87,9 @@ public class IOASchedulabilityTestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION,
+							TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -99,8 +101,8 @@ public class IOASchedulabilityTestParallel {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solverS = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, true);
-					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solverS = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, false);
+					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, false);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -127,12 +129,12 @@ public class IOASchedulabilityTestParallel {
 						incmrsp();
 
 					if (solverS.findSchedulableProtocols(true) >= 0)
-					inciacombineS();
+						inciacombineS();
 
 					if (solverL.findSchedulableProtocols(true) >= 0)
-					inciacombineL();
+						inciacombineL();
 
-					System.out.println(Thread.currentThread().getName() + " finished");
+					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
 
@@ -146,7 +148,7 @@ public class IOASchedulabilityTestParallel {
 					return true;
 				}
 			});
-			worker.setName("" + i);
+			worker.setName(cs_len + " " + i);
 			worker.start();
 		}
 
