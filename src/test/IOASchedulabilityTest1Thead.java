@@ -28,9 +28,9 @@ public class IOASchedulabilityTest1Thead {
 	public static double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		//for (int i = 1; i < 7; i++) {
-			experimentIncreasingCriticalSectionLength(6);
-		//}
+		// for (int i = 1; i < 7; i++) {
+		experimentIncreasingCriticalSectionLength(6);
+		// }
 
 	}
 
@@ -79,9 +79,9 @@ public class IOASchedulabilityTest1Thead {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
-			
-			for(int j=0;j<resources.size();j++){
-				System.out.print("R" + resources.get(j).id +" csl: " + resources.get(j).csl+"    ");
+
+			for (int j = 0; j < resources.size(); j++) {
+				System.out.print("R" + resources.get(j).id + " csl: " + resources.get(j).csl + "    ");
 			}
 			System.out.println();
 
@@ -94,7 +94,7 @@ public class IOASchedulabilityTest1Thead {
 			Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				siafnp++;
-			GASolver finder = new GASolver(tasks, resources);
+			GASolver finder = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5,true);
 			if (finder.findSchedulableProtocols(true) >= 0)
 				combine++;
 

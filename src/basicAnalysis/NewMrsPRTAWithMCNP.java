@@ -6,15 +6,29 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class NewMrsPRTAWithMCNP {
-	long count = 0;
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, long np,
+	
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, boolean printDebug) {
+		long[][] responsetime = null;
+		// get np section
+		long npsection = 0;
+		for (int i = 0; i < resources.size(); i++) {
+			if (npsection < resources.get(i).csl)
+				npsection = resources.get(i).csl;
+		}
+		long np = npsection;
+
+		responsetime = NewMrsPRTATest(tasks, resources, mig, np,  printDebug);
+		return responsetime;
+	}
+
+	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, long np,
 			boolean printDebug) {
 		long[][] init_Ri = new Utils().initResponseTime(tasks);
 
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missDeadline = false;
-		count = 0;
+		long count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++) {
 			response_time[i] = new long[init_Ri[i].length];

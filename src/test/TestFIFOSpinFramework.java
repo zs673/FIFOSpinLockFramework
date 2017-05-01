@@ -49,14 +49,13 @@ public class TestFIFOSpinFramework {
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			GASolver finder = new GASolver(tasks, resources);
+			GASolver finder = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5,true);
 			int result = finder.findSchedulableProtocols(true);
 			if (result >= 1)
 				combine++;
 			System.out.println(i);
 		}
-		
-		
+
 		System.out.println(NUMBER_OF_SYSTEMS + "system:   fifonp: " + sfnp + "   fifop: " + sfp + "   mrsp: " + smrsp + "   combine: " + combine);
 	}
 

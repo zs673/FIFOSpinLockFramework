@@ -18,14 +18,15 @@ public class GASolver {
 	Random ran = new Random(System.currentTimeMillis());
 
 	int PROTOCOL_SIZE = 3;
-	int population = 1000;
 	int randomBound = 65535;
-	int elitismSize = 2;
-	int maxGeneration = 200;
-	double crossoverRate = 0.5;
-	double mutationRate = 0.1;
-	int mutationBound = 5;
-	int toumamentSize1 = 5, toumamentSize2 = 5;
+
+	int population;
+	int elitismSize;
+	int maxGeneration;
+	double crossoverRate;
+	double mutationRate;
+	int mutationBound;
+	int toumamentSize1, toumamentSize2;
 
 	int currentGeneration = 0;
 	int[][] elitismGene;
@@ -34,12 +35,24 @@ public class GASolver {
 	int[] bestGene = null;
 	long[] schedFitness;
 	long[] rtFitness;
+	boolean isPrint;
 
 	/****************** GA Properties ******************/
 
-	public GASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public GASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
+			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
 		this.resources = resources;
+		this.population = population;
+		this.maxGeneration = maxGeneration;
+		this.elitismSize = elitismSize;
+		this.crossoverRate = crossoverRate;
+		this.mutationRate = mutationRate;
+		this.mutationBound = mutationBound;
+		this.toumamentSize1 = toumamentSize1;
+		this.toumamentSize2 = toumamentSize2;
+
+		this.isPrint = isPrint;
 
 		nextGenes = new int[population][resources.size()];
 		parentGenes = new int[population][resources.size()];
@@ -62,7 +75,8 @@ public class GASolver {
 		getFirstGene();
 		getFitness(nextGenes);
 		if (bestGene != null) {
-			System.out.println("new combination schedulable");
+			if (isPrint)
+				System.out.println("new combination schedulable");
 			return 0;
 		}
 
@@ -148,12 +162,14 @@ public class GASolver {
 			}
 			getFitness(nextGenes);
 			if (bestGene != null) {
-				System.out.println("new combination schedulable");
+				if (isPrint)
+					System.out.println("new combination schedulable");
 				return 0;
 			}
 
 		}
-		System.out.println("not schedulable. GA finish");
+		if (isPrint)
+			System.out.println("not schedulable. GA finish");
 		return -1;
 	}
 
@@ -199,8 +215,9 @@ public class GASolver {
 		}
 
 		long maxindex = fitness.get(0).get(2);
-		System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
-				+ Arrays.toString(nextGenes[(int) maxindex]));
+		if (isPrint)
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
+					+ Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {

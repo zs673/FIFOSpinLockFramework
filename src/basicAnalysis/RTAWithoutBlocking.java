@@ -6,13 +6,12 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class RTAWithoutBlocking {
-	long count = 0;
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
 		long[][] init_Ri = new Utils().initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missDeadline = false;
-		count = 0;
+		long count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++)
 			response_time[i] = new long[init_Ri[i].length];

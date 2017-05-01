@@ -9,12 +9,18 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
+import basicAnalysis.FIFONP;
+import basicAnalysis.FIFOP;
+import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
+import geneticAlgoritmSolver.GASolver;
 
 public class IOASchedulabilityTestParallel {
 
@@ -23,17 +29,26 @@ public class IOASchedulabilityTestParallel {
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 
+	int mrsp = 0;
+	int fp = 0;
+	int fnp = 0;
+
 	int siamrsp = 0;
 	int siafp = 0;
 	int siafnp = 0;
-	int combine = 0;
+
+	int combineS = 0;
+	int combineL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
 		IOASchedulabilityTestParallel test = new IOASchedulabilityTestParallel();
-		//for (int i = 1; i < 7; i++) {
-		test.experimentIncreasingCriticalSectionLength(1);
-		//}
+		for (int i = 1; i < 7; i++) {
+			test.initResults();
+			test.experimentIncreasingCriticalSectionLength(i);
+		}
+		// test.experimentIncreasingCriticalSectionLength(5);
 
+		IOAResultReader.schedreader();
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cslen) {
@@ -72,22 +87,55 @@ public class IOASchedulabilityTestParallel {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
+					IAFIFOP IOAfp = new IAFIFOP();
+					IAFIFONP IOAfnp = new IAFIFONP();
+					FIFONP fnp = new FIFONP();
+					FIFOP fp = new FIFOP();
+					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					GASolver solverS = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
+
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false);
+					if (isSystemSchedulable(tasks, Ris))
+						inciafnp();
+
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false);
+					if (isSystemSchedulable(tasks, Ris))
+						inciafp();
+
+					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					if (isSystemSchedulable(tasks, Ris))
+						incfp();
+
+					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					if (isSystemSchedulable(tasks, Ris))
+						incfnp();
+
+					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					if (isSystemSchedulable(tasks, Ris))
+						incmrsp();
+
+					// if (solverS.findSchedulableProtocols(true) >= 0)
+					// inciacombineS();
+
+					// if (solverL.findSchedulableProtocols(true) >= 0)
+					// inciacombineL();
+
 					System.out.println(Thread.currentThread().getName() + " finished");
 					downLatch.countDown();
 				}
-				
+
 				public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
 					for (int i = 0; i < tasks.size(); i++) {
 						for (int j = 0; j < tasks.get(i).size(); j++) {
@@ -98,37 +146,67 @@ public class IOASchedulabilityTestParallel {
 					return true;
 				}
 			});
-			worker.setName(""+i);
+			worker.setName("" + i);
 			worker.start();
 		}
-		
+
 		try {
 			downLatch.await();
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) combineS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
 	}
 
-	public void initResults(){
+	public void initResults() {
+		mrsp = 0;
+		fp = 0;
+		fnp = 0;
+
 		siamrsp = 0;
-		 siafp = 0;
-		 siafnp = 0;
-		 combine = 0;
+		siafp = 0;
+		siafnp = 0;
+
+		combineL = 0;
+		combineS = 0;
 	}
+
+	public synchronized void incmrsp() {
+		mrsp++;
+	}
+
+	public synchronized void incfp() {
+		fp++;
+	}
+
+	public synchronized void incfnp() {
+		fnp++;
+	}
+
 	public synchronized void inciamrsp() {
 		siamrsp++;
 	}
+
 	public synchronized void inciafp() {
 		siafp++;
 	}
+
 	public synchronized void inciafnp() {
 		siafnp++;
 	}
-	public synchronized void inciacombine() {
-		combine++;
+
+	public synchronized void inciacombineL() {
+		combineL++;
+	}
+
+	public synchronized void inciacombineS() {
+		combineS++;
 	}
 
 	public void writeSystem(String filename, String result) {
@@ -147,7 +225,4 @@ public class IOASchedulabilityTestParallel {
 		writer.close();
 	}
 
-
-
-	
 }
