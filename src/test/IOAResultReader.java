@@ -44,7 +44,7 @@ public class IOAResultReader {
 		for (int bigSet = 1; bigSet < 6; bigSet++) {
 			result += "tasks per core: " + (3 + bigSet - 1) + "\n";
 
-			for (int smallSet = 1; smallSet < 501; smallSet++) {
+			for (int smallSet = 1; smallSet < 7; smallSet++) {
 				String filepath = "result/" + "ioa 2" + " " + bigSet + " " + smallSet + ".txt";
 
 				List<String> lines = null;

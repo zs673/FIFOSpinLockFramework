@@ -15,6 +15,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import geneticAlgoritmSolver.GASolver;
 import generatorTools.SystemGenerator;
 
 public class IOASchedulabilityTest {
@@ -27,15 +28,41 @@ public class IOASchedulabilityTest {
 	public static double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		experimentIncreasingCriticalSectionLength();
+		//for (int i = 1; i < 7; i++) {
+			experimentIncreasingCriticalSectionLength(6);
+		//}
+
 	}
 
-	public static void experimentIncreasingCriticalSectionLength() {
+	public static void experimentIncreasingCriticalSectionLength(int cslen) {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+		CS_LENGTH_RANGE range = null;
+		switch (cslen) {
+		case 1:
+			range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			break;
+		case 2:
+			range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+			break;
+		case 3:
+			range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			break;
+		case 4:
+			range = CS_LENGTH_RANGE.LONG_CSLEN;
+			break;
+		case 5:
+			range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			break;
+		case 6:
+			range = CS_LENGTH_RANGE.Random;
+			break;
+		default:
+			break;
+		}
 
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 		long[][] Ris;
 
 		IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -46,11 +73,17 @@ public class IOASchedulabilityTest {
 		int siamrsp = 0;
 		int siafp = 0;
 		int siafnp = 0;
+		int combine = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
+			
+			for(int j=0;j<resources.size();j++){
+				System.out.print("R" + resources.get(j).id +" csl: " + resources.get(j).csl+"    ");
+			}
+			System.out.println();
 
 			Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
@@ -61,12 +94,16 @@ public class IOASchedulabilityTest {
 			Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				siafnp++;
+			GASolver finder = new GASolver(tasks, resources);
+			if (finder.findSchedulableProtocols(true) >= 0)
+				combine++;
 
-			System.out.println(i);
+			System.out.println("cslen " + cslen + "   times: " + i);
 		}
 
-		result = (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		result = (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
 	}
 

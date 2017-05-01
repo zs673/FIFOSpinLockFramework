@@ -7,9 +7,6 @@ import java.util.Random;
 import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator;
-import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
-import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
 public class GASolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;
@@ -24,7 +21,7 @@ public class GASolver {
 	int population = 1000;
 	int randomBound = 65535;
 	int elitismSize = 2;
-	int maxGeneration = 100;
+	int maxGeneration = 200;
 	double crossoverRate = 0.5;
 	double mutationRate = 0.1;
 	int mutationBound = 5;
@@ -49,16 +46,7 @@ public class GASolver {
 
 		schedFitness = new long[population];
 		rtFitness = new long[population];
-//		for (int i = 0; i < population; i++) {
-//			schedFitness[i] = 0;
-//			rtFitness[i] = 0;
-//		}
 		elitismGene = new int[elitismSize][resources.size()];
-		
-//		for(int i=0;i<resources.size();i++){
-//			System.out.print("R" + resources.get(i).id +": " + resources.get(i).csl + "    ");
-//		}
-//		System.out.println();
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
@@ -66,10 +54,8 @@ public class GASolver {
 		if (initial != 0)
 			return initial;
 
-//		int result = solve(useGA);
-//		return result;
-		
-		return -1;
+		int result = solve(useGA);
+		return result;
 	}
 
 	int solve(boolean useGA) {
@@ -271,46 +257,5 @@ public class GASolver {
 		fitness[0] = sched_fitness;
 		fitness[1] = rt_fitness;
 		return fitness;
-	}
-
-	public static void main(String args[]) {
-		int TOTAL_PARTITIONS = 16;
-		int MIN_PERIOD = 1;
-		int MAX_PERIOD = 1000;
-		CS_LENGTH_RANGE cs_len_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-		double RSF = 0.4;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
-		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
-		int NUMBER_OF_SYSTEMS = 1000;
-
-		int fifop = 0, fifonp = 0, mrsp = 0, combine = 0;
-
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, cs_len_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-
-		for (int i = 0; i < NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
-			GASolver finder = new GASolver(tasks, resources);
-			int result = finder.findSchedulableProtocols(true);
-
-			if (result == 1) {
-				fifonp++;
-				combine++;
-			}
-			if (result == 2) {
-				fifop++;
-				combine++;
-			}
-			if (result == 3) {
-				mrsp++;
-				combine++;
-			}
-			if (result == 0)
-				combine++;
-			System.out.println(i);
-		}
-		System.out.println(NUMBER_OF_SYSTEMS + "system:   fifonp: " + fifonp + "   fifop: " + fifop + "   mrsp: " + mrsp + "   combine: " + combine);
 	}
 }
