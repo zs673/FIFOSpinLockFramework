@@ -18,7 +18,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import geneticAlgoritmSolver.GASolver;
 import generatorTools.SystemGenerator;
 
-public class IOASchedulabilityTest {
+public class IOASchedulabilityTest1Thead {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;

@@ -55,6 +55,8 @@ public class TestFIFOSpinFramework {
 				combine++;
 			System.out.println(i);
 		}
+		
+		
 		System.out.println(NUMBER_OF_SYSTEMS + "system:   fifonp: " + sfnp + "   fifop: " + sfp + "   mrsp: " + smrsp + "   combine: " + combine);
 	}
 
