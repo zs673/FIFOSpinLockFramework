@@ -126,11 +126,11 @@ public class IOASchedulabilityTestParallel {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					// if (solverS.findSchedulableProtocols(true) >= 0)
-					// inciacombineS();
+					if (solverS.findSchedulableProtocols(true) >= 0)
+					inciacombineS();
 
-					// if (solverL.findSchedulableProtocols(true) >= 0)
-					// inciacombineL();
+					if (solverL.findSchedulableProtocols(true) >= 0)
+					inciacombineL();
 
 					System.out.println(Thread.currentThread().getName() + " finished");
 					downLatch.countDown();

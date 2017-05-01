@@ -1,9 +1,7 @@
 /native/
-/geneticAlgoritmSolver/
-/test/
-/Analysis/
-/generatorTools/
 /analysis/
 /basicAnalysis/
-/generatorTools22/
 /entity/
+/generatorTools/
+/geneticAlgoritmSolver/
+/test/
