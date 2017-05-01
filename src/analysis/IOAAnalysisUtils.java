@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import entity.SporadicTask;
 
 public class IOAAnalysisUtils {
-	public static int extendCal = 5;
+	public static int extendCal = 3;
 
 	// private static double CACHE_OVERHEADS = (double) (1905) / (double) 1000;
 	public static double LINUX_SCHED = (double) (845) / (double) 1000;

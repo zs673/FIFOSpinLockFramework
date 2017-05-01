@@ -7,7 +7,6 @@ import entity.SporadicTask;
 
 public class IACombinedProtocol {
 
-
 	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
 			boolean printDebug) {
 		long count = 0; // The number of calculations
