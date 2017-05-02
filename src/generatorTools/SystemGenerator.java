@@ -179,7 +179,7 @@ public class SystemGenerator {
 				case VERY_SHORT_CS_LEN:
 					cs_len = ran.nextInt(15) + 1;
 					break;
-				case Random:
+				case RANDOM:
 					cs_len = ran.nextInt(300) + 1;
 				default:
 					break;

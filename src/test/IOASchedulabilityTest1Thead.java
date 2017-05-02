@@ -55,7 +55,7 @@ public class IOASchedulabilityTest1Thead {
 			range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
 			break;
 		case 6:
-			range = CS_LENGTH_RANGE.Random;
+			range = CS_LENGTH_RANGE.RANDOM;
 			break;
 		default:
 			break;
