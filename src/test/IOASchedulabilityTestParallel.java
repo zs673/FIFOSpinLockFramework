@@ -36,8 +36,6 @@ public class IOASchedulabilityTestParallel {
 	int siamrsp = 0;
 	int siafp = 0;
 	int siafnp = 0;
-
-	int combineS = 0;
 	int combineL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
@@ -86,9 +84,9 @@ public class IOASchedulabilityTestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-							0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-							range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION,
+							TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -100,8 +98,7 @@ public class IOASchedulabilityTestParallel {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solverS = new GASolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, false);
-					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, false);
+					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -126,9 +123,6 @@ public class IOASchedulabilityTestParallel {
 					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
-
-					if (solverS.findSchedulableProtocols(true) >= 0)
-						inciacombineS();
 
 					if (solverL.findSchedulableProtocols(true) >= 0)
 						inciacombineL();
@@ -159,7 +153,7 @@ public class IOASchedulabilityTestParallel {
 		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) combineS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
@@ -175,7 +169,6 @@ public class IOASchedulabilityTestParallel {
 		siafnp = 0;
 
 		combineL = 0;
-		combineS = 0;
 	}
 
 	public synchronized void incmrsp() {
@@ -204,10 +197,6 @@ public class IOASchedulabilityTestParallel {
 
 	public synchronized void inciacombineL() {
 		combineL++;
-	}
-
-	public synchronized void inciacombineS() {
-		combineS++;
 	}
 
 	public void writeSystem(String filename, String result) {
