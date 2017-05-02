@@ -41,8 +41,10 @@ public class IOASchedulabilityTestParallel {
 	int combineL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
+		int i = Integer.parseInt(args[0]);
+		System.out.println("start from " + i);
 		IOASchedulabilityTestParallel test = new IOASchedulabilityTestParallel();
-		for (int i = 1; i < 7; i++) {
+		for (; i < 7; i++) {
 			test.initResults();
 			test.experimentIncreasingCriticalSectionLength(i);
 		}
