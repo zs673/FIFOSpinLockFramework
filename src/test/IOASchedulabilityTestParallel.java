@@ -41,14 +41,13 @@ public class IOASchedulabilityTestParallel {
 	int combineL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
-		int i = Integer.parseInt(args[0]);
-		System.out.println("start from " + i);
+		// int i = Integer.parseInt(args[0]);
+		// System.out.println("start from " + i);
 		IOASchedulabilityTestParallel test = new IOASchedulabilityTestParallel();
-		for (; i < 7; i++) {
+		for (int i = 1; i < 7; i++) {
 			test.initResults();
 			test.experimentIncreasingCriticalSectionLength(i);
 		}
-		// test.experimentIncreasingCriticalSectionLength(5);
 
 		IOAResultReader.schedreader();
 	}
@@ -89,9 +88,9 @@ public class IOASchedulabilityTestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION,
-							TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
+							0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+							range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
