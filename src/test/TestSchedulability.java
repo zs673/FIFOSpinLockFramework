@@ -25,7 +25,7 @@ public class TestSchedulability {
 	public static int MAX_PERIOD = 1000;
 
 	public static void main(String[] args) throws InterruptedException {
-		boolean runParallel = false;
+		boolean runParallel = true;
 		if (runParallel) {
 			TestSchedulability test = new TestSchedulability();
 

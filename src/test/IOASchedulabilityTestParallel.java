@@ -98,7 +98,7 @@ public class IOASchedulabilityTestParallel {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, true);
+					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 500, 200, 2, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
