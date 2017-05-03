@@ -20,7 +20,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
-import geneticAlgoritmSolver.GASolver;
+import geneticAlgoritmSolver.GADynamicSolver;
 
 public class IOASchedulabilityTestParallel {
 
@@ -98,7 +98,7 @@ public class IOASchedulabilityTestParallel {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solverL = new GASolver(tasks, resources, 1000, 500, 2, 0.5, 0.1, 5, 5, 5, true);
+					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 100, 100, 2, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))

@@ -8,7 +8,7 @@ import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 
-public class GASolver {
+public class GADynamicSolver {
 	ArrayList<ArrayList<SporadicTask>> tasks;
 	ArrayList<Resource> resources;
 
@@ -39,7 +39,7 @@ public class GASolver {
 
 	/****************** GA Properties ******************/
 
-	public GASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
+	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
 			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
 		this.resources = resources;

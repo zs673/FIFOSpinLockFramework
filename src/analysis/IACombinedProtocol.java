@@ -582,14 +582,16 @@ public class IACombinedProtocol {
 		ArrayList<Double> overheads = new ArrayList<>();
 
 		for (int i = 0; i < LocalBlockingResources.size(); i++) {
+			double arrivalBlockingOverheads = 0;
 			ArrayList<Integer> migration_targets = new ArrayList<>();
 
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
-
+			arrivalBlockingOverheads += IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK;
+		
 			migration_targets.add(t.partition);
-
 			if (res.isGlobal) {
+				int remoteblocking = 0;
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
 					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], time);
@@ -599,10 +601,11 @@ public class IACombinedProtocol {
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
+						remoteblocking++;
 						migration_targets.add(partition);
 					}
 				}
-				overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK));
+				arrivalBlockingOverheads += remoteblocking * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);
@@ -615,13 +618,18 @@ public class IACombinedProtocol {
 					}
 					local_blocking += mc_long;
 				}
-				overheads.add(overheads.get(overheads.size() - 1) + mc_plus);
+				arrivalBlockingOverheads += mc_plus;
 			}
 
 			local_blocking_each_resource.add(local_blocking);
+			overheads.add(arrivalBlockingOverheads);
 		}
 
 		if (local_blocking_each_resource.size() >= 1) {
+			if (overheads.size() <= 0) {
+				System.err.println("overheads error!");
+				System.exit(-1);
+			}
 			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
 			overheads.sort((l1, l2) -> -Double.compare(l1, l2));
 			t.mrsp_arrivalblocking_overheads = overheads.get(0);
