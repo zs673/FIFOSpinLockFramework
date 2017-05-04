@@ -4,4 +4,4 @@ rm -rf *.txt
 cd ..
 ls
 
-nohup java -cp bin/ test.IOASchedulabilityTestParallel
+nohup java -cp bin/ test.GATestParallel

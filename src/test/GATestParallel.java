@@ -22,7 +22,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 import geneticAlgoritmSolver.GADynamicSolver;
 
-public class IOASchedulabilityTestParallel {
+public class GATestParallel {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
@@ -39,7 +39,7 @@ public class IOASchedulabilityTestParallel {
 	int combineL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
-		IOASchedulabilityTestParallel test = new IOASchedulabilityTestParallel();
+		GATestParallel test = new GATestParallel();
 		for (int i = 1; i < 7; i++) {
 			test.initResults();
 			test.experimentIncreasingCriticalSectionLength(i);
