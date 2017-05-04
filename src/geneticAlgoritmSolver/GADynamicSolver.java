@@ -39,8 +39,8 @@ public class GADynamicSolver {
 
 	/****************** GA Properties ******************/
 
-	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
-			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
+	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration,
+			int elitismSize, double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.population = population;
@@ -76,7 +76,7 @@ public class GADynamicSolver {
 		getFitness(nextGenes);
 		if (bestGene != null) {
 			if (isPrint)
-				System.out.println("new combination schedulable");
+				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
 			return 0;
 		}
 
@@ -163,7 +163,7 @@ public class GADynamicSolver {
 			getFitness(nextGenes);
 			if (bestGene != null) {
 				if (isPrint)
-					System.out.println("new combination schedulable");
+					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
 				return 0;
 			}
 
@@ -216,8 +216,8 @@ public class GADynamicSolver {
 
 		long maxindex = fitness.get(0).get(2);
 		if (isPrint)
-			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
-					+ Arrays.toString(nextGenes[(int) maxindex]));
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1)
+					+ "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {
@@ -244,8 +244,8 @@ public class GADynamicSolver {
 			}
 		}
 
-		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  " + b.get(1)
-				+ " b2:  " + b.get(2));
+		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  "
+				+ b.get(1) + " b2:  " + b.get(2));
 		System.err.println(a0 == b0);
 		System.err.println(a1 == b1);
 		System.err.println(a2 == b2);
