@@ -24,6 +24,11 @@ public class TestSchedulability {
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 
+	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+	double RESOURCE_SHARING_FACTOR = 0.2;
+	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
+	CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+
 	public static void main(String[] args) throws InterruptedException {
 		boolean runParallel = true;
 		if (runParallel) {
@@ -101,13 +106,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		double RESOURCE_SHARING_FACTOR = 0.4;
-		CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-		int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = NoT;
-
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NoT, TOTAL_PARTITIONS, NoT, true, range,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -144,12 +144,7 @@ public class TestSchedulability {
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);
 	}
 
-	public void experimentIncreasingCriticalSectionLength(int csLenConfig) {
-		double RESOURCE_SHARING_FACTOR = 0.4;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
-		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-		int cs_len = csLenConfig;
-
+	public void experimentIncreasingCriticalSectionLength(int cs_len) {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 				cs_len);
@@ -190,13 +185,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		double RESOURCE_SHARING_FACTOR = 0.4;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = NoA;
-		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-		CS_LENGTH_RANGE cs_len = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -234,13 +224,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingParallel(int NoP) {
-		double RESOURCE_SHARING_FACTOR = 0.4;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-		CS_LENGTH_RANGE cs_len = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_len, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();

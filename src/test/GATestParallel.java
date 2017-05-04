@@ -37,6 +37,7 @@ public class GATestParallel {
 	int siafp = 0;
 	int siafnp = 0;
 	int combineL = 0;
+	int combineS = 0;
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
@@ -84,9 +85,8 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION,
-							TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -98,7 +98,8 @@ public class GATestParallel {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 500, 200, 2, 0.5, 0.1, 5, 5, 5, true);
+					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 500, 200, 5, 0.5, 0.1, 5, 5, 5, true);
+					GADynamicSolver solverS = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -127,6 +128,9 @@ public class GATestParallel {
 					if (solverL.findSchedulableProtocols(true) >= 0)
 						inciacombineL();
 
+					if (solverS.findSchedulableProtocols(true) >= 0)
+						inciacombineS();
+
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
@@ -153,7 +157,7 @@ public class GATestParallel {
 		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) combineS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
@@ -169,6 +173,7 @@ public class GATestParallel {
 		siafnp = 0;
 
 		combineL = 0;
+		combineS = 0;
 	}
 
 	public synchronized void incmrsp() {
@@ -197,6 +202,10 @@ public class GATestParallel {
 
 	public synchronized void inciacombineL() {
 		combineL++;
+	}
+
+	public synchronized void inciacombineS() {
+		combineS++;
 	}
 
 	public void writeSystem(String filename, String result) {
