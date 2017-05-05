@@ -26,7 +26,7 @@ import geneticAlgoritmSolver.StaticSolver;
 
 public class GATestParallel {
 
-	static final ArrayList<Double> similarity = new ArrayList<>();
+	ArrayList<Double> similarity = new ArrayList<>();
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 	public static int MIN_PERIOD = 1;
@@ -52,8 +52,8 @@ public class GATestParallel {
 		IOAResultReader.schedreader();
 
 		System.out.println("similarity: ");
-		for (int i = 0; i < similarity.size(); i++) {
-			System.out.print(similarity.get(i) + "    ");
+		for (int i = 0; i < test.similarity.size(); i++) {
+			System.out.print(test.similarity.get(i) + "    ");
 		}
 		System.out.println();
 	}
