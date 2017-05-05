@@ -38,6 +38,7 @@ public class GATestParallel {
 	int siafnp = 0;
 	int combineL = 0;
 	int combineS = 0;
+	int combineLL = 0;
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
@@ -100,6 +101,7 @@ public class GATestParallel {
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
 					GADynamicSolver solverL = new GADynamicSolver(tasks, resources, 500, 200, 5, 0.5, 0.1, 5, 5, 5, true);
 					GADynamicSolver solverS = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GADynamicSolver solverLL = new GADynamicSolver(tasks, resources, 1000, 500, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -131,6 +133,9 @@ public class GATestParallel {
 					if (solverS.findSchedulableProtocols(true) >= 0)
 						inciacombineS();
 
+					if (solverLL.findSchedulableProtocols(true) >= 0)
+						inciacombineLL();
+
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
@@ -157,7 +162,8 @@ public class GATestParallel {
 		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) combineS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) combineS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) combineL / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) combineLL / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
@@ -174,6 +180,7 @@ public class GATestParallel {
 
 		combineL = 0;
 		combineS = 0;
+		combineLL = 0;
 	}
 
 	public synchronized void incmrsp() {
@@ -206,6 +213,10 @@ public class GATestParallel {
 
 	public synchronized void inciacombineS() {
 		combineS++;
+	}
+
+	public synchronized void inciacombineLL() {
+		combineLL++;
 	}
 
 	public void writeSystem(String filename, String result) {

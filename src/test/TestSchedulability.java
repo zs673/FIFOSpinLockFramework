@@ -25,9 +25,9 @@ public class TestSchedulability {
 	public static int MAX_PERIOD = 1000;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	double RESOURCE_SHARING_FACTOR = 0.2;
+	double RESOURCE_SHARING_FACTOR = 0.6;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-	CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	CS_LENGTH_RANGE range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 
 	public static void main(String[] args) throws InterruptedException {
 		boolean runParallel = true;
