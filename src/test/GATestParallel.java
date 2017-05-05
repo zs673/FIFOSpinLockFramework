@@ -46,7 +46,7 @@ public class GATestParallel {
 		GATestParallel test = new GATestParallel();
 		// for (int i = 1; i < 7; i++) {
 		test.initResults();
-		test.seqExperimentIncreasingCriticalSectionLength(6);
+		test.parallelExperimentIncreasingCriticalSectionLength(6);
 		// }
 
 		IOAResultReader.schedreader();
