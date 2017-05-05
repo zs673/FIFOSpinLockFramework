@@ -20,7 +20,6 @@ public class StaticSolver {
 			Resource res = resources.get(i);
 			int protocol = 0;
 
-			// based on critical section length.
 			if (res.csl <= 60) {
 				protocol = 1;
 			} else if (res.csl > 60 && res.csl < 100) {

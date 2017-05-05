@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import analysis.IACombinedProtocol;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
@@ -21,9 +22,11 @@ import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 import geneticAlgoritmSolver.GADynamicSolver;
+import geneticAlgoritmSolver.StaticSolver;
 
 public class GATestParallel {
 
+	static final ArrayList<Double> similarity = new ArrayList<>();
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 	public static int MIN_PERIOD = 1;
@@ -36,20 +39,28 @@ public class GATestParallel {
 	int siamrsp = 0;
 	int siafp = 0;
 	int siafnp = 0;
-	int combine = 0;
+	int Scombine = 0;
+	int Dcombine = 0;
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
-		for (int i = 1; i < 7; i++) {
-			test.initResults();
-			test.experimentIncreasingCriticalSectionLength(i);
-		}
+		// for (int i = 1; i < 7; i++) {
+		test.initResults();
+		test.seqExperimentIncreasingCriticalSectionLength(6);
+		// }
 
 		IOAResultReader.schedreader();
+
+		System.out.println("similarity: ");
+		for (int i = 0; i < similarity.size(); i++) {
+			System.out.print(similarity.get(i) + "    ");
+		}
+		System.out.println();
 	}
 
-	public void experimentIncreasingCriticalSectionLength(int cslen) {
+	public void parallelExperimentIncreasingCriticalSectionLength(int cslen) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
+
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 		final double RSF = 0.3;
@@ -98,6 +109,7 @@ public class GATestParallel {
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					IACombinedProtocol sCombine = new IACombinedProtocol();
 
 					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -123,8 +135,27 @@ public class GATestParallel {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0)
-						inciacombine();
+					int maxAccess = 0;
+					for (int l = 0; l < tasks.size(); l++) {
+						for (int j = 0; j < tasks.get(l).size(); j++) {
+							SporadicTask task = tasks.get(l).get(j);
+							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
+								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
+									maxAccess = task.number_of_access_in_one_release.get(k);
+								}
+							}
+						}
+					}
+					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
+					for (int l = 0; l < resources.size(); l++) {
+						resources.get(l).protocol = protocols[l];
+					}
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false);
+					if (isSystemSchedulable(tasks, Ris))
+						inciaScombine();
+
+					if (solver.findSchedulableProtocols(true, maxAccess) >= 0)
+						inciaDcombine();
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
@@ -152,7 +183,113 @@ public class GATestParallel {
 		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) combine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem("ioa 2 2 " + cslen, result);
+		System.out.println(result);
+	}
+
+	public void seqExperimentIncreasingCriticalSectionLength(int cslen) {
+		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
+		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+		final double RSF = 0.3;
+		final CS_LENGTH_RANGE range;
+		switch (cslen) {
+		case 1:
+			range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			break;
+		case 2:
+			range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+			break;
+		case 3:
+			range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			break;
+		case 4:
+			range = CS_LENGTH_RANGE.LONG_CSLEN;
+			break;
+		case 5:
+			range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			break;
+		case 6:
+			range = CS_LENGTH_RANGE.RANDOM;
+			break;
+		default:
+			range = null;
+			break;
+		}
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+					NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasks, resources);
+
+			long[][] Ris;
+			IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
+			IAFIFOP IOAfp = new IAFIFOP();
+			IAFIFONP IOAfnp = new IAFIFONP();
+			FIFONP fnp = new FIFONP();
+			FIFOP fp = new FIFOP();
+			NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+			GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+			IACombinedProtocol sCombine = new IACombinedProtocol();
+
+			Ris = IOAmrsp.getResponseTime(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				inciamrsp();
+
+			Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				inciafnp();
+
+			Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				inciafp();
+
+			Ris = fp.NewMrsPRTATest(tasks, resources, false);
+			if (isSystemSchedulable(tasks, Ris))
+				incfp();
+
+			Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+			if (isSystemSchedulable(tasks, Ris))
+				incfnp();
+
+			Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+			if (isSystemSchedulable(tasks, Ris))
+				incmrsp();
+
+			int maxAccess = 0;
+			for (int l = 0; l < tasks.size(); l++) {
+				for (int j = 0; j < tasks.get(l).size(); j++) {
+					SporadicTask task = tasks.get(l).get(j);
+					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
+						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
+							maxAccess = task.number_of_access_in_one_release.get(k);
+						}
+					}
+				}
+			}
+			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
+			for (int l = 0; l < resources.size(); l++) {
+				resources.get(l).protocol = protocols[l];
+			}
+			Ris = sCombine.calculateResponseTime(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				inciaScombine();
+
+			if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+				inciaDcombine();
+				addSimilarity(solver.similarity);
+			}
+
+			System.out.println(i);
+		}
+
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
@@ -167,7 +304,8 @@ public class GATestParallel {
 		siafp = 0;
 		siafnp = 0;
 
-		combine = 0;
+		Scombine = 0;
+		Dcombine = 0;
 	}
 
 	public synchronized void incmrsp() {
@@ -194,8 +332,26 @@ public class GATestParallel {
 		siafnp++;
 	}
 
-	public synchronized void inciacombine() {
-		combine++;
+	public synchronized void inciaDcombine() {
+		Dcombine++;
+	}
+
+	public synchronized void inciaScombine() {
+		Scombine++;
+	}
+	
+	public synchronized void addSimilarity(double value){
+		similarity.add(value);
+	}
+
+	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < Ris[i][j])
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public void writeSystem(String filename, String result) {

@@ -88,19 +88,32 @@ public class TestSchedulability {
 		} else {
 			TestSchedulability test = new TestSchedulability();
 
-			for (int i = 1; i < 11; i++) {
-				test.experimentIncreasingWorkLoad(i);
-			}
-			for (int i = 1; i < 301; i++) {
-				test.experimentIncreasingCriticalSectionLength(i);
-			}
-			for (int i = 1; i < 31; i++) {
-				test.experimentIncreasingContention(i);
-			}
-			for (int i = 1; i < 17; i++) {
-				test.experimentIncreasingParallel(i, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+			// for (int i = 1; i < 11; i++) {
+			// test.experimentIncreasingWorkLoad(i);
+			// }
+			// for (int i = 1; i < 301; i++) {
+			// test.experimentIncreasingCriticalSectionLength(i);
+			// }
+			// for (int i = 1; i < 31; i++) {
+			// test.experimentIncreasingContention(i);
+			// }
+			// for (int i = 1; i < 17; i++) {
+			// test.experimentIncreasingParallel(i,
+			// NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+			// }
+
+			/**
+			 * cslen & rsf
+			 */
+			for (int i = 1; i < 6; i++) {
+				for (int j = 1; j <= 6; j++) {
+					test.experimentIncreasingRSF(j, i);
+				}
 			}
 
+			/**
+			 * parallel partitions & access
+			 */
 			// final CountDownLatch downLatch = new CountDownLatch(930);
 			// for (int j = 1; j < 31; j++) {
 			// for (int i = 2; i < 33; i++) {
@@ -155,7 +168,7 @@ public class TestSchedulability {
 			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
-			System.out.println(1 + "" + 1 + " " + NoT + " times: " + i);
+			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);
 		}
 
 		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
@@ -195,7 +208,7 @@ public class TestSchedulability {
 			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
-			System.out.println(2 + "" + 1 + " " + cs_len + " times: " + i);
+			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
 		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
@@ -234,7 +247,7 @@ public class TestSchedulability {
 			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
-			System.out.println(3 + "" + 1 + " " + NoA + " times: " + i);
+			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
 		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
@@ -280,6 +293,88 @@ public class TestSchedulability {
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
+	}
+
+	public void experimentIncreasingRSF(int RSF, int cslen) {
+		double rsf;
+		CS_LENGTH_RANGE range;
+		switch (RSF) {
+		case 1:
+			rsf = 0.2;
+			break;
+		case 2:
+			rsf = 0.4;
+			break;
+		case 3:
+			rsf = 0.6;
+			break;
+		case 4:
+			rsf = 0.8;
+			break;
+		case 5:
+			rsf = 1.0;
+			break;
+		default:
+			rsf = 0;
+			break;
+		}
+		
+		switch (cslen) {
+		case 1:
+			range =CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			break;
+		case 2:
+			range =CS_LENGTH_RANGE.SHORT_CS_LEN;
+			break;
+		case 3:
+			range =CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			break;
+		case 4:
+			range =CS_LENGTH_RANGE.LONG_CSLEN;
+			break;
+		case 5:
+			range =CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			break;
+		default:
+			range = null;
+			break;
+		}
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+
+		long[][] Ris;
+		IAFIFONP fnp = new IAFIFONP();
+		IAFIFOP fp = new IAFIFOP();
+		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
+
+		String result = "";
+		int sfnp = 0;
+		int sfp = 0;
+		int smrsp = 0;
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasks, resources);
+
+			Ris = mrsp.getResponseTime(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				smrsp++;
+
+			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfnp++;
+
+			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfp++;
+			System.out.println(5 + " " + cslen + " " + RSF + " times: " + i);
+		}
+
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem(("ioa " + 5 + " " + cslen + " " + RSF), result);
 	}
 
 	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {

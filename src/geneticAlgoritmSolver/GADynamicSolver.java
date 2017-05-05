@@ -18,6 +18,7 @@ public class GADynamicSolver {
 	Random ran = new Random(System.currentTimeMillis());
 
 	int PROTOCOL_SIZE = 3;
+	boolean withStaticProtocols = false;
 	int randomBound = 65535;
 
 	int population;
@@ -36,11 +37,13 @@ public class GADynamicSolver {
 	long[] schedFitness;
 	long[] rtFitness;
 	boolean isPrint;
+	public double similarity = 0;
+	int[] staticProtocols;
 
 	/****************** GA Properties ******************/
 
-	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration,
-			int elitismSize, double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
+	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
+			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.population = population;
@@ -60,12 +63,42 @@ public class GADynamicSolver {
 		schedFitness = new long[population];
 		rtFitness = new long[population];
 		elitismGene = new int[elitismSize][resources.size()];
+
+		staticProtocols = new int[resources.size()];
 	}
 
-	public int findSchedulableProtocols(boolean useGA) {
-		int initial = new PreGASolver(tasks, resources, isPrint).initialCheck();
-		if (initial != 0)
+	public int findSchedulableProtocols(boolean useGA, int maxAccess) {
+		PreGASolver preSovler = new PreGASolver(tasks, resources, isPrint);
+		int initial = preSovler.initialCheck(maxAccess);
+		for (int i = 0; i < resources.size(); i++) {
+			staticProtocols[i] = preSovler.staticprotocols[i];
+		}
+		if (initial != 0) {
+			if(initial == 4)
+				similarity = 1;
+			if(initial == 1){
+				int[] protocols = new int[resources.size()];
+				for(int i=0;i<resources.size();i++){
+					protocols[i] = 1;
+				}
+				similarity = ArrayCompare(staticProtocols, protocols);
+			}
+			if(initial == 2){
+				int[] protocols = new int[resources.size()];
+				for(int i=0;i<resources.size();i++){
+					protocols[i] = 2;
+				}
+				similarity = ArrayCompare(staticProtocols, protocols);
+			}
+			if(initial == 3){
+				int[] protocols = new int[resources.size()];
+				for(int i=0;i<resources.size();i++){
+					protocols[i] = 3;
+				}
+				similarity = ArrayCompare(staticProtocols, protocols);
+			}
 			return initial;
+		}
 
 		int result = solve(useGA);
 		return result;
@@ -75,8 +108,10 @@ public class GADynamicSolver {
 		getFirstGene();
 		getFitness(nextGenes);
 		if (bestGene != null) {
+			similarity = ArrayCompare(staticProtocols, bestGene);
 			if (isPrint)
-				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
+				System.out.println(
+						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " similar: " + similarity);
 			return 0;
 		}
 
@@ -162,8 +197,10 @@ public class GADynamicSolver {
 			}
 			getFitness(nextGenes);
 			if (bestGene != null) {
+				similarity = ArrayCompare(staticProtocols, bestGene);
 				if (isPrint)
-					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
+					System.out.println(
+							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " similar: " + similarity);
 				return 0;
 			}
 
@@ -174,15 +211,23 @@ public class GADynamicSolver {
 	}
 
 	private void getFirstGene() {
-		for (int i = 0; i < nextGenes.length; i++) {
-			if (i < PROTOCOL_SIZE) {
-				for (int j = 0; j < nextGenes[i].length; j++) {
-					nextGenes[i][j] = i + 1;
-				}
-			} else {
-				for (int j = 0; j < nextGenes[i].length; j++) {
-					nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
-				}
+		int offsite = 0;
+		if (withStaticProtocols) {
+			for (int j = 0; j < nextGenes[0].length; j++) {
+				nextGenes[0][j] = staticProtocols[j];
+			}
+			offsite = 1;
+		}
+
+		for (int i = offsite; i < PROTOCOL_SIZE + offsite; i++) {
+			for (int j = 0; j < nextGenes[i].length; j++) {
+				nextGenes[i][j] = offsite == 1 ? i:i+1;
+			}
+		}
+
+		for (int i = PROTOCOL_SIZE + offsite; i < nextGenes.length; i++) {
+			for (int j = 0; j < nextGenes[i].length; j++) {
+				nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
 			}
 		}
 	}
@@ -216,8 +261,8 @@ public class GADynamicSolver {
 
 		long maxindex = fitness.get(0).get(2);
 		if (isPrint)
-			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1)
-					+ "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
+					+ Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {
@@ -244,8 +289,8 @@ public class GADynamicSolver {
 			}
 		}
 
-		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  "
-				+ b.get(1) + " b2:  " + b.get(2));
+		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  " + b.get(1)
+				+ " b2:  " + b.get(2));
 		System.err.println(a0 == b0);
 		System.err.println(a1 == b1);
 		System.err.println(a2 == b2);
@@ -274,5 +319,14 @@ public class GADynamicSolver {
 		fitness[0] = sched_fitness;
 		fitness[1] = rt_fitness;
 		return fitness;
+	}
+
+	private double ArrayCompare(int[] a, int[] b) {
+		int sameCount = 0;
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] == b[i])
+				sameCount++;
+		}
+		return (double) sameCount / (double) a.length;
 	}
 }
