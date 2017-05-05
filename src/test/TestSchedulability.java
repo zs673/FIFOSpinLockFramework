@@ -24,13 +24,13 @@ public class TestSchedulability {
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 
-	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	double RESOURCE_SHARING_FACTOR = 0.6;
-	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-	CS_LENGTH_RANGE range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+	static double RESOURCE_SHARING_FACTOR = 0.2;
+	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
+	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 
 	public static void main(String[] args) throws InterruptedException {
-		boolean runParallel = true;
+		boolean runParallel = false;
 		if (runParallel) {
 			TestSchedulability test = new TestSchedulability();
 
@@ -69,8 +69,8 @@ public class TestSchedulability {
 			Thread parallel = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					for (int i = 0; i < 33; i++) {
-						test.experimentIncreasingParallel(i);
+					for (int i = 2; i < 17; i++) {
+						test.experimentIncreasingParallel(i, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					}
 					downLatch.countDown();
 				}
@@ -87,22 +87,42 @@ public class TestSchedulability {
 
 		} else {
 			TestSchedulability test = new TestSchedulability();
+
 			for (int i = 1; i < 11; i++) {
 				test.experimentIncreasingWorkLoad(i);
 			}
-
 			for (int i = 1; i < 301; i++) {
 				test.experimentIncreasingCriticalSectionLength(i);
 			}
 			for (int i = 1; i < 31; i++) {
 				test.experimentIncreasingContention(i);
 			}
-			for (int i = 0; i < 33; i++) {
-				test.experimentIncreasingParallel(i);
+			for (int i = 1; i < 17; i++) {
+				test.experimentIncreasingParallel(i, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 			}
+
+			// final CountDownLatch downLatch = new CountDownLatch(930);
+			// for (int j = 1; j < 31; j++) {
+			// for (int i = 2; i < 33; i++) {
+			// final int access = j;
+			// final int partitions = i;
+			// new Thread(new Runnable() {
+			// public void run() {
+			// test.experimentIncreasingParallel(partitions,access);
+			// downLatch.countDown();
+			// }
+			// }).start();
+			// }
+			// }
+			//
+			// try {
+			// downLatch.await();
+			// } catch (InterruptedException e) {
+			// }
 		}
 
 		IOAResultReader.schedreader();
+
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
@@ -223,9 +243,9 @@ public class TestSchedulability {
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
-	public void experimentIncreasingParallel(int NoP) {
+	public void experimentIncreasingParallel(int NoP, int NoA) {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * (double) NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -253,13 +273,13 @@ public class TestSchedulability {
 			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
-			System.out.println(4 + "" + 1 + " " + NoP + " times: " + i);
+			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
 		}
 
 		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
-		writeSystem(("ioa " + 4 + " " + 1 + " " + NoP), result);
+		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
 	}
 
 	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {

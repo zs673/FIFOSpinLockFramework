@@ -75,7 +75,7 @@ public class IOAResultReader {
 		}
 
 		result += "\n \n Parallel \n";
-		for (int bigSet = 1; bigSet < 6; bigSet++) {
+		for (int bigSet = 1; bigSet < 31; bigSet++) {
 			for (int smallSet = 2; smallSet < 33; smallSet++) {
 				String filepath = "result/" + "ioa 4" + " " + bigSet + " " + smallSet + ".txt";
 

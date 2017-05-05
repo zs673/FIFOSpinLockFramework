@@ -28,11 +28,11 @@ public class GADynamicSolver {
 	int mutationBound;
 	int toumamentSize1, toumamentSize2;
 
-	int currentGeneration = 0;
+	public int currentGeneration = 0;
 	int[][] elitismGene;
 	int[][] nextGenes;
 	int[][] parentGenes;
-	int[] bestGene = null;
+	public int[] bestGene = null;
 	long[] schedFitness;
 	long[] rtFitness;
 	boolean isPrint;
