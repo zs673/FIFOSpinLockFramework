@@ -57,7 +57,7 @@ public class IOAResultReader {
 
 		result += "\n \n Resource Access \n";
 		for (int bigSet = 1; bigSet < 6; bigSet++) {
-			for (int smallSet = 1; smallSet < 31; smallSet++) {
+			for (int smallSet = 1; smallSet < 32; smallSet++) {
 				String filepath = "result/" + "ioa 3" + " " + bigSet + " " + smallSet + ".txt";
 
 				List<String> lines = null;
