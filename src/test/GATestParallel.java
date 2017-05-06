@@ -75,7 +75,7 @@ public class GATestParallel {
 	int mrsp = 0;
 	
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.LONG_CSLEN;
+	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	final double RSF = 0.3;
 
 	public synchronized void addSimilarity(double value) {
@@ -595,6 +595,7 @@ public class GATestParallel {
 	public void parallelExperimentIncreasingWorkload(int NoT) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
+		double rsf = 0.2;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			Thread worker = new Thread(new Runnable() {
@@ -612,7 +613,7 @@ public class GATestParallel {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
