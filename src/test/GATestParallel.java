@@ -25,33 +25,29 @@ import geneticAlgoritmSolver.GADynamicSolver;
 import geneticAlgoritmSolver.StaticSolver;
 
 public class GATestParallel {
-	public static int MAX_PERIOD = 1000;
 
-	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
-	public static int TOTAL_PARTITIONS = 16;
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
 		for (int i = 1; i < 11; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);
 		}
-		for (int i = 1; i < 7; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingCriticalSectionLength(i);
-		}
-		for (int i = 1; i < 32; i= i+5) {
-			test.initResults();
-			test.parallelExperimentIncreasingAccess(i);
-		}
-		for (int i = 2; i < 33; i= i+2) {
-			test.initResults();
-			test.parallelExperimentIncreasingPartitions(i);
-		}
-		for (int i = 1; i < 6; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingrsf(i);
-		}
+//		for (int i = 1; i < 7; i++) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingCriticalSectionLength(i);
+//		}
+//		for (int i = 1; i < 32; i= i+5) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingAccess(i);
+//		}
+//		for (int i = 2; i < 33; i= i+2) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingPartitions(i);
+//		}
+//		for (int i = 1; i < 6; i++) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingrsf(i);
+//		}
 		IOAResultReader.schedreader();
 
 		System.out.println("similarity: ");
@@ -60,21 +56,27 @@ public class GATestParallel {
 		}
 		System.out.println();
 	}
+	
+
+	ArrayList<Double> similarity = new ArrayList<>();
+	
+	public static int MAX_PERIOD = 1000;
+	public static int MIN_PERIOD = 1;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_PARTITIONS = 16;
+	
 	int Dcombine = 0;
 	int fnp = 0;
 	int fp = 0;
-
-	int mrsp = 0;
-	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-
-	final double RSF = 0.3;
 	int Scombine = 0;
 	int siafnp = 0;
 	int siafp = 0;
 	int siamrsp = 0;
-
-	ArrayList<Double> similarity = new ArrayList<>();
+	int mrsp = 0;
+	
+	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+	final double RSF = 0.3;
 
 	public synchronized void addSimilarity(double value) {
 		similarity.add(value);
