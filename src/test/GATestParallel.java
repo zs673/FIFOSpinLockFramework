@@ -468,7 +468,7 @@ public class GATestParallel {
 
 	public void parallelExperimentIncreasingrsf(int resourceSharingFactor) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
+		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 		double rsf;
 		switch (resourceSharingFactor) {
 		case 1:
