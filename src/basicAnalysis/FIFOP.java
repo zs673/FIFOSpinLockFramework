@@ -7,51 +7,6 @@ import entity.SporadicTask;
 
 public class FIFOP {
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
-		long[][] init_Ri = new Utils().initResponseTime(tasks);
-
-		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missDeadline = false;
-		long count = 0;
-
-		for (int i = 0; i < init_Ri.length; i++) {
-			response_time[i] = new long[init_Ri[i].length];
-		}
-
-		new Utils().cloneList(init_Ri, response_time);
-
-		/* a huge busy window to get a fixed Ri */
-		while (!isEqual) {
-			isEqual = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time);
-
-			for (int i = 0; i < response_time_plus.length; i++) {
-				for (int j = 0; j < response_time_plus[i].length; j++) {
-					if (response_time[i][j] != response_time_plus[i][j]) 
-						isEqual = false;
-					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
-						missDeadline = true;
-				}
-			}
-
-			count++;
-			new Utils().cloneList(response_time_plus, response_time);
-
-			if (missDeadline)
-				break;
-		}
-
-		if (printDebug) {
-			if (missDeadline)
-				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, the tasks miss the deadline.");
-			else
-				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, we got the response time.");
-			new Utils().printResponseTime(response_time, tasks);
-		}
-
-		return response_time;
-	}
-
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
@@ -74,6 +29,54 @@ public class FIFOP {
 			}
 		}
 		return response_time_plus;
+	}
+
+	/*
+	 * Return the index of a given resource in stored in a task.
+	 */
+	private int getIndexRInTask(SporadicTask task, Resource resource) {
+		int indexR = -1;
+		if (task.resource_required_index.contains(resource.id - 1)) {
+			for (int j = 0; j < task.resource_required_index.size(); j++) {
+				if (resource.id - 1 == task.resource_required_index.get(j)) {
+					indexR = j;
+					break;
+				}
+			}
+		}
+		return indexR;
+	}
+
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources) {
+		ArrayList<Resource> localBlockingResources = new ArrayList<>();
+		int partition = task.partition;
+
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			// local resources that have a higher ceiling
+			if (resource.partitions.size() == 1 && resource.partitions.get(0) == partition
+					&& resource.ceiling.get(resource.partitions.indexOf(partition)) >= task.priority) {
+				for (int j = 0; j < resource.requested_tasks.size(); j++) {
+					SporadicTask LP_task = resource.requested_tasks.get(j);
+					if (LP_task.partition == partition && LP_task.priority < task.priority) {
+						localBlockingResources.add(resource);
+						break;
+					}
+				}
+			}
+			// global resources that are accessed from the partition
+			if (resource.partitions.contains(partition) && resource.partitions.size() > 1) {
+				for (int j = 0; j < resource.requested_tasks.size(); j++) {
+					SporadicTask LP_task = resource.requested_tasks.get(j);
+					if (LP_task.partition == partition && LP_task.priority < task.priority) {
+						localBlockingResources.add(resource);
+						break;
+					}
+				}
+			}
+		}
+
+		return localBlockingResources;
 	}
 
 	private long getSpinDelay(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long time, long[][] Ris) {
@@ -201,52 +204,49 @@ public class FIFOP {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources) {
-		ArrayList<Resource> localBlockingResources = new ArrayList<>();
-		int partition = task.partition;
+	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
+		long[][] init_Ri = new Utils().initResponseTime(tasks);
 
-		for (int i = 0; i < resources.size(); i++) {
-			Resource resource = resources.get(i);
-			// local resources that have a higher ceiling
-			if (resource.partitions.size() == 1 && resource.partitions.get(0) == partition
-					&& resource.ceiling.get(resource.partitions.indexOf(partition)) >= task.priority) {
-				for (int j = 0; j < resource.requested_tasks.size(); j++) {
-					SporadicTask LP_task = resource.requested_tasks.get(j);
-					if (LP_task.partition == partition && LP_task.priority < task.priority) {
-						localBlockingResources.add(resource);
-						break;
-					}
-				}
-			}
-			// global resources that are accessed from the partition
-			if (resource.partitions.contains(partition) && resource.partitions.size() > 1) {
-				for (int j = 0; j < resource.requested_tasks.size(); j++) {
-					SporadicTask LP_task = resource.requested_tasks.get(j);
-					if (LP_task.partition == partition && LP_task.priority < task.priority) {
-						localBlockingResources.add(resource);
-						break;
-					}
-				}
-			}
+		long[][] response_time = new long[tasks.size()][];
+		boolean isEqual = false, missDeadline = false;
+		long count = 0;
+
+		for (int i = 0; i < init_Ri.length; i++) {
+			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		return localBlockingResources;
-	}
+		new Utils().cloneList(init_Ri, response_time);
 
-	/*
-	 * Return the index of a given resource in stored in a task.
-	 */
-	private int getIndexRInTask(SporadicTask task, Resource resource) {
-		int indexR = -1;
-		if (task.resource_required_index.contains(resource.id - 1)) {
-			for (int j = 0; j < task.resource_required_index.size(); j++) {
-				if (resource.id - 1 == task.resource_required_index.get(j)) {
-					indexR = j;
-					break;
+		/* a huge busy window to get a fixed Ri */
+		while (!isEqual) {
+			isEqual = true;
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time);
+
+			for (int i = 0; i < response_time_plus.length; i++) {
+				for (int j = 0; j < response_time_plus[i].length; j++) {
+					if (response_time[i][j] != response_time_plus[i][j]) 
+						isEqual = false;
+					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+						missDeadline = true;
 				}
 			}
+
+			count++;
+			new Utils().cloneList(response_time_plus, response_time);
+
+			if (missDeadline)
+				break;
 		}
-		return indexR;
+
+		if (printDebug) {
+			if (missDeadline)
+				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, the tasks miss the deadline.");
+			else
+				System.out.println("FIFO-P-NEW    after " + count + " tims of recursion, we got the response time.");
+			new Utils().printResponseTime(response_time, tasks);
+		}
+
+		return response_time;
 	}
 
 }

@@ -9,20 +9,60 @@ import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
 public class SystemGenerator {
+	static public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+		System.out.println("----------------------------------------------------");
+		for (int i = 0; i < tasks.size(); i++) {
+			double util = 0;
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				SporadicTask task = tasks.get(i).get(j);
+				util += ((double) (task.WCET + task.pure_resource_execution_time)) / (double) task.period;
+				System.out.println(tasks.get(i).get(j).toString());
+			}
+			System.out.println("util on partition: " + i + " : " + util);
+		}
+		System.out.println("----------------------------------------------------");
+		System.out.println("****************************************************");
+		for (int i = 0; i < resources.size(); i++) {
+			System.out.println(resources.get(i).toString());
+		}
+		System.out.println("****************************************************");
+
+		String resource_usage = "";
+		/* print resource usage */
+		System.out.println("---------------------------------------------------------------------------------");
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+
+				SporadicTask task = tasks.get(i).get(j);
+				String usage = "T" + task.id + ": ";
+				for (int k = 0; k < task.resource_required_index.size(); k++) {
+					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k) + ";  ";
+				}
+				usage += "\n";
+				if (task.resource_required_index.size() > 0)
+					resource_usage = resource_usage + usage;
+			}
+		}
+
+		System.out.println(resource_usage);
+		System.out.println("---------------------------------------------------------------------------------");
+
+	}
+
+	public CS_LENGTH_RANGE cs_len_range;
 	long csl = -1;
+	public boolean isLogUni;
+	public int maxT;
+	public int minT;
+	public int number_of_max_access;
+	public int number_of_tasks_per_processor;
+	public RESOURCES_RANGE range;
+	public double rsf;
 
 	public int task_id = 1;
-	public int minT;
-	public int maxT;
-	public double util;
 	public int total_partitions;
-	public int number_of_tasks_per_processor;
-	public boolean isLogUni;
-	public CS_LENGTH_RANGE cs_len_range;
-	public RESOURCES_RANGE range;
 
-	public double rsf;
-	public int number_of_max_access;
+	public double util;
 
 	public SystemGenerator(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
 			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access) {
@@ -52,88 +92,6 @@ public class SystemGenerator {
 		this.rsf = rsf;
 		this.number_of_max_access = number_of_max_access;
 		this.csl = csl;
-	}
-
-	/*
-	 * generate task sets for multiprocessor fully partitioned fixed-priority
-	 * system
-	 */
-	public ArrayList<ArrayList<SporadicTask>> generateTasks() {
-		task_id = 1;
-		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>();
-		for (int i = 0; i < total_partitions; i++) {
-			ArrayList<SporadicTask> tasks_on_one_partition = null;
-			while (tasks_on_one_partition == null) {
-				tasks_on_one_partition = generateTaskset(i);
-			}
-			tasks.add(tasks_on_one_partition);
-		}
-		return tasks;
-	}
-
-	private ArrayList<SporadicTask> generateTaskset(int partition_id) {
-		ArrayList<SporadicTask> tasks = new ArrayList<>(number_of_tasks_per_processor);
-		ArrayList<Long> periods = new ArrayList<>(number_of_tasks_per_processor);
-		Random random = new Random();
-
-		tasks.clear();
-		periods.clear();
-		/* generates random periods */
-		while (true) {
-			if (!isLogUni) {
-				long period = (random.nextInt((int) (maxT - minT)) + (int) minT) * 1000;
-				if (!periods.contains(period))
-					periods.add(period);
-			} else {
-				double a1 = Math.log(minT);
-				double a2 = Math.log(maxT + 1);
-				double scaled = random.nextDouble() * (a2 - a1);
-				double shifted = scaled + a1;
-				double exp = Math.exp(shifted);
-
-				int result = (int) exp;
-				result = Math.max((int) minT, result);
-				result = Math.min((int) maxT, result);
-
-				long period = result * 1000;
-				if (!periods.contains(period))
-					periods.add(period);
-			}
-
-			if (periods.size() >= number_of_tasks_per_processor)
-				break;
-		}
-		periods.sort((p1, p2) -> Double.compare(p1, p2));
-
-		/* generate utils */
-		UUnifastDiscard unifastDiscard = new UUnifastDiscard(util, number_of_tasks_per_processor, 1000);
-		ArrayList<Double> utils = null;
-		while (true) {
-			utils = unifastDiscard.getUtils();
-			if (utils != null)
-				if (utils.size() == number_of_tasks_per_processor)
-					break;
-		}
-
-		// double tt = 0;
-		// for(int i=0;i<utils.size();i++){
-		// tt += utils.get(i);
-		// }
-		// System.out.println("total uitls: "+ tt);
-
-		/* generate sporadic tasks */
-		for (int i = 0; i < utils.size(); i++) {
-			long computation_time = (long) (periods.get(i) * utils.get(i));
-			if (computation_time == 0)
-				return null;
-			SporadicTask t = new SporadicTask(-1, periods.get(i), computation_time, partition_id, task_id);
-			task_id++;
-			tasks.add(t);
-		}
-
-		/* assign priorities */
-		new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks, number_of_tasks_per_processor);
-		return tasks;
 	}
 
 	/*
@@ -330,43 +288,85 @@ public class SystemGenerator {
 		return fails;
 	}
 
-	static public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
-		System.out.println("----------------------------------------------------");
-		for (int i = 0; i < tasks.size(); i++) {
-			double util = 0;
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				SporadicTask task = tasks.get(i).get(j);
-				util += ((double) (task.WCET + task.pure_resource_execution_time)) / (double) task.period;
-				System.out.println(tasks.get(i).get(j).toString());
+	/*
+	 * generate task sets for multiprocessor fully partitioned fixed-priority
+	 * system
+	 */
+	public ArrayList<ArrayList<SporadicTask>> generateTasks() {
+		task_id = 1;
+		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>();
+		for (int i = 0; i < total_partitions; i++) {
+			ArrayList<SporadicTask> tasks_on_one_partition = null;
+			while (tasks_on_one_partition == null) {
+				tasks_on_one_partition = generateTaskset(i);
 			}
-			System.out.println("util on partition: " + i + " : " + util);
+			tasks.add(tasks_on_one_partition);
 		}
-		System.out.println("----------------------------------------------------");
-		System.out.println("****************************************************");
-		for (int i = 0; i < resources.size(); i++) {
-			System.out.println(resources.get(i).toString());
-		}
-		System.out.println("****************************************************");
+		return tasks;
+	}
 
-		String resource_usage = "";
-		/* print resource usage */
-		System.out.println("---------------------------------------------------------------------------------");
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
+	private ArrayList<SporadicTask> generateTaskset(int partition_id) {
+		ArrayList<SporadicTask> tasks = new ArrayList<>(number_of_tasks_per_processor);
+		ArrayList<Long> periods = new ArrayList<>(number_of_tasks_per_processor);
+		Random random = new Random();
 
-				SporadicTask task = tasks.get(i).get(j);
-				String usage = "T" + task.id + ": ";
-				for (int k = 0; k < task.resource_required_index.size(); k++) {
-					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k) + ";  ";
-				}
-				usage += "\n";
-				if (task.resource_required_index.size() > 0)
-					resource_usage = resource_usage + usage;
+		tasks.clear();
+		periods.clear();
+		/* generates random periods */
+		while (true) {
+			if (!isLogUni) {
+				long period = (random.nextInt(maxT - minT) + minT) * 1000;
+				if (!periods.contains(period))
+					periods.add(period);
+			} else {
+				double a1 = Math.log(minT);
+				double a2 = Math.log(maxT + 1);
+				double scaled = random.nextDouble() * (a2 - a1);
+				double shifted = scaled + a1;
+				double exp = Math.exp(shifted);
+
+				int result = (int) exp;
+				result = Math.max(minT, result);
+				result = Math.min(maxT, result);
+
+				long period = result * 1000;
+				if (!periods.contains(period))
+					periods.add(period);
 			}
+
+			if (periods.size() >= number_of_tasks_per_processor)
+				break;
+		}
+		periods.sort((p1, p2) -> Double.compare(p1, p2));
+
+		/* generate utils */
+		UUnifastDiscard unifastDiscard = new UUnifastDiscard(util, number_of_tasks_per_processor, 1000);
+		ArrayList<Double> utils = null;
+		while (true) {
+			utils = unifastDiscard.getUtils();
+			if (utils != null)
+				if (utils.size() == number_of_tasks_per_processor)
+					break;
 		}
 
-		System.out.println(resource_usage);
-		System.out.println("---------------------------------------------------------------------------------");
+		// double tt = 0;
+		// for(int i=0;i<utils.size();i++){
+		// tt += utils.get(i);
+		// }
+		// System.out.println("total uitls: "+ tt);
 
+		/* generate sporadic tasks */
+		for (int i = 0; i < utils.size(); i++) {
+			long computation_time = (long) (periods.get(i) * utils.get(i));
+			if (computation_time == 0)
+				return null;
+			SporadicTask t = new SporadicTask(-1, periods.get(i), computation_time, partition_id, task_id);
+			task_id++;
+			tasks.add(t);
+		}
+
+		/* assign priorities */
+		new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks, number_of_tasks_per_processor);
+		return tasks;
 	}
 }

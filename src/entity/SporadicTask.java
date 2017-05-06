@@ -3,34 +3,34 @@ package entity;
 import java.util.ArrayList;
 
 public class SporadicTask {
-	public int priority;
-	public long period;
 	public long deadline;
-	public long WCET;
-	public int partition;
-	public int id;
-
-	public long pure_resource_execution_time = 0;
-	public long spin_delay_by_preemptions = 0;
-	public long Ri = 0, spin = 0, interference = 0, local = 0, indirectspin = 0, total_blocking = 0;
-
-	public ArrayList<Integer> resource_required_index;
-	public ArrayList<Integer> number_of_access_in_one_release;
-
-	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0,
-			fifop_arrivalblocking_overheads = 0;
-	public double migration_overheads_plus = 0;
-
-	/* Used by LP solver from C code */
-	public int hasResource = 0;
-	public int[] resource_required_index_cpoy = null;
-	public int[] number_of_access_in_one_release_copy = null;
-
 	public double[] fifonp = null;
 	public double[] fifop = null;
-	public double[] mrsp = null;
+	/* Used by LP solver from C code */
+	public int hasResource = 0;
+	public int id;
+	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0,
+			fifop_arrivalblocking_overheads = 0;
 
+	public double migration_overheads_plus = 0;
+	public double[] mrsp = null;
 	public double np_section = 0;
+
+	public ArrayList<Integer> number_of_access_in_one_release;
+	public int[] number_of_access_in_one_release_copy = null;
+
+	public int partition;
+	public long period;
+
+	public int priority;
+	public long pure_resource_execution_time = 0;
+	public ArrayList<Integer> resource_required_index;
+
+	public int[] resource_required_index_cpoy = null;
+	public long Ri = 0, spin = 0, interference = 0, local = 0, indirectspin = 0, total_blocking = 0;
+	public long spin_delay_by_preemptions = 0;
+
+	public long WCET;
 	
 
 	public SporadicTask(int priority, long t, long c, int partition, int id) {
@@ -53,15 +53,15 @@ public class SporadicTask {
 		local = 0;
 	}
 
+	public String RTA() {
+		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = " + this.local + ". is schedulable: "
+				+ (Ri <= deadline);
+	}
+
 	@Override
 	public String toString() {
 		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time + ", D = " + this.deadline
 				+ ", Priority = " + this.priority + ", Partition = " + this.partition;
-	}
-
-	public String RTA() {
-		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = " + this.local + ". is schedulable: "
-				+ (Ri <= deadline);
 	}
 
 }

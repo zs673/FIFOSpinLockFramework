@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 public class Resource {
 
-	public int id;
+	public ArrayList<Integer> ceiling;
 	public long csl;
 
-	public ArrayList<SporadicTask> requested_tasks;
+	public int id;
+	public boolean isGlobal = false;
 	public ArrayList<Integer> partitions;
-	public ArrayList<Integer> ceiling;
 
 	public int protocol;
 
-	public boolean isGlobal = false;
+	public ArrayList<SporadicTask> requested_tasks;
 
 	public Resource(int id, long cs_len) {
 		this.id = id;

@@ -11,21 +11,36 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class PreGASolver {
-	ArrayList<ArrayList<SporadicTask>> tasks;
-	ArrayList<Resource> resources;
-	boolean print;
-
-	IAFIFOP fifop = new IAFIFOP();
 	IAFIFONP fifonp = new IAFIFONP();
+	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
+	boolean print;
+	ArrayList<Resource> resources;
 	public int[] staticprotocols;
+
+	ArrayList<ArrayList<SporadicTask>> tasks;
 
 	public PreGASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean print) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.print = print;
 		this.staticprotocols = new int[resources.size()];
+	}
+
+	int[][] getTaskSchedulability(long[][] rt) {
+		int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
+
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < rt[i][j])
+					tasksrt[i][j] = 0;
+				else
+					tasksrt[i][j] = 1;
+			}
+		}
+
+		return tasksrt;
 	}
 
 	public int initialCheck(int maxAccess) {
@@ -98,20 +113,5 @@ public class PreGASolver {
 		}
 
 		return 0;
-	}
-
-	int[][] getTaskSchedulability(long[][] rt) {
-		int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
-
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < rt[i][j])
-					tasksrt[i][j] = 0;
-				else
-					tasksrt[i][j] = 1;
-			}
-		}
-
-		return tasksrt;
 	}
 }

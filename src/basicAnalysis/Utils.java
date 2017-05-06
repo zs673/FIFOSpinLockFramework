@@ -6,6 +6,23 @@ import entity.SporadicTask;
 
 public class Utils {
 
+	public static boolean isArrayContain(int[] array, int value) {
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == value)
+				return true;
+		}
+		return false;
+	}
+
+	public void cloneList(long[][] oldList, long[][] newList) {
+		for (int i = 0; i < oldList.length; i++) {
+			for (int j = 0; j < oldList[i].length; j++) {
+				newList[i][j] = oldList[i][j];
+			}
+		}
+	}
+
 	public long[][] initResponseTime(ArrayList<ArrayList<SporadicTask>> tasks) {
 		long[][] response_times = new long[tasks.size()][];
 
@@ -38,23 +55,6 @@ public class Utils {
 			}
 			System.out.println();
 		}
-	}
-
-	public void cloneList(long[][] oldList, long[][] newList) {
-		for (int i = 0; i < oldList.length; i++) {
-			for (int j = 0; j < oldList[i].length; j++) {
-				newList[i][j] = oldList[i][j];
-			}
-		}
-	}
-
-	public static boolean isArrayContain(int[] array, int value) {
-
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] == value)
-				return true;
-		}
-		return false;
 	}
 
 }
