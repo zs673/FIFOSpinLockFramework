@@ -44,10 +44,10 @@ public class GATestParallel {
 //			test.initResults();
 //			test.parallelExperimentIncreasingPartitions(i);
 //		}
-//		for (int i = 1; i < 6; i++) {
-//			test.initResults();
-//			test.parallelExperimentIncreasingrsf(i);
-//		}
+		for (int i = 1; i < 6; i++) {
+			test.initResults();
+			test.parallelExperimentIncreasingrsf(i);
+		}
 		IOAResultReader.schedreader();
 
 		System.out.println("similarity: ");
