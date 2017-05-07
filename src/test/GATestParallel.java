@@ -75,7 +75,7 @@ public class GATestParallel {
 	int mrsp = 0;
 	
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.LONG_CSLEN;
+	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	final double RSF = 0.3;
 
 	public synchronized void addSimilarity(double value) {
