@@ -28,10 +28,10 @@ public class GATestParallel {
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
-		for (int i = 1; i < 11; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingWorkload(i);
-		}
+//		for (int i = 1; i < 11; i++) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingWorkload(i);
+//		}
 //		for (int i = 1; i < 7; i++) {
 //			test.initResults();
 //			test.parallelExperimentIncreasingCriticalSectionLength(i);
