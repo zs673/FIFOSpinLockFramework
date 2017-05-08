@@ -42,8 +42,8 @@ public class GADynamicSolver {
 
 	/****************** GA Properties ******************/
 
-	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration, int elitismSize,
-			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
+	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population, int maxGeneration,
+			int elitismSize, double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.population = population;
@@ -100,8 +100,8 @@ public class GADynamicSolver {
 			}
 		}
 
-		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  " + b.get(1)
-				+ " b2:  " + b.get(2));
+		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  "
+				+ b.get(1) + " b2:  " + b.get(2));
 		System.err.println(a0 == b0);
 		System.err.println(a1 == b1);
 		System.err.println(a2 == b2);
@@ -117,25 +117,25 @@ public class GADynamicSolver {
 			staticProtocols[i] = preSovler.staticprotocols[i];
 		}
 		if (initial != 0) {
-			if(initial == 4)
+			if (initial == 4)
 				similarity = 1;
-			if(initial == 1){
+			if (initial == 1) {
 				int[] protocols = new int[resources.size()];
-				for(int i=0;i<resources.size();i++){
+				for (int i = 0; i < resources.size(); i++) {
 					protocols[i] = 1;
 				}
 				similarity = ArrayCompare(staticProtocols, protocols);
 			}
-			if(initial == 2){
+			if (initial == 2) {
 				int[] protocols = new int[resources.size()];
-				for(int i=0;i<resources.size();i++){
+				for (int i = 0; i < resources.size(); i++) {
 					protocols[i] = 2;
 				}
 				similarity = ArrayCompare(staticProtocols, protocols);
 			}
-			if(initial == 3){
+			if (initial == 3) {
 				int[] protocols = new int[resources.size()];
-				for(int i=0;i<resources.size();i++){
+				for (int i = 0; i < resources.size(); i++) {
 					protocols[i] = 3;
 				}
 				similarity = ArrayCompare(staticProtocols, protocols);
@@ -158,7 +158,7 @@ public class GADynamicSolver {
 
 		for (int i = offsite; i < PROTOCOL_SIZE + offsite; i++) {
 			for (int j = 0; j < nextGenes[i].length; j++) {
-				nextGenes[i][j] = offsite == 1 ? i:i+1;
+				nextGenes[i][j] = offsite == 1 ? i : i + 1;
 			}
 		}
 
@@ -198,8 +198,8 @@ public class GADynamicSolver {
 
 		long maxindex = fitness.get(0).get(2);
 		if (isPrint)
-			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
-					+ Arrays.toString(nextGenes[(int) maxindex]));
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1)
+					+ "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	private long[] isSystemSchedulable(int[] gene) {
@@ -230,8 +230,8 @@ public class GADynamicSolver {
 		if (bestGene != null) {
 			similarity = ArrayCompare(staticProtocols, bestGene);
 			if (isPrint)
-				System.out.println(
-						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " similar: " + similarity);
+				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " similar: "
+						+ similarity);
 			return 0;
 		}
 
@@ -319,8 +319,8 @@ public class GADynamicSolver {
 			if (bestGene != null) {
 				similarity = ArrayCompare(staticProtocols, bestGene);
 				if (isPrint)
-					System.out.println(
-							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " similar: " + similarity);
+					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene)
+							+ " similar: " + similarity);
 				return 0;
 			}
 

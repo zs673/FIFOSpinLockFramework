@@ -31,7 +31,6 @@ public class SporadicTask {
 	public long spin_delay_by_preemptions = 0;
 
 	public long WCET;
-	
 
 	public SporadicTask(int priority, long t, long c, int partition, int id) {
 		this.priority = priority;
@@ -54,14 +53,14 @@ public class SporadicTask {
 	}
 
 	public String RTA() {
-		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = " + this.local + ". is schedulable: "
-				+ (Ri <= deadline);
+		return "T" + this.id + " : R = " + this.Ri + ", S = " + this.spin + ", I = " + this.interference + ", A = " + this.local
+				+ ". is schedulable: " + (Ri <= deadline);
 	}
 
 	@Override
 	public String toString() {
-		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time + ", D = " + this.deadline
-				+ ", Priority = " + this.priority + ", Partition = " + this.partition;
+		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time + ", D = "
+				+ this.deadline + ", Priority = " + this.priority + ", Partition = " + this.partition;
 	}
 
 }

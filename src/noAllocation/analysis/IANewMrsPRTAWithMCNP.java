@@ -7,8 +7,8 @@ import noAllocation.entity.SporadicTask;
 
 public class IANewMrsPRTAWithMCNP {
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig, long np,
-			boolean testSchedulability) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig,
+			long np, boolean testSchedulability) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -111,7 +111,8 @@ public class IANewMrsPRTAWithMCNP {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math.ceil((double) (Ri + Ris[i]) / (double) hpTask.period) * hpTask.number_of_access_in_one_release.get(indexR);
+				number_of_request_by_HP += Math.ceil((double) (Ri + Ris[i]) / (double) hpTask.period)
+						* hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;
@@ -131,7 +132,8 @@ public class IANewMrsPRTAWithMCNP {
 		return number_of_request_by_Remote_P;
 	}
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability, boolean printDebug) {
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
+			boolean printDebug) {
 		long[][] responsetime = null;
 		// get np section
 		long npsection = 0;
@@ -149,8 +151,8 @@ public class IANewMrsPRTAWithMCNP {
 	 * Calculate the local high priority tasks' interference for a given task t.
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris, ArrayList<Resource> resources,
-			double oneMig, long np) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris,
+			ArrayList<Resource> resources, double oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -200,8 +202,8 @@ public class IANewMrsPRTAWithMCNP {
 	/*
 	 * Calculate the local blocking for task t.
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, double oneMig,
-			long np) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			double oneMig, long np) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -266,8 +268,8 @@ public class IANewMrsPRTAWithMCNP {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			SporadicTask calT) {
+	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
 		double migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 
@@ -410,7 +412,8 @@ public class IANewMrsPRTAWithMCNP {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np,
+					testSchedulability);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -446,14 +449,15 @@ public class IANewMrsPRTAWithMCNP {
 		return response_time;
 	}
 
-	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
-			long jitter, double oneMig, long np, SporadicTask calT) {
+	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris,
+			long time, long jitter, double oneMig, long np, SporadicTask calT) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
 			Resource resource = resources.get(task.resource_required_index.get(i));
 
-			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period) * task.number_of_access_in_one_release.get(i);
+			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period)
+					* task.number_of_access_in_one_release.get(i);
 
 			for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 				long oneAccess = 0;
@@ -494,7 +498,8 @@ public class IANewMrsPRTAWithMCNP {
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP - n + 1;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0
+						: number_of_request_by_Remote_P - getNoRFromHP - n + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
 			}
 		}
@@ -504,7 +509,8 @@ public class IANewMrsPRTAWithMCNP {
 
 		calTask.implementation_overheads += number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 
-		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl + number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl
+				+ number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}

@@ -19,6 +19,7 @@ import allocation.basicAnalysis.NewMrsPRTAWithMCNP;
 import allocation.entity.Resource;
 import allocation.entity.SporadicTask;
 import allocation.generatorTools.SystemGenerator;
+import allocation.generatorTools.GeneatorUtils.ALLOCATION_POLICY;
 import allocation.generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import allocation.generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import allocation.geneticAlgoritmSolver.GADynamicSolver;
@@ -28,22 +29,22 @@ public class GATestParallel {
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
-//		for (int i = 1; i < 11; i++) {
-//			test.initResults();
-//			test.parallelExperimentIncreasingWorkload(i);
-//		}
-//		for (int i = 1; i < 7; i++) {
-//			test.initResults();
-//			test.parallelExperimentIncreasingCriticalSectionLength(i);
-//		}
-//		for (int i = 1; i < 32; i= i+5) {
-//			test.initResults();
-//			test.parallelExperimentIncreasingAccess(i);
-//		}
-//		for (int i = 2; i < 33; i= i+2) {
-//			test.initResults();
-//			test.parallelExperimentIncreasingPartitions(i);
-//		}
+		// for (int i = 1; i < 11; i++) {
+		// test.initResults();
+		// test.parallelExperimentIncreasingWorkload(i);
+		// }
+		// for (int i = 1; i < 7; i++) {
+		// test.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(i);
+		// }
+		// for (int i = 1; i < 32; i= i+5) {
+		// test.initResults();
+		// test.parallelExperimentIncreasingAccess(i);
+		// }
+		// for (int i = 2; i < 33; i= i+2) {
+		// test.initResults();
+		// test.parallelExperimentIncreasingPartitions(i);
+		// }
 		for (int i = 1; i < 6; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingrsf(i);
@@ -56,15 +57,14 @@ public class GATestParallel {
 		}
 		System.out.println();
 	}
-	
 
 	ArrayList<Double> similarity = new ArrayList<>();
-	
+
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
-	
+
 	int Dcombine = 0;
 	int fnp = 0;
 	int fp = 0;
@@ -73,8 +73,8 @@ public class GATestParallel {
 	int siafp = 0;
 	int siamrsp = 0;
 	int mrsp = 0;
-	
-	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+
+	int TOTAL_TASKS = 64;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	final double RSF = 0.3;
 
@@ -145,11 +145,13 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_TASKS, true, range,
+							RESOURCES_RANGE.PARTITIONS, RSF, NoA, false);
+					ArrayList<SporadicTask> taskonearray = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(taskonearray, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(taskonearray, resources, TOTAL_PARTITIONS,
+							ALLOCATION_POLICY.WORST_FIT);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -275,11 +277,13 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_TASKS, true, cs_range,
+							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> taskonearray = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(taskonearray, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(taskonearray, resources, TOTAL_PARTITIONS,
+							ALLOCATION_POLICY.WORST_FIT);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -380,11 +384,13 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, TOTAL_TASKS, true, range, RESOURCES_RANGE.PARTITIONS,
+							RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> taskonearray = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(taskonearray, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(taskonearray, resources, TOTAL_PARTITIONS,
+							ALLOCATION_POLICY.WORST_FIT);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -506,11 +512,13 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_TASKS, true, range,
+							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> taskonearray = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(taskonearray, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(taskonearray, resources, TOTAL_PARTITIONS,
+							ALLOCATION_POLICY.WORST_FIT);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -612,11 +620,13 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NoT, true, range,
+							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> taskonearray = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(taskonearray, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(taskonearray, resources, TOTAL_PARTITIONS,
+							ALLOCATION_POLICY.WORST_FIT);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();

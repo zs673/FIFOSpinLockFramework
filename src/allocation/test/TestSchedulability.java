@@ -15,6 +15,7 @@ import allocation.analysis.IANewMrsPRTAWithMCNP;
 import allocation.entity.Resource;
 import allocation.entity.SporadicTask;
 import allocation.generatorTools.SystemGenerator;
+import allocation.generatorTools.GeneatorUtils.ALLOCATION_POLICY;
 import allocation.generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import allocation.generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
@@ -22,7 +23,7 @@ public class TestSchedulability {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+	static int TOTAL_tASKS = 80;
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
@@ -139,8 +140,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_tASKS, true, range,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -153,9 +154,10 @@ public class TestSchedulability {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> task = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(task, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(task, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
 
 			Ris = mrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
@@ -178,9 +180,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
-				cs_len);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_tASKS, true, null, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -193,9 +194,10 @@ public class TestSchedulability {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> task = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(task, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(task, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
 
 			Ris = mrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
@@ -218,8 +220,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, TOTAL_tASKS, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -232,9 +234,10 @@ public class TestSchedulability {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> task = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(task, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(task, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
 
 			Ris = mrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
@@ -279,29 +282,29 @@ public class TestSchedulability {
 			rsf = 0;
 			break;
 		}
-		
+
 		switch (cslen) {
 		case 1:
-			range =CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 			break;
 		case 2:
-			range =CS_LENGTH_RANGE.SHORT_CS_LEN;
+			range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 			break;
 		case 3:
-			range =CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 			break;
 		case 4:
-			range =CS_LENGTH_RANGE.LONG_CSLEN;
+			range = CS_LENGTH_RANGE.LONG_CSLEN;
 			break;
 		case 5:
-			range =CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
 			break;
 		default:
 			range = null;
 			break;
 		}
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_tASKS, true, range,
+				RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -314,9 +317,10 @@ public class TestSchedulability {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> task = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(task, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(task, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
 
 			Ris = mrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
@@ -339,8 +343,8 @@ public class TestSchedulability {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NoT, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -353,9 +357,10 @@ public class TestSchedulability {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> task = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(task, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(task, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
 
 			Ris = mrsp.getResponseTime(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))

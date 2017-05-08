@@ -92,7 +92,7 @@ public class IOAResultReader {
 			result += "\n";
 
 		}
-		
+
 		result += "\n \n RSF \n";
 		for (int bigSet = 1; bigSet < 6; bigSet++) {
 			for (int smallSet = 1; smallSet < 6; smallSet++) {

@@ -30,23 +30,21 @@ public class IOAAnalysisUtils {
 	public static double MrsP_INSERT = (double) 2347 / (double) 1000;
 
 	public static double MrsP_LOCK = (double) (794 + 259 + 219) / (double) 1000;
-	
+
 	public static double MrsP_UNLOCK = (double) (744 + 65 + 571 + 262) / (double) 1000;
 	public static double PFP_SCHED_CHECK = (double) (492) / (double) 1000;
 	public static double PFP_SCHED_REQUEUE = (double) (603) / (double) 1000;
 
 	public static double PFP_SCHED_SET_NEXT = (double) (308) / (double) 1000;
 	public static double PFP_SCHED_TAKE_NEXT = (double) (274) / (double) 1000;
-	
+
 	public static double PFP_SCHEDULER = (double) (492 + 603 + 274 + 308) / (double) 1000;
-	
-	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
-			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
-	
+
+	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE
+			+ MrsP_HELP_IN_SCHEDULE + PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
+
 	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
 	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
-
-
 
 	// public static double FIFONP_LOCK = 0;
 	// public static double FIFONP_UNLOCK = 0;
@@ -111,10 +109,10 @@ public class IOAAnalysisUtils {
 		int task_id = 1;
 		for (int i = 0; i < Ris.length; i++) {
 			for (int j = 0; j < Ris[i].length; j++) {
-				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = " + tasks.get(i).get(j).spin + ", L = "
-						+ tasks.get(i).get(j).local + ", I = " + tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
-						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin + ", implementation_overheads: "
-						+ tasks.get(i).get(j).implementation_overheads);
+				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = " + tasks.get(i).get(j).spin
+						+ ", L = " + tasks.get(i).get(j).local + ", I = " + tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET
+						+ ", Resource: " + tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin
+						+ ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
 				task_id++;
 			}
 			System.out.println();

@@ -53,7 +53,7 @@ public class PreGASolver {
 
 		if (print) {
 			for (int i = 0; i < resources.size(); i++) {
-				System.out.print("R"+resources.get(i).id +": " + resources.get(i).csl +"    ");
+				System.out.print("R" + resources.get(i).id + ": " + resources.get(i).csl + "    ");
 			}
 			System.out.println("\n" + "static protocols: " + Arrays.toString(staticprotocols));
 		}

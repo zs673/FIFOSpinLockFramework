@@ -224,7 +224,7 @@ public class FIFOP {
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
-					if (response_time[i][j] != response_time_plus[i][j]) 
+					if (response_time[i][j] != response_time_plus[i][j])
 						isEqual = false;
 					if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 						missDeadline = true;
