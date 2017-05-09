@@ -225,7 +225,12 @@ public class IANewMrsPRTAWithMCNP {
 					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], time);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time);
+					int norR = 0;
+					try {
+						norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time);
+					} catch (Exception e) {
+						System.out.println("sss");
+					}
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;

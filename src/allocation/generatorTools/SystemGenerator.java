@@ -284,16 +284,24 @@ public class SystemGenerator {
 			tasks = null;
 			break;
 		}
+		
+		if(resources != null){
+			for(int i=0;i<resources.size();i++){
+				Resource res= resources.get(i);
+				res.ceiling.clear();
+				res.isGlobal = false;
+				res.partitions.clear();
+				res.requested_tasks.clear();
+			}
+		}
 
 		if (tasks != null) {
-			System.out.println("before: size: " + tasks.size());
 			for (int i = 0; i < tasks.size(); i++) {
 				if (tasks.get(i).size() == 0) {
 					tasks.remove(i);
 					i--;
 				}
 			}
-			System.out.println("after: size: " + tasks.size());
 			/* for each resource */
 			for (int i = 0; i < resources.size(); i++) {
 				Resource resource = resources.get(i);
