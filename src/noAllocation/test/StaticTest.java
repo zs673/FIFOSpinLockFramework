@@ -77,6 +77,7 @@ public class StaticTest {
 		cslen.start();
 		access.start();
 		parallel.start();
+		
 		downLatch.await();
 
 		IOAResultReader.schedreader();
