@@ -2,3 +2,9 @@
 /.gitignore
 /allocation/
 /noAllocation/
+/analysis/
+/basicAnalysis/
+/entity/
+/generatorTools/
+/geneticAlgoritmSolver/
+/test/
