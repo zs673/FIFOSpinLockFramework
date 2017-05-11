@@ -17,7 +17,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGeneratorNoAllocation;
+import generatorTools.SystemGenerator;
 import geneticAlgoritmSolver.StaticSolver;
 
 public class StaticTest {
@@ -59,7 +59,7 @@ public class StaticTest {
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
 
@@ -121,7 +121,7 @@ public class StaticTest {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
@@ -160,7 +160,7 @@ public class StaticTest {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
@@ -242,7 +242,7 @@ public class StaticTest {
 			range = null;
 			break;
 		}
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
@@ -282,7 +282,7 @@ public class StaticTest {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;

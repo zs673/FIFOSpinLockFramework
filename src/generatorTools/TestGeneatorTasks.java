@@ -21,7 +21,7 @@ public class TestGeneatorTasks {
 		double RESOURCE_SHARING_FACTOR = 0.2;
 		int TOTAL_PARTITIONS = 16;
 
-		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS,
+		SystemGeneratorWithAllocation geneator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS,
 				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
 		for (int j = 0; j < NUMBER_OF_SYSTEMS; j++) {
@@ -30,16 +30,16 @@ public class TestGeneatorTasks {
 			geneator.generateResourceUsage(tasks, resources);
 
 			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
-			SystemGenerator.testifyAllocatedTasksetAndResource(tasksWF, resources);
+			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksWF, resources);
 
 			System.out.println("\n\n");
 
 			ArrayList<ArrayList<SporadicTask>> tasksBF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.BEST_FIT);
-			SystemGenerator.testifyAllocatedTasksetAndResource(tasksBF, null);
+			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksBF, null);
 
 			System.out.println("\n\n");
 			ArrayList<ArrayList<SporadicTask>> tasksFF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.FIRST_FIT);
-			SystemGenerator.testifyAllocatedTasksetAndResource(tasksFF, null);
+			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksFF, null);
 
 			System.out.println(j);
 		}
