@@ -32,29 +32,35 @@ public class StaticTest {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
+		boolean parallel = false;
 		StaticTest test = new StaticTest();
-		final CountDownLatch downLatch = new CountDownLatch(300);
+		if (parallel) {
+			final CountDownLatch downLatch = new CountDownLatch(300);
 
-		for (int i = 1; i < 301; i++) {
-			final int cslen = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingCriticalSectionLength(cslen);
-					downLatch.countDown();
-				}
+			for (int i = 1; i < 301; i++) {
+				final int cslen = i;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						test.experimentIncreasingCriticalSectionLength(cslen);
+						downLatch.countDown();
+					}
 
-			}).start();
+				}).start();
+			}
+			downLatch.await();
+		} else {
+			for (int i = 1; i < 301; i++) {
+				test.experimentIncreasingCriticalSectionLength(i);
+			}
 		}
-
-		downLatch.await();
 
 		IOAResultReader.schedreader();
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
 				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
 
 		long[][] Ris;
@@ -115,8 +121,8 @@ public class StaticTest {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -236,8 +242,9 @@ public class StaticTest {
 			range = null;
 			break;
 		}
-		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllocation generator = new SystemGeneratorNoAllocation(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();

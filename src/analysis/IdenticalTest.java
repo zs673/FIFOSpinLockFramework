@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGenerator;
 import generatorTools.GeneatorUtils.ALLOCATION_POLICY;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import generatorTools.SystemGenerator;
 
 public class IdenticalTest {
 

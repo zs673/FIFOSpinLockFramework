@@ -155,6 +155,7 @@ public class IANewMrsPRTAWithMCNP {
 			ArrayList<Resource> resources, double oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
+
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -168,6 +169,7 @@ public class IANewMrsPRTAWithMCNP {
 						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
+
 		return interference;
 	}
 
