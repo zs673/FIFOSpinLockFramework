@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import noAllocation.analysis.IACombinedProtocol;
 import noAllocation.analysis.IAFIFONP;
 import noAllocation.analysis.IAFIFOP;
 import noAllocation.analysis.IANewMrsPRTAWithMCNP;
@@ -17,6 +18,7 @@ import noAllocation.entity.SporadicTask;
 import noAllocation.generatorTools.SystemGenerator;
 import noAllocation.generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import noAllocation.generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import noAllocation.geneticAlgoritmSolver.StaticSolver;
 
 public class StaticTest {
 	public static int MAX_PERIOD = 1000;
@@ -31,58 +33,25 @@ public class StaticTest {
 
 	public static void main(String[] args) throws Exception {
 		StaticTest test = new StaticTest();
-		final CountDownLatch downLatch = new CountDownLatch(4);
+		final CountDownLatch downLatch = new CountDownLatch(300);
 
-		Thread workload = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 1; i < 11; i++) {
-					test.experimentIncreasingWorkLoad(i);
+		for (int i = 1; i < 301; i++) {
+			final int cslen = i;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					test.experimentIncreasingCriticalSectionLength(cslen);
+					downLatch.countDown();
 				}
-				downLatch.countDown();
-			}
-		});
 
-		Thread cslen = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 1; i < 301; i++) {
-					test.experimentIncreasingCriticalSectionLength(i);
-				}
-				downLatch.countDown();
-			}
-		});
+			}).start();
+		}
 
-		Thread access = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 1; i < 31; i++) {
-					test.experimentIncreasingContention(i);
-				}
-				downLatch.countDown();
-			}
-		});
-
-		Thread parallel = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (int i = 2; i < 17; i++) {
-					test.experimentIncreasingParallel(i, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-				}
-				downLatch.countDown();
-			}
-		});
-
-		workload.start();
-		cslen.start();
-		access.start();
-		parallel.start();
-		
 		downLatch.await();
 
 		IOAResultReader.schedreader();
 	}
-	
+
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
@@ -92,11 +61,13 @@ public class StaticTest {
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
+		IACombinedProtocol sCombine = new IACombinedProtocol();
 
 		String result = "";
 		int sfnp = 0;
 		int sfp = 0;
 		int smrsp = 0;
+		int scombine = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
@@ -114,15 +85,34 @@ public class StaticTest {
 			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
+
+			int maxAccess = 0;
+			for (int l = 0; l < tasks.size(); l++) {
+				for (int j = 0; j < tasks.get(l).size(); j++) {
+					SporadicTask task = tasks.get(l).get(j);
+					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
+						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
+							maxAccess = task.number_of_access_in_one_release.get(k);
+						}
+					}
+				}
+			}
+			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
+			for (int l = 0; l < resources.size(); l++) {
+				resources.get(l).protocol = protocols[l];
+			}
+			Ris = sCombine.calculateResponseTime(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				scombine++;
+
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
 		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + (double) scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
-
 
 	public void experimentIncreasingContention(int NoA) {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
