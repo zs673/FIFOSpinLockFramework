@@ -317,7 +317,7 @@ public class SystemGeneratorNoAllocation {
 		return fails;
 	}
 
-	static public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
 		for (int i = 0; i < tasks.size(); i++) {
 			double util = 0;
