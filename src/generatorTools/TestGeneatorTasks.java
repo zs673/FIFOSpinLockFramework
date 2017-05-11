@@ -30,16 +30,16 @@ public class TestGeneatorTasks {
 			geneator.generateResourceUsage(tasks, resources);
 
 			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
-			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksWF, resources);
+			geneator.testifyAllocatedTasksetAndResource(tasksWF, resources);
 
 			System.out.println("\n\n");
 
 			ArrayList<ArrayList<SporadicTask>> tasksBF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.BEST_FIT);
-			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksBF, null);
+			geneator.testifyAllocatedTasksetAndResource(tasksBF, null);
 
 			System.out.println("\n\n");
 			ArrayList<ArrayList<SporadicTask>> tasksFF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.FIRST_FIT);
-			SystemGeneratorWithAllocation.testifyAllocatedTasksetAndResource(tasksFF, null);
+			geneator.testifyAllocatedTasksetAndResource(tasksFF, null);
 
 			System.out.println(j);
 		}

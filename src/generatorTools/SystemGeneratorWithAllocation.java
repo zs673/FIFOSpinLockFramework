@@ -471,7 +471,7 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	static public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
 		for (int i = 0; i < tasks.size(); i++) {
 			double util = 0;
@@ -515,7 +515,7 @@ public class SystemGeneratorWithAllocation {
 
 	}
 
-	static public void testifyGeneratedTasksetAndResource(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources) {
+	public void testifyGeneratedTasksetAndResource(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
 		for (int i = 0; i < tasks.size(); i++) {
 			System.out.println(tasks.get(i).toString());
