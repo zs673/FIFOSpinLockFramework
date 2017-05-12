@@ -32,9 +32,6 @@ public class IOAResultReader {
 				if (lines != null)
 					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
-
-			result += "\n";
-
 		}
 
 		result += "\n \n CS Length \n";
@@ -50,9 +47,6 @@ public class IOAResultReader {
 				if (lines != null)
 					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
-
-			result += "\n";
-
 		}
 
 		result += "\n \n Resource Access \n";
@@ -69,9 +63,6 @@ public class IOAResultReader {
 				if (lines != null)
 					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
-
-			result += "\n";
-
 		}
 
 		result += "\n \n Parallel \n";
@@ -88,14 +79,11 @@ public class IOAResultReader {
 				if (lines != null)
 					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
-
-			result += "\n";
-
 		}
 
 		result += "\n \n RSF \n";
-		for (int bigSet = 1; bigSet < 6; bigSet++) {
-			for (int smallSet = 1; smallSet < 6; smallSet++) {
+		for (int bigSet = 1; bigSet < 100; bigSet++) {
+			for (int smallSet = 1; smallSet < 100; smallSet++) {
 				String filepath = "result/" + "ioa 5" + " " + bigSet + " " + smallSet + ".txt";
 
 				List<String> lines = null;
@@ -104,12 +92,9 @@ public class IOAResultReader {
 				} catch (IOException e) {
 				}
 
-				if (lines != null)
+				if (lines != null && !lines.isEmpty())
 					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
-
-			result += "\n";
-
 		}
 
 		System.out.println(result);

@@ -174,7 +174,7 @@ public class SystemGenerator {
 					cs_len = ran.nextInt(100 - 50) + 51;
 					break;
 				case SHORT_CS_LEN:
-					cs_len = ran.nextInt(50 - 15) + 16;
+					cs_len = ran.nextInt(70) + 1;  // ran.nextInt(50 - 15) + 16
 					break;
 				case VERY_SHORT_CS_LEN:
 					cs_len = ran.nextInt(15) + 1;
