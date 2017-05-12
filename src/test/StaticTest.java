@@ -113,10 +113,7 @@ public class StaticTest {
 			}
 		}
 
-		
-		java.awt.Toolkit.getDefaultToolkit().beep(); 
 		IOAResultReader.schedreader();
-		java.awt.Toolkit.getDefaultToolkit().beep(); 
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
