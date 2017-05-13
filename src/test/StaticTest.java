@@ -33,7 +33,7 @@ public class StaticTest {
 	public static void main(String[] args) throws Exception {
 		StaticTest test = new StaticTest();
 
-		for (cslen = 40; cslen <= 50; cslen += 2) {
+		for (cslen = 40; cslen <= 150; cslen += 2) {
 
 			final CountDownLatch workloadcd = new CountDownLatch(10);
 			for (int i = 1; i < 11; i++) {

@@ -19,7 +19,7 @@ public class IOAResultReader {
 	}
 
 	public static void schedreader(String title, boolean append) {
-		String result = null;
+		String result = "";
 		
 		if(title != null)
 			result+= title +"\n";
