@@ -25,18 +25,16 @@ public class StaticTest {
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
-	static int cslen = -1;
+	static int cslen;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
-		
-		cslen = Integer.parseInt(args[0]);
-		
-		boolean parallel = true;
 		StaticTest test = new StaticTest();
-		if (parallel) {
+
+		for (cslen = 40; cslen <= 50; cslen += 2) {
+
 			final CountDownLatch workloadcd = new CountDownLatch(10);
 			for (int i = 1; i < 11; i++) {
 				final int workload = i;
@@ -51,20 +49,6 @@ public class StaticTest {
 			}
 			workloadcd.await();
 
-			// final CountDownLatch cslencd = new CountDownLatch(300);
-			// for (int i = 1; i < 301; i++) {
-			// final int cslen = i;
-			// new Thread(new Runnable() {
-			// @Override
-			// public void run() {
-			// test.experimentIncreasingCriticalSectionLength(cslen);
-			// cslencd.countDown();
-			// }
-			//
-			// }).start();
-			// }
-			// cslencd.await();
-			//
 			final CountDownLatch accesscd = new CountDownLatch(20);
 			for (int i = 1; i < 21; i++) {
 				final int access = i;
@@ -107,13 +91,9 @@ public class StaticTest {
 			}
 			rsfcd.await();
 
-		} else {
-			for (int i = 1; i < 301; i++) {
-				test.experimentIncreasingCriticalSectionLength(i);
-			}
+			IOAResultReader.schedreader("cslen: " + cslen, true);
 		}
 
-		IOAResultReader.schedreader();
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {

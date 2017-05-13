@@ -134,7 +134,7 @@ public class TestSchedulability {
 			// }
 		}
 
-		IOAResultReader.schedreader();
+		IOAResultReader.schedreader(null, false);
 
 	}
 

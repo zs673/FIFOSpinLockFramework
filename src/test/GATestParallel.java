@@ -48,7 +48,7 @@ public class GATestParallel {
 			test.initResults();
 			test.parallelExperimentIncreasingrsf(i);
 		}
-		IOAResultReader.schedreader();
+		IOAResultReader.schedreader(null, false);
 
 		System.out.println("similarity: ");
 		for (int i = 0; i < test.similarity.size(); i++) {
