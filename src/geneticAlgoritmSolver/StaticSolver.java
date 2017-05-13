@@ -20,18 +20,33 @@ public class StaticSolver {
 			Resource res = resources.get(i);
 			int protocol = 0;
 
-			if (res.csl <= 60) {
+			if (res.csl <= 60)
 				protocol = 1;
-			} else if (res.csl > 60 && res.csl < 100) {
+			else if (res.csl < 70) {
+				if (NoA < 2)
+					protocol = 2;
+				else
+					protocol = 1;
+			} 
+			
+			else if (res.csl <= 100) {
 				if (NoP <= 7 || NoA > 13)
 					protocol = 1;
 				else if (NoA <= 3)
 					protocol = 2;
 				else
 					protocol = 3;
-			} else {
+			} 
+			
+			
+			else if (res.csl <= 150){
+				if (NoA < 2)
+					protocol = 2;
+				else
+					protocol = 3;
+			}	
+			else
 				protocol = 3;
-			}
 
 			if (protocol != 0)
 				protocols[i] = protocol;
