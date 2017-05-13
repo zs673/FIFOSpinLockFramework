@@ -19,7 +19,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 
 public class StaticTest {
-	public static int MAX_PERIOD = 2000;
+	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -33,7 +33,7 @@ public class StaticTest {
 	public static void main(String[] args) throws Exception {
 		StaticTest test = new StaticTest();
 
-		for (cslen = 40; cslen <= 150; cslen += 2) {
+		for (cslen = 152; cslen <= 200; cslen += 2) {
 
 			final CountDownLatch workloadcd = new CountDownLatch(10);
 			for (int i = 1; i < 11; i++) {
