@@ -19,8 +19,8 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 
 public class StaticTest3cslen {
-	public static int MAX_PERIOD = 20;
-	public static int MIN_PERIOD = 10;
+	public static int MAX_PERIOD = 1000;
+	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
@@ -30,9 +30,10 @@ public class StaticTest3cslen {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
+		final CountDownLatch downLatch = new CountDownLatch(9);
 		StaticTest3cslen test = new StaticTest3cslen();
-		final CountDownLatch downLatch = new CountDownLatch(300);
-		for (int i = 1; i < 301; i++) {
+	
+		for (int i = 1; i < 10; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				public void run() {
@@ -42,7 +43,7 @@ public class StaticTest3cslen {
 			}).start();
 		}
 
-		downLatch.wait();
+		downLatch.await();
 
 		IOAResultReader.schedreader(null, false);
 	}
