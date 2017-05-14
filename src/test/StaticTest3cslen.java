@@ -19,8 +19,8 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 
 public class StaticTest3cslen {
-	public static int MAX_PERIOD = 10;
-	public static int MIN_PERIOD = 1;
+	public static int MAX_PERIOD = 20;
+	public static int MIN_PERIOD = 10;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
@@ -35,15 +35,11 @@ public class StaticTest3cslen {
 		for (int i = 1; i < 301; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
-				@Override
 				public void run() {
-
 					test.experimentIncreasingCriticalSectionLength(cslen);
 					downLatch.countDown();
 				}
-
 			}).start();
-			
 		}
 
 		downLatch.wait();
