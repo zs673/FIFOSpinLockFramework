@@ -31,7 +31,7 @@ public class StaticTest3cslen {
 
 	public static void main(String[] args) throws Exception {
 		StaticTest3cslen test = new StaticTest3cslen();
-		final CountDownLatch workloadcd = new CountDownLatch(20);
+
 		for (int j = 0; j < 20; j++) {
 			if (j == 0) {
 				MAX_PERIOD = 10;
@@ -44,19 +44,21 @@ public class StaticTest3cslen {
 				MIN_PERIOD = 10 + MIN_PERIOD;
 			}
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 1; i < 301; i++) {
-						test.experimentIncreasingCriticalSectionLength(i);
+			final CountDownLatch workloadcd = new CountDownLatch(300);
+			for (int i = 1; i < 301; i++) {
+				final int cslen = i;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						test.experimentIncreasingCriticalSectionLength(cslen);
+						workloadcd.countDown();
 					}
-					IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
-					workloadcd.countDown();
-				}
-			}).start();
+				}).start();
+			}
+			workloadcd.await();
+			IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 		}
 
-		workloadcd.await();
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
