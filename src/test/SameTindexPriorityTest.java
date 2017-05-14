@@ -29,19 +29,29 @@ public class SameTindexPriorityTest {
 	public static void main(String[] args) throws Exception {
 		StaticTest3cslen test = new StaticTest3cslen();
 
-		final CountDownLatch workloadcd = new CountDownLatch(300);
-		for (int i = 1; i < 301; i++) {
-			final int cslen = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingCriticalSectionLength(cslen);
-					workloadcd.countDown();
-				}
-			}).start();
+		for (int j = 0; j < 50; j++) {
+			if(j == 0)
+				PERIOD = 1;
+			else if (j == 1)
+				PERIOD = 10;
+			else
+				PERIOD = PERIOD + 10;
+			
+			final CountDownLatch workloadcd = new CountDownLatch(300);
+			for (int i = 1; i < 301; i++) {
+				final int cslen = i;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						test.experimentIncreasingCriticalSectionLength(cslen);
+						workloadcd.countDown();
+					}
+				}).start();
+			}
+			workloadcd.await();
+			
+			IOAResultReader.schedreader("period: " + PERIOD, true);
 		}
-		workloadcd.await();
-		IOAResultReader.schedreader("period: " + PERIOD, true);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
