@@ -32,13 +32,10 @@ public class StaticTest3cslen {
 	public static void main(String[] args) throws Exception {
 		StaticTest3cslen test = new StaticTest3cslen();
 
-		for (int j = 0; j < 20; j++) {
+		for (int j = 0; j < 80; j++) {
 			if (j == 0) {
-				MAX_PERIOD = 10;
-				MIN_PERIOD = 1;
-			} else if (j == 1) {
-				MAX_PERIOD = 20;
-				MIN_PERIOD = 10;
+				MAX_PERIOD = 220;
+				MIN_PERIOD = 210;
 			} else {
 				MAX_PERIOD = 10 + MAX_PERIOD;
 				MIN_PERIOD = 10 + MIN_PERIOD;
