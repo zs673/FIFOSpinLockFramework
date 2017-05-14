@@ -30,10 +30,10 @@ public class StaticTest3cslen {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
-		final CountDownLatch downLatch = new CountDownLatch(9);
+		final CountDownLatch downLatch = new CountDownLatch(300);
 		StaticTest3cslen test = new StaticTest3cslen();
 	
-		for (int i = 1; i < 10; i++) {
+		for (int i = 1; i < 301; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				public void run() {
