@@ -19,8 +19,8 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 
 public class StaticTest3cslen {
-	public static int MAX_PERIOD = 50;
-	public static int MIN_PERIOD = 10;
+	public static int MAX_PERIOD = 10;
+	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
@@ -30,22 +30,33 @@ public class StaticTest3cslen {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
-		final CountDownLatch downLatch = new CountDownLatch(300);
 		StaticTest3cslen test = new StaticTest3cslen();
-	
-		for (int i = 1; i < 301; i++) {
-			final int cslen = i;
+		final CountDownLatch workloadcd = new CountDownLatch(20);
+		for (int j = 0; j < 20; j++) {
+			if (j == 0) {
+				MAX_PERIOD = 10;
+				MIN_PERIOD = 1;
+			} else if (j == 1) {
+				MAX_PERIOD = 20;
+				MIN_PERIOD = 10;
+			} else {
+				MAX_PERIOD = 10 + MAX_PERIOD;
+				MIN_PERIOD = 10 + MIN_PERIOD;
+			}
+
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
-					test.experimentIncreasingCriticalSectionLength(cslen);
-					downLatch.countDown();
+					for (int i = 1; i < 301; i++) {
+						test.experimentIncreasingCriticalSectionLength(i);
+					}
+					IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+					workloadcd.countDown();
 				}
 			}).start();
 		}
 
-		downLatch.await();
-
-		IOAResultReader.schedreader(null, false);
+		workloadcd.await();
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {

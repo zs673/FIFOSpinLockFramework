@@ -126,7 +126,7 @@ public class SystemGenerator {
 			long computation_time = (long) (periods.get(i) * utils.get(i));
 			if (computation_time == 0)
 				return null;
-			SporadicTask t = new SporadicTask(-1, periods.get(i), computation_time, partition_id, task_id, utils.get(i));
+			SporadicTask t = new SporadicTask(1, periods.get(i), computation_time, partition_id, task_id, utils.get(i));
 			task_id++;
 			tasks.add(t);
 		}
