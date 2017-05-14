@@ -17,7 +17,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGeneratorSameUP;
 
-public class sameTindexPriorityTest {
+public class SameTindexPriorityTest {
 	public static int PERIOD = 1;
 
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
