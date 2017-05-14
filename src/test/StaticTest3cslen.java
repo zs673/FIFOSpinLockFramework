@@ -19,7 +19,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.SystemGenerator;
 
 public class StaticTest3cslen {
-	public static int MAX_PERIOD = 500;
+	public static int MAX_PERIOD = 100;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
