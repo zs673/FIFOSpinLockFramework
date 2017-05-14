@@ -8,7 +8,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
-public class SystemGenerator {
+public class SystemGeneratorSameUP {
 	public CS_LENGTH_RANGE cs_len_range;
 	long csl = -1;
 	public boolean isLogUni;
@@ -20,11 +20,12 @@ public class SystemGenerator {
 	public double rsf;
 
 	public int task_id = 1;
+	int priority = 10000;
 	public int total_partitions;
 
 	public double util;
 
-	public SystemGenerator(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
+	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
 			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access) {
 		this.minT = minT;
 		this.maxT = maxT;
@@ -39,7 +40,7 @@ public class SystemGenerator {
 		this.csl = -1;
 	}
 
-	public SystemGenerator(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
+	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
 			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, long csl) {
 		this.minT = minT;
 		this.maxT = maxT;
@@ -73,66 +74,18 @@ public class SystemGenerator {
 
 	private ArrayList<SporadicTask> generateTaskset(int partition_id) {
 		ArrayList<SporadicTask> tasks = new ArrayList<>(number_of_tasks_per_processor);
-		ArrayList<Long> periods = new ArrayList<>(number_of_tasks_per_processor);
-		Random random = new Random();
-
 		tasks.clear();
-		periods.clear();
-		/* generates random periods */
-		while (true) {
-			if (!isLogUni) {
-				long period = (random.nextInt(maxT - minT) + minT) * 1000;
-				if (!periods.contains(period))
-					periods.add(period);
-			} else {
-				double a1 = Math.log(minT);
-				double a2 = Math.log(maxT + 1);
-				double scaled = random.nextDouble() * (a2 - a1);
-				double shifted = scaled + a1;
-				double exp = Math.exp(shifted);
-
-				int result = (int) exp;
-				result = Math.max(minT, result);
-				result = Math.min(maxT, result);
-
-				long period = result * 1000;
-				if (!periods.contains(period))
-					periods.add(period);
-			}
-
-			if (periods.size() >= number_of_tasks_per_processor)
-				break;
-		}
-		periods.sort((p1, p2) -> Double.compare(p1, p2));
-
-		/* generate utils */
-		UUnifastDiscard unifastDiscard = new UUnifastDiscard(util, number_of_tasks_per_processor, 1000);
-		ArrayList<Double> utils = null;
-		while (true) {
-			utils = unifastDiscard.getUtils();
-			if (utils != null)
-				if (utils.size() == number_of_tasks_per_processor)
-					break;
-		}
-
-		// double tt = 0;
-		// for(int i=0;i<utils.size();i++){
-		// tt += utils.get(i);
-		// }
-		// System.out.println("total uitls: "+ tt);
 
 		/* generate sporadic tasks */
-		for (int i = 0; i < utils.size(); i++) {
-			long computation_time = (long) (periods.get(i) * utils.get(i));
+		for (int i = 0; i < number_of_tasks_per_processor; i++) {
+			long computation_time = (long) (minT * 1000 * 0.1);
 			if (computation_time == 0)
 				return null;
-			SporadicTask t = new SporadicTask(1, periods.get(i), computation_time, partition_id, task_id, utils.get(i));
+			SporadicTask t = new SporadicTask(priority, minT * 1000, computation_time, partition_id, task_id, 0.1);
 			task_id++;
+			priority--;
 			tasks.add(t);
 		}
-
-		/* assign priorities */
-		new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks, number_of_tasks_per_processor);
 		return tasks;
 	}
 
@@ -174,7 +127,7 @@ public class SystemGenerator {
 					cs_len = ran.nextInt(100 - 50) + 51;
 					break;
 				case SHORT_CS_LEN:
-					cs_len = ran.nextInt(70) + 1;  // ran.nextInt(50 - 15) + 16
+					cs_len = ran.nextInt(70) + 1; // ran.nextInt(50 - 15) + 16
 					break;
 				case VERY_SHORT_CS_LEN:
 					cs_len = ran.nextInt(15) + 1;
@@ -277,7 +230,7 @@ public class SystemGenerator {
 					task.WCET = task.WCET - total_resource_execution_time;
 					task.pure_resource_execution_time = total_resource_execution_time;
 
-					if (task.resource_required_index.size() > 0) 
+					if (task.resource_required_index.size() > 0)
 						task.hasResource = 1;
 				}
 

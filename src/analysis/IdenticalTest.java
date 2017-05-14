@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGenerator;
+import generatorTools.SystemGeneratorDef;
 
 public class IdenticalTest {
 
@@ -53,7 +53,7 @@ public class IdenticalTest {
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
 				TOTAL_PARTITIONS, NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS,
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 

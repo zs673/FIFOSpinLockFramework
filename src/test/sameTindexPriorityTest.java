@@ -10,73 +10,79 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorSameUP;
 
-public class StaticTest2DeeperLooking {
-	public static int MAX_PERIOD = 1000;
-	public static int MIN_PERIOD = 1;
+public class sameTindexPriorityTest {
+	public static int PERIOD = 1;
+
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-
-	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
-	static int cslen;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
-	public static int TOTAL_PARTITIONS = 16;
+	public static int TOTAL_PARTITIONS = 4;
 
 	public static void main(String[] args) throws Exception {
-		StaticTest2DeeperLooking test = new StaticTest2DeeperLooking();
+		StaticTest3cslen test = new StaticTest3cslen();
 
-		for (cslen = 40; cslen <= 180; cslen += 2) {
-
-			final CountDownLatch accesscd = new CountDownLatch(20);
-			for (int i = 1; i < 21; i++) {
-				final int access = i;
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						test.experimentIncreasingContention(access);
-						accesscd.countDown();
-					}
-
-				}).start();
-			}
-			accesscd.await();
-
-			IOAResultReader.schedreader("cslen: " + cslen, true);
+		final CountDownLatch workloadcd = new CountDownLatch(300);
+		for (int i = 1; i < 301; i++) {
+			final int cslen = i;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					test.experimentIncreasingCriticalSectionLength(cslen);
+					workloadcd.countDown();
+				}
+			}).start();
 		}
-
+		workloadcd.await();
+		IOAResultReader.schedreader("period: " + PERIOD, true);
 	}
 
-	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, cslen);
+	public void experimentIncreasingCriticalSectionLength(int cs_len) {
+		SystemGeneratorSameUP generator = new SystemGeneratorSameUP(PERIOD, PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
+		IAFIFOP fp = new IAFIFOP();
+		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
 		String result = "";
 		int sfnp = 0;
+		int sfp = 0;
+		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
+			Ris = mrsp.getResponseTime(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				smrsp++;
+
 			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
+			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfp++;
+
+			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		result = (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
-		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
+		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
 
 	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {

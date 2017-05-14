@@ -20,7 +20,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGenerator;
+import generatorTools.SystemGeneratorDef;
 import geneticAlgoritmSolver.GADynamicSolver;
 import geneticAlgoritmSolver.StaticSolver;
 
@@ -144,7 +144,7 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -274,7 +274,7 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -379,7 +379,7 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
 							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -505,7 +505,7 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
 							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -611,7 +611,7 @@ public class GATestParallel {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
 							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();

@@ -16,6 +16,16 @@ public class PriorityGeneator {
 			taskset.get(i).priority = priorities.get(i);
 		}
 	}
+	
+	public void indexMonotonicPriorityAssignment(ArrayList<SporadicTask> taskset, int number) {
+		ArrayList<Integer> priorities = generatePriorities(number);
+		/* deadline monotonic assignment */
+		taskset.sort((t1, t2) -> Double.compare(t1.id, t2.id));
+		priorities.sort((p1, p2) -> -Integer.compare(p1, p2));
+		for (int i = 0; i < taskset.size(); i++) {
+			taskset.get(i).priority = priorities.get(i);
+		}
+	}
 
 	private ArrayList<Integer> generatePriorities(int number) {
 		ArrayList<Integer> priorities = new ArrayList<>();
