@@ -46,59 +46,48 @@ public class StaticTest2DeeperLooking {
 			}).start();
 		}
 		
-		final CountDownLatch workloadcountdown = new CountDownLatch(10);
-		for (int i = 1; i < 11; i++) {
-			final int workload = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingWorkLoad(workload);
-					workloadcountdown.countDown();
-				}
-			}).start();
-		}
+//		final CountDownLatch workloadcountdown = new CountDownLatch(10);
+//		for (int i = 1; i < 11; i++) {
+//			final int workload = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingWorkLoad(workload);
+//					workloadcountdown.countDown();
+//				}
+//			}).start();
+//		}
+//		
+//		final CountDownLatch accesscountdown = new CountDownLatch(20);
+//		for (int i = 1; i < 21; i++) {
+//			final int access = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingContention(access);
+//					accesscountdown.countDown();
+//				}
+//			}).start();
+//		}
+//		
+//		final CountDownLatch processorscountdown = new CountDownLatch(16);
+//		for (int i = 1; i < 17; i++) {
+//			final int processors = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingParallel(processors, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+//					processorscountdown.countDown();
+//				}
+//			}).start();
+//		}
 		
-		final CountDownLatch accesscountdown = new CountDownLatch(20);
-		for (int i = 1; i < 21; i++) {
-			final int access = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingContention(access);
-					accesscountdown.countDown();
-				}
-			}).start();
-		}
-		
-		final CountDownLatch processorscountdown = new CountDownLatch(16);
-		for (int i = 1; i < 17; i++) {
-			final int processors = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingParallel(processors, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					processorscountdown.countDown();
-				}
-			}).start();
-		}
-		
-		final CountDownLatch rsfcountdown = new CountDownLatch(5);
-		for (int i = 1; i < 6; i++) {
-			final int rsf = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingRSF(rsf, range);
-					rsfcountdown.countDown();
-				}
-			}).start();
-		}
 		
 		cslencountdown.await();
-		workloadcountdown.await();
-		accesscountdown.await();
-		processorscountdown.await();
-		rsfcountdown.await();
+//		workloadcountdown.await();
+//		accesscountdown.await();
+//		processorscountdown.await();
+
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 	}
 	
@@ -246,67 +235,6 @@ public class StaticTest2DeeperLooking {
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
-	}
-
-	public void experimentIncreasingRSF(int RSF, CS_LENGTH_RANGE range) {
-		double rsf;
-		switch (RSF) {
-		case 1:
-			rsf = 0.2;
-			break;
-		case 2:
-			rsf = 0.4;
-			break;
-		case 3:
-			rsf = 0.6;
-			break;
-		case 4:
-			rsf = 0.8;
-			break;
-		case 5:
-			rsf = 1.0;
-			break;
-		default:
-			rsf = 0;
-			break;
-		}
-
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-
-		long[][] Ris;
-		IAFIFONP fnp = new IAFIFONP();
-		IAFIFOP fp = new IAFIFOP();
-		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-
-		String result = "";
-		int sfnp = 0;
-		int sfp = 0;
-		int smrsp = 0;
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
-
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
-			if (isSystemSchedulable(tasks, Ris))
-				smrsp++;
-
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfnp++;
-
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfp++;
-			System.out.println(5 + " 2 " + RSF + " times: " + i);
-		}
-
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem(("ioa " + 5 + " 2 " + RSF), result);
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
