@@ -117,5 +117,7 @@ public class IOAResultReader {
 
 		writer.println(result);
 		writer.close();
+		
+		System.out.println(result);
 	}
 }
