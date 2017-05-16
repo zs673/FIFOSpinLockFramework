@@ -1,4 +1,4 @@
-package test;
+package generatorTools;
 
 import java.io.File;
 import java.io.FileNotFoundException;

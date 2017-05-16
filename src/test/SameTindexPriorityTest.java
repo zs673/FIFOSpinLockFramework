@@ -15,6 +15,7 @@ import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorSameUP;
 
 public class SameTindexPriorityTest {

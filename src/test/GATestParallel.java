@@ -20,6 +20,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorDef;
 import geneticAlgoritmSolver.GADynamicSolver;
 import geneticAlgoritmSolver.StaticSolver;
@@ -28,22 +29,22 @@ public class GATestParallel {
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
-		// for (int i = 1; i < 11; i++) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingWorkload(i);
-		// }
-		// for (int i = 1; i < 7; i++) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(i);
-		// }
-		// for (int i = 1; i < 32; i= i+5) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingAccess(i);
-		// }
-		// for (int i = 2; i < 33; i= i+2) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingPartitions(i);
-		// }
+		for (int i = 1; i < 11; i++) {
+			test.initResults();
+			test.parallelExperimentIncreasingWorkload(i);
+		}
+		for (int i = 1; i < 7; i++) {
+			test.initResults();
+			test.parallelExperimentIncreasingCriticalSectionLength(i);
+		}
+		for (int i = 1; i < 32; i = i + 5) {
+			test.initResults();
+			test.parallelExperimentIncreasingAccess(i);
+		}
+		for (int i = 2; i < 33; i = i + 2) {
+			test.initResults();
+			test.parallelExperimentIncreasingPartitions(i);
+		}
 		for (int i = 1; i < 6; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingrsf(i);
