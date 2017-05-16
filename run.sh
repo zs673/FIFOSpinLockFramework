@@ -8,4 +8,4 @@ javac $(find ./src/* | grep .java)
 
 #nohup java -cp src/ noAllocation.test.GATestParallel
 
-#nohup java -cp src/ test.StaticTest2DeeperLooking
+nohup java -cp src/ evaluation.StaticTestDeeperLooking
