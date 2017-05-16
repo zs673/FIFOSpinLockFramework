@@ -51,7 +51,7 @@ public class GATestParallel {
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
-		for (int i = 1; i < 11; i++) {
+		for (int i = 1; i < 10; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);
 		}

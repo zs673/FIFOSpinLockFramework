@@ -50,8 +50,8 @@ public class StaticTestGeneral {
 			}).start();
 		}
 
-		final CountDownLatch workloadcountdown = new CountDownLatch(10);
-		for (int i = 1; i < 11; i++) {
+		final CountDownLatch workloadcountdown = new CountDownLatch(9);
+		for (int i = 1; i < 10; i++) {
 			final int workload = i;
 			new Thread(new Runnable() {
 				@Override
