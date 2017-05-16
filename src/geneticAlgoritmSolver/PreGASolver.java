@@ -7,6 +7,7 @@ import analysis.IACombinedProtocol;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 
@@ -58,10 +59,10 @@ public class PreGASolver {
 			System.out.println("\n" + "static protocols: " + Arrays.toString(staticprotocols));
 		}
 
-		int[][] taskschedule_scombine = getTaskSchedulability(sCombine.calculateResponseTime(tasks, resources, false, false));
-		int[][] taskschedule_fifonp = getTaskSchedulability(fifonp.NewMrsPRTATest(tasks, resources, false, false));
-		int[][] taskschedule_fifop = getTaskSchedulability(fifop.NewMrsPRTATest(tasks, resources, false, false));
-		int[][] taskschedule_mrsp = getTaskSchedulability(mrsp.getResponseTime(tasks, resources, false, false));
+		int[][] taskschedule_scombine = getTaskSchedulability(sCombine.calculateResponseTime(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+		int[][] taskschedule_fifonp = getTaskSchedulability(fifonp.NewMrsPRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+		int[][] taskschedule_fifop = getTaskSchedulability(fifop.NewMrsPRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+		int[][] taskschedule_mrsp = getTaskSchedulability(mrsp.getResponseTime(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0, scombine_sched = 0;
 		boolean isPossible = true;

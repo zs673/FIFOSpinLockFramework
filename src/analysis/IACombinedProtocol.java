@@ -6,9 +6,74 @@ import entity.Resource;
 import entity.SporadicTask;
 
 public class IACombinedProtocol {
+	
+	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
+			boolean printDebug, int extendCal) {
+		long count = 0; // The number of calculations
+		long np = 0; // The NP section length if MrsP is applied
+
+		long npsection = 0;
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
+		}
+		np = npsection;
+
+		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
+		long[][] response_time = new long[tasks.size()][];
+		boolean isEqual = false, missdeadline = false;
+		count = 0;
+
+		for (int i = 0; i < init_Ri.length; i++) {
+			response_time[i] = new long[init_Ri[i].length];
+		}
+
+		IOAAnalysisUtils.cloneList(init_Ri, response_time);
+
+		/* a huge busy window to get a fixed Ri */
+		while (!isEqual) {
+			isEqual = true;
+			boolean should_finish = true;
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np,
+					testSchedulability, extendCal);
+
+			for (int i = 0; i < response_time_plus.length; i++) {
+				for (int j = 0; j < response_time_plus[i].length; j++) {
+					if (response_time[i][j] != response_time_plus[i][j])
+						isEqual = false;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+							should_finish = false;
+					}
+				}
+			}
+
+			count++;
+			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
+
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
+		}
+
+		if (printDebug) {
+			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
+			IOAAnalysisUtils.printResponseTime(response_time, tasks);
+		}
+
+		return response_time;
+	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig,
-			long np, boolean testSchedulability) {
+			long np, boolean testSchedulability, int extendCal) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -18,7 +83,7 @@ public class IACombinedProtocol {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * IOAAnalysisUtils.extendCal) {
+				if (response_time[i][j] > task.deadline * extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}
@@ -47,71 +112,6 @@ public class IACombinedProtocol {
 			}
 		}
 		return response_time_plus;
-	}
-
-	public long[][] calculateResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
-			boolean printDebug) {
-		long count = 0; // The number of calculations
-		long np = 0; // The NP section length if MrsP is applied
-
-		long npsection = 0;
-		for (int i = 0; i < resources.size(); i++) {
-			Resource resource = resources.get(i);
-			if (resource.protocol == 3 && npsection < resource.csl)
-				npsection = resources.get(i).csl;
-		}
-		np = npsection;
-
-		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
-		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missdeadline = false;
-		count = 0;
-
-		for (int i = 0; i < init_Ri.length; i++) {
-			response_time[i] = new long[init_Ri[i].length];
-		}
-
-		IOAAnalysisUtils.cloneList(init_Ri, response_time);
-
-		/* a huge busy window to get a fixed Ri */
-		while (!isEqual) {
-			isEqual = true;
-			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np,
-					testSchedulability);
-
-			for (int i = 0; i < response_time_plus.length; i++) {
-				for (int j = 0; j < response_time_plus[i].length; j++) {
-					if (response_time[i][j] != response_time_plus[i][j])
-						isEqual = false;
-					if (testSchedulability) {
-						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
-							missdeadline = true;
-					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * IOAAnalysisUtils.extendCal)
-							should_finish = false;
-					}
-				}
-			}
-
-			count++;
-			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
-
-			if (testSchedulability) {
-				if (missdeadline)
-					break;
-			} else {
-				if (should_finish)
-					break;
-			}
-		}
-
-		if (printDebug) {
-			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
-			IOAAnalysisUtils.printResponseTime(response_time, tasks);
-		}
-
-		return response_time;
 	}
 
 	private ArrayList<Resource> FIFONPgetLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources) {

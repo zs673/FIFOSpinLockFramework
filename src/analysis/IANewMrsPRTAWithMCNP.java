@@ -8,7 +8,7 @@ import entity.SporadicTask;
 public class IANewMrsPRTAWithMCNP {
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig,
-			long np, boolean testSchedulability) {
+			long np, boolean testSchedulability, int extendCal) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -18,7 +18,7 @@ public class IANewMrsPRTAWithMCNP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * IOAAnalysisUtils.extendCal) {
+				if (response_time[i][j] > task.deadline * extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}
@@ -133,7 +133,7 @@ public class IANewMrsPRTAWithMCNP {
 	}
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
-			boolean printDebug) {
+			boolean printDebug, int extendCal) {
 		long[][] responsetime = null;
 		// get np section
 		long npsection = 0;
@@ -143,7 +143,7 @@ public class IANewMrsPRTAWithMCNP {
 		}
 		long np = npsection;
 
-		responsetime = NewMrsPRTATest(tasks, resources, np, testSchedulability, printDebug);
+		responsetime = NewMrsPRTATest(tasks, resources, np, testSchedulability, printDebug, extendCal);
 		return responsetime;
 	}
 
@@ -401,7 +401,7 @@ public class IANewMrsPRTAWithMCNP {
 	}
 
 	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np, boolean testSchedulability,
-			boolean printDebug) {
+			boolean printDebug, int extendCal) {
 		long count = 0;
 		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 
@@ -420,7 +420,7 @@ public class IANewMrsPRTAWithMCNP {
 			isEqual = true;
 			boolean should_finish = true;
 			long[][] response_time_plus = busyWindow(tasks, resources, response_time, IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np,
-					testSchedulability);
+					testSchedulability, extendCal);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -430,7 +430,7 @@ public class IANewMrsPRTAWithMCNP {
 						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 							missdeadline = true;
 					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * IOAAnalysisUtils.extendCal)
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
 							should_finish = false;
 					}
 				}

@@ -8,7 +8,7 @@ import entity.SporadicTask;
 public class IAFIFOP {
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
-			boolean testSchedulability) {
+			boolean testSchedulability, int extendCal) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -18,7 +18,7 @@ public class IAFIFOP {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				if (response_time[i][j] > task.deadline * IOAAnalysisUtils.extendCal) {
+				if (response_time[i][j] > task.deadline * extendCal) {
 					response_time_plus[i][j] = response_time[i][j];
 					continue;
 				}
@@ -237,7 +237,7 @@ public class IAFIFOP {
 	}
 
 	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean testSchedulability,
-			boolean printDebug) {
+			boolean printDebug, int extendCal) {
 
 		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 
@@ -255,7 +255,7 @@ public class IAFIFOP {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, testSchedulability);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, testSchedulability, extendCal);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -266,7 +266,7 @@ public class IAFIFOP {
 						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
 							missdeadline = true;
 					} else {
-						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * IOAAnalysisUtils.extendCal)
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
 							should_finish = false;
 					}
 				}

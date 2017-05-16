@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import entity.SporadicTask;
 
 public class IOAAnalysisUtils {
-	public static int extendCal = 5;
+	public static int extendCalForGA = 5;
+	public static int extendCalForStatic = 1;
 
 	public static double FIFONP_LOCK = (double) (501 + 259 + 219) / (double) 1000;
 	public static double FIFONP_UNLOCK = (double) 602 / (double) 1000;

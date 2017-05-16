@@ -21,6 +21,8 @@ public class IdenticalTest {
 
 	public static int TOTAL_PARTITIONS = 8;
 
+	static int extendCal = 1;
+
 	public static boolean isEqual(long[][] r1, long[][] r2, boolean print) {
 		boolean isequal = true;
 		for (int i = 0; i < r1.length; i++) {
@@ -53,9 +55,9 @@ public class IdenticalTest {
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+				NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
@@ -67,16 +69,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 3;
 			}
 
-			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
+			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;
@@ -94,16 +96,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 1;
 			}
 
-			r1 = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
+			r1 = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;
@@ -121,16 +123,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 2;
 			}
 
-			r1 = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
-			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false);
+			r1 = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyGeneratedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true);
-				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.calculateResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;

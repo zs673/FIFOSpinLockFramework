@@ -13,6 +13,7 @@ import analysis.IACombinedProtocol;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -140,15 +141,15 @@ public class StaticTestGeneral {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
@@ -167,7 +168,7 @@ public class StaticTestGeneral {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
 
@@ -201,15 +202,15 @@ public class StaticTestGeneral {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
@@ -228,7 +229,7 @@ public class StaticTestGeneral {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
 
@@ -262,15 +263,15 @@ public class StaticTestGeneral {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
@@ -289,7 +290,7 @@ public class StaticTestGeneral {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
 
@@ -323,15 +324,15 @@ public class StaticTestGeneral {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
@@ -350,7 +351,7 @@ public class StaticTestGeneral {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
 

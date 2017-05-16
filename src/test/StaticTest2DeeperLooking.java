@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -138,15 +139,15 @@ public class StaticTest2DeeperLooking {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
@@ -177,15 +178,15 @@ public class StaticTest2DeeperLooking {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
@@ -218,15 +219,15 @@ public class StaticTest2DeeperLooking {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
@@ -257,15 +258,15 @@ public class StaticTest2DeeperLooking {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);

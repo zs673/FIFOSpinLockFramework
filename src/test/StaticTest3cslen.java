@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -69,15 +70,15 @@ public class StaticTest3cslen {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false);
+			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false);
+			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false);
+			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
