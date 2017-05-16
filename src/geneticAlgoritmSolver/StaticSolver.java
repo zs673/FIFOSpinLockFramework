@@ -30,7 +30,7 @@ public class StaticSolver {
 			} 
 			
 			else if (res.csl <= 100) {
-				if (NoP <= 7 || NoA > 13)
+				if (NoP <= 10 || NoA > 13)
 					protocol = 1;
 				else if (NoA <= 3)
 					protocol = 2;
