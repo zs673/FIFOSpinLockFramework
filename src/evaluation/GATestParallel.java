@@ -1,4 +1,4 @@
-package test;
+package evaluation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +26,27 @@ import geneticAlgoritmSolver.GADynamicSolver;
 import geneticAlgoritmSolver.StaticSolver;
 
 public class GATestParallel {
+	
+
+	ArrayList<Double> similarity = new ArrayList<>();
+
+	public static int MAX_PERIOD = 1000;
+	public static int MIN_PERIOD = 1;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_PARTITIONS = 16;
+
+	int Dcombine = 0;
+	int fnp = 0;
+	int fp = 0;
+	int Scombine = 0;
+	int siafnp = 0;
+	int siafp = 0;
+	int siamrsp = 0;
+	int mrsp = 0;
+
+	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	final double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
 		GATestParallel test = new GATestParallel();
@@ -56,75 +77,6 @@ public class GATestParallel {
 			System.out.print(test.similarity.get(i) + "    ");
 		}
 		System.out.println();
-	}
-
-	ArrayList<Double> similarity = new ArrayList<>();
-
-	public static int MAX_PERIOD = 1000;
-	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
-	public static int TOTAL_PARTITIONS = 16;
-
-	int Dcombine = 0;
-	int fnp = 0;
-	int fp = 0;
-	int Scombine = 0;
-	int siafnp = 0;
-	int siafp = 0;
-	int siamrsp = 0;
-	int mrsp = 0;
-
-	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-	final double RSF = 0.3;
-
-	public synchronized void addSimilarity(double value) {
-		similarity.add(value);
-	}
-
-	public synchronized void incfnp() {
-		fnp++;
-	}
-
-	public synchronized void incfp() {
-		fp++;
-	}
-
-	public synchronized void inciaDcombine() {
-		Dcombine++;
-	}
-
-	public synchronized void inciafnp() {
-		siafnp++;
-	}
-
-	public synchronized void inciafp() {
-		siafp++;
-	}
-
-	public synchronized void inciamrsp() {
-		siamrsp++;
-	}
-
-	public synchronized void inciaScombine() {
-		Scombine++;
-	}
-
-	public synchronized void incmrsp() {
-		mrsp++;
-	}
-
-	public void initResults() {
-		mrsp = 0;
-		fp = 0;
-		fnp = 0;
-
-		siamrsp = 0;
-		siafp = 0;
-		siafnp = 0;
-
-		Scombine = 0;
-		Dcombine = 0;
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA) {
@@ -696,6 +648,59 @@ public class GATestParallel {
 		writeSystem("ioa 1 2 " + NoT, result);
 		System.out.println(result);
 	}
+	
+	
+
+
+	public synchronized void addSimilarity(double value) {
+		similarity.add(value);
+	}
+
+	public synchronized void incfnp() {
+		fnp++;
+	}
+
+	public synchronized void incfp() {
+		fp++;
+	}
+
+	public synchronized void inciaDcombine() {
+		Dcombine++;
+	}
+
+	public synchronized void inciafnp() {
+		siafnp++;
+	}
+
+	public synchronized void inciafp() {
+		siafp++;
+	}
+
+	public synchronized void inciamrsp() {
+		siamrsp++;
+	}
+
+	public synchronized void inciaScombine() {
+		Scombine++;
+	}
+
+	public synchronized void incmrsp() {
+		mrsp++;
+	}
+
+	public void initResults() {
+		mrsp = 0;
+		fp = 0;
+		fnp = 0;
+
+		siamrsp = 0;
+		siafp = 0;
+		siafnp = 0;
+
+		Scombine = 0;
+		Dcombine = 0;
+	}
+	
 
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
