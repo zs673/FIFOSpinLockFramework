@@ -32,6 +32,7 @@ public class StaticTestDeeperLooking {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static boolean testSchedulability = false;
+	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
 		StaticTestDeeperLooking test = new StaticTestDeeperLooking();
@@ -47,7 +48,7 @@ public class StaticTestDeeperLooking {
 				}
 			}).start();
 		}
-		
+
 		final CountDownLatch workloadcountdown = new CountDownLatch(10);
 		for (int i = 1; i < 11; i++) {
 			final int workload = i;
@@ -59,7 +60,7 @@ public class StaticTestDeeperLooking {
 				}
 			}).start();
 		}
-		
+
 		final CountDownLatch accesscountdown = new CountDownLatch(20);
 		for (int i = 1; i < 21; i++) {
 			final int access = i;
@@ -71,7 +72,7 @@ public class StaticTestDeeperLooking {
 				}
 			}).start();
 		}
-		
+
 		final CountDownLatch processorscountdown = new CountDownLatch(16);
 		for (int i = 1; i < 17; i++) {
 			final int processors = i;
@@ -83,14 +84,13 @@ public class StaticTestDeeperLooking {
 				}
 			}).start();
 		}
-		
-		
+
 		cslencountdown.await();
 		workloadcountdown.await();
 		accesscountdown.await();
 		processorscountdown.await();
 
-		IOAResultReader.schedreader(null,false);
+		IOAResultReader.schedreader(null, false);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
@@ -133,7 +133,7 @@ public class StaticTestDeeperLooking {
 		int sfp = 0;
 		int smrsp = 0;
 
-		long[][] results = new long[3][NUMBER_OF_TASKS_ON_EACH_PARTITION];
+		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
@@ -181,7 +181,7 @@ public class StaticTestDeeperLooking {
 		int sfp = 0;
 		int smrsp = 0;
 
-		long[][] results = new long[3][NUMBER_OF_TASKS_ON_EACH_PARTITION];
+		long[][] results = new long[PROTOCOLS][NoT];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
@@ -229,7 +229,7 @@ public class StaticTestDeeperLooking {
 		int sfp = 0;
 		int smrsp = 0;
 
-		long[][] results = new long[3][NUMBER_OF_TASKS_ON_EACH_PARTITION];
+		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
@@ -277,7 +277,7 @@ public class StaticTestDeeperLooking {
 		int sfp = 0;
 		int smrsp = 0;
 
-		long[][] results = new long[3][NUMBER_OF_TASKS_ON_EACH_PARTITION];
+		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
