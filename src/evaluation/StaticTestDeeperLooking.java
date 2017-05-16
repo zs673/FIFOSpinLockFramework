@@ -208,7 +208,7 @@ public class StaticTestDeeperLooking {
 		int smrsp = 0;
 		int scombine = 0;
 
-		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
+		long[][] results = new long[PROTOCOLS][NoT];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
