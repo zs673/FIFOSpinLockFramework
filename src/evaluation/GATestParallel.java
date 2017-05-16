@@ -114,15 +114,15 @@ public class GATestParallel {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -153,7 +153,7 @@ public class GATestParallel {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -244,15 +244,15 @@ public class GATestParallel {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -283,7 +283,7 @@ public class GATestParallel {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -349,15 +349,15 @@ public class GATestParallel {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -388,7 +388,7 @@ public class GATestParallel {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -475,15 +475,15 @@ public class GATestParallel {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -514,7 +514,7 @@ public class GATestParallel {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -581,15 +581,15 @@ public class GATestParallel {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -620,7 +620,7 @@ public class GATestParallel {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForGA);
+					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 

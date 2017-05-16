@@ -47,19 +47,6 @@ public class StaticSolver {
 			}	
 			else
 				protocol = 3;
-			
-//			if (res.csl <= 60) {
-//				protocol = 1;
-//			} else if (res.csl > 60 && res.csl < 100) {
-//				if (NoP <= 7 || NoA > 13)
-//					protocol = 1;
-//				else if (NoA <= 3)
-//					protocol = 2;
-//				else
-//					protocol = 3;
-//			} else {
-//				protocol = 3;
-//			}
 
 			if (protocol != 0)
 				protocols[i] = protocol;
