@@ -19,14 +19,14 @@ import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
+import frameworkWFandDM.GADynamicSolver;
+import frameworkWFandDM.StaticSolver;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorDef;
-import geneticAlgoritmSolver.GADynamicSolver;
-import geneticAlgoritmSolver.StaticSolver;
 
-public class GATestParallel {
+public class DynamicTestWFandDM {
 	
 
 	ArrayList<Double> similarity = new ArrayList<>();
@@ -50,7 +50,7 @@ public class GATestParallel {
 	final double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		GATestParallel test = new GATestParallel();
+		DynamicTestWFandDM test = new DynamicTestWFandDM();
 		for (int i = 1; i < 10; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);

@@ -1,4 +1,4 @@
-package geneticAlgoritmSolver;
+package frameworkWFandDM;
 
 import java.util.ArrayList;
 import java.util.Arrays;

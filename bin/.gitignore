@@ -1,6 +1,6 @@
 /native/
 /evaluation/
-/geneticAlgoritmSolver/
-/generatorTools/
-/analysis/
-/test/
+/NewCombinationSolver/
+/framework/
+/frameworkWFandDM/
+/frameworkAllDynamic/
