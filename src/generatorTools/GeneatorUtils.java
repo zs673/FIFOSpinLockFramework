@@ -16,6 +16,6 @@ public class GeneatorUtils {
 
 	/* define how long the critical section can be */
 	public static enum ALLOCATION_POLICY {
-		FIRST_FIT, BEST_FIT, WORST_FIT, RESOURCE_FIT,
+		FIRST_FIT, BEST_FIT, WORST_FIT, NEXT_FIT, RESOURCE_FIT,
 	};
 }

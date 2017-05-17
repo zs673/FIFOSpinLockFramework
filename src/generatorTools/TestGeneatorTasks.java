@@ -16,7 +16,7 @@ public class TestGeneatorTasks {
 		int MAX_PERIOD = 1000;
 		int MIN_PERIOD = 1;
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 9;
+		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 		CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 		double RESOURCE_SHARING_FACTOR = 0.2;
 		int TOTAL_PARTITIONS = 16;
@@ -30,16 +30,23 @@ public class TestGeneatorTasks {
 			geneator.generateResourceUsage(tasks, resources);
 
 			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.WORST_FIT);
-			geneator.testifyAllocatedTasksetAndResource(tasksWF, resources);
+			geneator.testifyAllocatedTasksetAndResource(tasksWF, null);
 
 			System.out.println("\n\n");
-
 			ArrayList<ArrayList<SporadicTask>> tasksBF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.BEST_FIT);
 			geneator.testifyAllocatedTasksetAndResource(tasksBF, null);
 
 			System.out.println("\n\n");
 			ArrayList<ArrayList<SporadicTask>> tasksFF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.FIRST_FIT);
 			geneator.testifyAllocatedTasksetAndResource(tasksFF, null);
+			
+			System.out.println("\n\n");
+			ArrayList<ArrayList<SporadicTask>> tasksNF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.NEXT_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksNF, null);
+			
+			System.out.println("\n\n");
+			ArrayList<ArrayList<SporadicTask>> tasksRF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS, ALLOCATION_POLICY.RESOURCE_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksRF, null);
 
 			System.out.println(j);
 		}
