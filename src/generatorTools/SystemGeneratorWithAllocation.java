@@ -1,7 +1,6 @@
 package generatorTools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import entity.Resource;
@@ -307,8 +306,11 @@ public class SystemGeneratorWithAllocation {
 		case NEXT_FIT:
 			tasks = NextFitAllocation(tasksToAllocate, partitions, maxUtilPerCore);
 			break;
-		case RESOURCE_FIT:
+		case RESOURCE_REQUEST_TASKS_FIT:
 			tasks = ResourceRequestTasksAllocation(tasksToAllocate, partitions, maxUtilPerCore);
+			break;
+		case RESOURCE_LOCAL_FIT:
+			tasks = ResourceLocalAllocation(tasksToAllocate, partitions, maxUtilPerCore);
 			break;
 		default:
 			tasks = null;
@@ -552,7 +554,8 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions, double maxUtilPerCore) {
+	private ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
+			double maxUtilPerCore) {
 		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>();
 		for (int i = 0; i < partitions; i++) {
 			ArrayList<SporadicTask> task = new ArrayList<>();
@@ -584,7 +587,7 @@ public class SystemGeneratorWithAllocation {
 		}
 
 		ArrayList<ArrayList<Integer>> NoQT = new ArrayList<>();
-		for(int i=0;i<number_of_resources;i++){
+		for (int i = 0; i < number_of_resources; i++) {
 			ArrayList<Integer> noq = new ArrayList<>();
 			noq.add(i);
 			noq.add(0);
@@ -594,99 +597,163 @@ public class SystemGeneratorWithAllocation {
 		for (int j = 0; j < tasksToAllocate.size(); j++) {
 			SporadicTask task = tasksToAllocate.get(j);
 			for (int k = 0; k < task.resource_required_index.size(); k++) {
-				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1)+1);
+				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + 1);
 			}
 		}
-		
+
 		NoQT.sort((p1, p2) -> -Double.compare(p1.get(1), p2.get(1)));
-		
+//		System.out.println("NoQT: " + Arrays.toString(NoQT.toArray()));
+
 		ArrayList<SporadicTask> sortedTasks = new ArrayList<>();
-		for(int i=0;i<NoQT.size();i++){
-			for(int j=0;j<tasksToAllocate.size();j++){
+		ArrayList<SporadicTask> cleanTasks = new ArrayList<>();
+		for (int i = 0; i < NoQT.size(); i++) {
+			for (int j = 0; j < tasksToAllocate.size(); j++) {
 				SporadicTask task = tasksToAllocate.get(j);
-				if(task.resource_required_index.contains(NoQT.get(i).get(0)) && !tasks.contains(task)){
+				if (task.resource_required_index.contains(NoQT.get(i).get(0)) && !sortedTasks.contains(task)) {
 					sortedTasks.add(task);
+				}
+				if (!cleanTasks.contains(task) && task.resource_required_index.size() == 0) {
+					cleanTasks.add(task);
 				}
 			}
 		}
-		
-		if(sortedTasks.size() != tasksToAllocate.size()){
-			System.err.println("sorted tasks error");
+		sortedTasks.addAll(cleanTasks);
+
+//		System.out.println("sorted tasks: ");
+//		for (int i = 0; i < sortedTasks.size(); i++) {
+//			System.out.print("T" + sortedTasks.get(i).id + "   ");
+//		}
+//		System.out.println();
+
+		if (sortedTasks.size() != tasksToAllocate.size()) {
 			System.exit(-1);
 		}
 
-		int currentIndex = 0;
+		return FirstFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+	}
+	
+	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
+			double maxUtilPerCore) {
+		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>();
+		for (int i = 0; i < partitions; i++) {
+			ArrayList<SporadicTask> task = new ArrayList<>();
+			tasks.add(task);
+		}
+
+		ArrayList<Double> utilPerPartition = new ArrayList<>();
+		for (int i = 0; i < partitions; i++) {
+			utilPerPartition.add((double) 0);
+		}
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
-			SporadicTask task = tasksToAllocate.get(i);
+			tasksToAllocate.get(i).partition = -1;
+		}
 
-			for (int j = 0; j < partitions; j++) {
-				if (maxUtilPerCore - utilPerPartition.get(currentIndex) >= task.util) {
-					task.partition = currentIndex;
-					utilPerPartition.set(currentIndex, utilPerPartition.get(currentIndex) + task.util);
-					break;
-				}
-				if (currentIndex == total_partitions - 1)
-					currentIndex = 0;
-				else
-					currentIndex++;
+		int number_of_resources = 0;
+		switch (range) {
+		case PARTITIONS:
+			number_of_resources = total_partitions;
+			break;
+		case HALF_PARITIONS:
+			number_of_resources = total_partitions / 2;
+			break;
+		case DOUBLE_PARTITIONS:
+			number_of_resources = total_partitions * 2;
+			break;
+		default:
+			break;
+		}
+
+		ArrayList<ArrayList<Integer>> NoQT = new ArrayList<>();
+		for (int i = 0; i < number_of_resources; i++) {
+			ArrayList<Integer> noq = new ArrayList<>();
+			noq.add(i);
+			noq.add(0);
+			NoQT.add(noq);
+		}
+
+		for (int j = 0; j < tasksToAllocate.size(); j++) {
+			SporadicTask task = tasksToAllocate.get(j);
+			for (int k = 0; k < task.resource_required_index.size(); k++) {
+				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + 1);
 			}
-			if (task.partition == -1)
-				return null;
 		}
 
-		for (int i = 0; i < tasksToAllocate.size(); i++) {
-			int partition = tasksToAllocate.get(i).partition;
-			tasks.get(partition).add(tasksToAllocate.get(i));
+		NoQT.sort((p1, p2) -> -Double.compare(p1.get(1), p2.get(1)));
+//		System.out.println("NoQT: " + Arrays.toString(NoQT.toArray()));
+
+		ArrayList<SporadicTask> sortedTasks = new ArrayList<>();
+		ArrayList<SporadicTask> cleanTasks = new ArrayList<>();
+		for (int i = 0; i < NoQT.size(); i++) {
+			for (int j = 0; j < tasksToAllocate.size(); j++) {
+				SporadicTask task = tasksToAllocate.get(j);
+				if (task.resource_required_index.contains(NoQT.get(i).get(0)) && !sortedTasks.contains(task)) {
+					sortedTasks.add(task);
+				}
+				if (!cleanTasks.contains(task) && task.resource_required_index.size() == 0) {
+					cleanTasks.add(task);
+				}
+			}
+		}
+		sortedTasks.addAll(cleanTasks);
+
+//		System.out.println("sorted tasks: ");
+//		for (int i = 0; i < sortedTasks.size(); i++) {
+//			System.out.print("T" + sortedTasks.get(i).id + "   ");
+//		}
+//		System.out.println();
+
+		if (sortedTasks.size() != tasksToAllocate.size()) {
+			System.exit(-1);
 		}
 
-		for (int i = 0; i < tasks.size(); i++) {
-			tasks.get(i).sort((p1, p2) -> Double.compare(p1.period, p2.period));
-		}
-
-		return tasks;
+		return FirstFitAllocation(sortedTasks, partitions, maxUtilPerCore);
 	}
 
 	public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
-		for (int i = 0; i < tasks.size(); i++) {
-			double util = 0;
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				SporadicTask task = tasks.get(i).get(j);
-				util += ((double) (task.WCET + task.pure_resource_execution_time)) / (double) task.period;
-				System.out.println(tasks.get(i).get(j).toString());
-			}
-			System.out.println("util on partition: " + i + " : " + util);
-		}
-		System.out.println("----------------------------------------------------");
-
-		if (resources != null) {
-			System.out.println("****************************************************");
-			for (int i = 0; i < resources.size(); i++) {
-				System.out.println(resources.get(i).toString());
-			}
-			System.out.println("****************************************************");
-
-			String resource_usage = "";
-			/* print resource usage */
-			System.out.println("---------------------------------------------------------------------------------");
+		if (tasks == null) {
+			System.out.println("no tasks generated.");
+		} else {
 			for (int i = 0; i < tasks.size(); i++) {
+				double util = 0;
 				for (int j = 0; j < tasks.get(i).size(); j++) {
-
 					SporadicTask task = tasks.get(i).get(j);
-					String usage = "T" + task.id + ": ";
-					for (int k = 0; k < task.resource_required_index.size(); k++) {
-						usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - "
-								+ task.number_of_access_in_one_release.get(k) + ";  ";
-					}
-					usage += "\n";
-					if (task.resource_required_index.size() > 0)
-						resource_usage = resource_usage + usage;
+					util += ((double) (task.WCET + task.pure_resource_execution_time)) / (double) task.period;
+					System.out.println(tasks.get(i).get(j).toString());
 				}
+				System.out.println("util on partition: " + i + " : " + util);
 			}
+			System.out.println("----------------------------------------------------");
 
-			System.out.println(resource_usage);
-			System.out.println("---------------------------------------------------------------------------------");
+			if (resources != null) {
+				System.out.println("****************************************************");
+				for (int i = 0; i < resources.size(); i++) {
+					System.out.println(resources.get(i).toString());
+				}
+				System.out.println("****************************************************");
+
+				String resource_usage = "";
+				/* print resource usage */
+				System.out.println("---------------------------------------------------------------------------------");
+				for (int i = 0; i < tasks.size(); i++) {
+					for (int j = 0; j < tasks.get(i).size(); j++) {
+
+						SporadicTask task = tasks.get(i).get(j);
+						String usage = "T" + task.id + ": ";
+						for (int k = 0; k < task.resource_required_index.size(); k++) {
+							usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - "
+									+ task.number_of_access_in_one_release.get(k) + ";  ";
+						}
+						usage += "\n";
+						if (task.resource_required_index.size() > 0)
+							resource_usage = resource_usage + usage;
+					}
+				}
+
+				System.out.println(resource_usage);
+				System.out.println("---------------------------------------------------------------------------------");
+			}
 		}
 
 	}
