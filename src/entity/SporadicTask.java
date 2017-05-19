@@ -25,8 +25,8 @@ public class SporadicTask {
 	public double[] fifonp = null;
 	public double[] fifop = null;
 
-	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0,
-			fifop_arrivalblocking_overheads = 0;
+	public double implementation_overheads = 0, blocking_overheads = 0, mrsp_arrivalblocking_overheads = 0,
+			fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
 	public double migration_overheads_plus = 0;
 
 	public SporadicTask(int priority, long t, long c, int partition, int id, double util) {
@@ -70,12 +70,14 @@ public class SporadicTask {
 				+ ". is schedulable: " + (Ri <= deadline);
 	}
 
-	@Override
-	public String toString() {
+	public String getInfo() {
 		DecimalFormat df = new DecimalFormat("#.#######");
-		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time + ", D = "
-				+ this.deadline + ", Priority = " + this.priority + ", Partition = " + this.partition + ", Util: "
+		return "T" + this.id + " : T = " + this.period + ", C = " + this.WCET + ", PRET: " + this.pure_resource_execution_time
+				+ ", D = " + this.deadline + ", Priority = " + this.priority + ", Partition = " + this.partition + ", Util: "
 				+ Double.parseDouble(df.format(util));
 	}
 
+	public String toString() {
+		return "T" + this.id;
+	}
 }

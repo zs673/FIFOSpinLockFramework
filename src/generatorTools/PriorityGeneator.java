@@ -16,7 +16,7 @@ public class PriorityGeneator {
 			taskset.get(i).priority = priorities.get(i);
 		}
 	}
-	
+
 	public void indexMonotonicPriorityAssignment(ArrayList<SporadicTask> taskset, int number) {
 		ArrayList<Integer> priorities = generatePriorities(number);
 		/* deadline monotonic assignment */

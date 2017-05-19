@@ -32,13 +32,13 @@ public class SameTindexPriorityTest {
 		StaticTest3cslen test = new StaticTest3cslen();
 
 		for (int j = 0; j < 50; j++) {
-			if(j == 0)
+			if (j == 0)
 				PERIOD = 1;
 			else if (j == 1)
 				PERIOD = 10;
 			else
 				PERIOD = PERIOD + 10;
-			
+
 			final CountDownLatch workloadcd = new CountDownLatch(300);
 			for (int i = 1; i < 301; i++) {
 				final int cslen = i;
@@ -51,15 +51,15 @@ public class SameTindexPriorityTest {
 				}).start();
 			}
 			workloadcd.await();
-			
+
 			IOAResultReader.schedreader("period: " + PERIOD, true);
 		}
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGeneratorSameUP generator = new SystemGeneratorSameUP(PERIOD, PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
+		SystemGeneratorSameUP generator = new SystemGeneratorSameUP(PERIOD, PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();

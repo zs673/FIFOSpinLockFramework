@@ -122,9 +122,9 @@ public class StaticTestWFandDM {
 			break;
 		}
 
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -175,7 +175,8 @@ public class StaticTestWFandDM {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false,
+					IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[3]);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
@@ -194,8 +195,8 @@ public class StaticTestWFandDM {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -246,7 +247,8 @@ public class StaticTestWFandDM {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false,
+					IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[3]);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
@@ -265,8 +267,8 @@ public class StaticTestWFandDM {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -317,7 +319,8 @@ public class StaticTestWFandDM {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false,
+					IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[3]);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;
@@ -336,8 +339,9 @@ public class StaticTestWFandDM {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -388,7 +392,8 @@ public class StaticTestWFandDM {
 			for (int l = 0; l < resources.size(); l++) {
 				resources.get(l).protocol = protocols[l];
 			}
-			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = sCombine.calculateResponseTime(tasks, resources, testSchedulability, false,
+					IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[3]);
 			if (isSystemSchedulable(tasks, Ris))
 				scombine++;

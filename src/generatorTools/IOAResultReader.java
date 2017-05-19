@@ -15,17 +15,17 @@ public class IOAResultReader {
 
 	public static void main(String[] args) {
 
-		schedreader(null,false);
+		schedreader(null, false);
 	}
 
 	public static void schedreader(String title, boolean append) {
 		String result = "";
-		
-		if(title != null)
-			result+= title +"\n";
-		
-		result+= "Work Load\n";
-		
+
+		if (title != null)
+			result += title + "\n";
+
+		result += "Work Load\n";
+
 		for (int bigSet = 1; bigSet < 6; bigSet++) {
 			for (int smallSet = 1; smallSet < 11; smallSet++) {
 				String filepath = "result/" + "ioa 1" + " " + bigSet + " " + smallSet + ".txt";
@@ -117,7 +117,7 @@ public class IOAResultReader {
 
 		writer.println(result);
 		writer.close();
-		
+
 		System.out.println(result);
 	}
 }

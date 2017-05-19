@@ -27,8 +27,8 @@ public class StaticSolver {
 					protocol = 2;
 				else
 					protocol = 1;
-			} 
-			
+			}
+
 			else if (res.csl <= 100) {
 				if (NoP <= 10 || NoA > 13)
 					protocol = 1;
@@ -36,16 +36,14 @@ public class StaticSolver {
 					protocol = 2;
 				else
 					protocol = 3;
-			} 
-			
-			
-			else if (res.csl <= 150){
+			}
+
+			else if (res.csl <= 150) {
 				if (NoA < 2)
 					protocol = 2;
 				else
 					protocol = 3;
-			}	
-			else
+			} else
 				protocol = 3;
 
 			if (protocol != 0)

@@ -25,8 +25,8 @@ public class SystemGeneratorSameUP {
 
 	public double util;
 
-	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
-			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access) {
+	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
+			boolean isLogUni, CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access) {
 		this.minT = minT;
 		this.maxT = maxT;
 		this.util = util;
@@ -40,8 +40,9 @@ public class SystemGeneratorSameUP {
 		this.csl = -1;
 	}
 
-	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor, boolean isLogUni,
-			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, long csl) {
+	public SystemGeneratorSameUP(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
+			boolean isLogUni, CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access,
+			long csl) {
 		this.minT = minT;
 		this.maxT = maxT;
 		this.util = util;
@@ -277,7 +278,7 @@ public class SystemGeneratorSameUP {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
 				util += ((double) (task.WCET + task.pure_resource_execution_time)) / (double) task.period;
-				System.out.println(tasks.get(i).get(j).toString());
+				System.out.println(tasks.get(i).get(j).getInfo());
 			}
 			System.out.println("util on partition: " + i + " : " + util);
 		}
@@ -297,8 +298,8 @@ public class SystemGeneratorSameUP {
 				SporadicTask task = tasks.get(i).get(j);
 				String usage = "T" + task.id + ": ";
 				for (int k = 0; k < task.resource_required_index.size(); k++) {
-					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - " + task.number_of_access_in_one_release.get(k)
-							+ ";  ";
+					usage = usage + "R" + resources.get(task.resource_required_index.get(k)).id + " - "
+							+ task.number_of_access_in_one_release.get(k) + ";  ";
 				}
 				usage += "\n";
 				if (task.resource_required_index.size() > 0)

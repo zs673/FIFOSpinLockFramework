@@ -30,7 +30,7 @@ public class StaticTest2DeeperLooking {
 	static double RESOURCE_SHARING_FACTOR = 0.2;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
-	
+
 	public static boolean testSchedulability = true;
 
 	public static void main(String[] args) throws Exception {
@@ -47,53 +47,52 @@ public class StaticTest2DeeperLooking {
 				}
 			}).start();
 		}
-		
-//		final CountDownLatch workloadcountdown = new CountDownLatch(10);
-//		for (int i = 1; i < 11; i++) {
-//			final int workload = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingWorkLoad(workload);
-//					workloadcountdown.countDown();
-//				}
-//			}).start();
-//		}
-//		
-//		final CountDownLatch accesscountdown = new CountDownLatch(20);
-//		for (int i = 1; i < 21; i++) {
-//			final int access = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingContention(access);
-//					accesscountdown.countDown();
-//				}
-//			}).start();
-//		}
-//		
-//		final CountDownLatch processorscountdown = new CountDownLatch(16);
-//		for (int i = 1; i < 17; i++) {
-//			final int processors = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingParallel(processors, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-//					processorscountdown.countDown();
-//				}
-//			}).start();
-//		}
-		
-		
+
+		// final CountDownLatch workloadcountdown = new CountDownLatch(10);
+		// for (int i = 1; i < 11; i++) {
+		// final int workload = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingWorkLoad(workload);
+		// workloadcountdown.countDown();
+		// }
+		// }).start();
+		// }
+		//
+		// final CountDownLatch accesscountdown = new CountDownLatch(20);
+		// for (int i = 1; i < 21; i++) {
+		// final int access = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingContention(access);
+		// accesscountdown.countDown();
+		// }
+		// }).start();
+		// }
+		//
+		// final CountDownLatch processorscountdown = new CountDownLatch(16);
+		// for (int i = 1; i < 17; i++) {
+		// final int processors = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingParallel(processors,
+		// NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		// processorscountdown.countDown();
+		// }
+		// }).start();
+		// }
+
 		cslencountdown.await();
-//		workloadcountdown.await();
-//		accesscountdown.await();
-//		processorscountdown.await();
+		// workloadcountdown.await();
+		// accesscountdown.await();
+		// processorscountdown.await();
 
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 	}
-	
-	
+
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
 		final CS_LENGTH_RANGE cs_range;
 		switch (cs_len) {
@@ -119,10 +118,10 @@ public class StaticTest2DeeperLooking {
 			cs_range = null;
 			break;
 		}
-		
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -160,8 +159,9 @@ public class StaticTest2DeeperLooking {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -198,11 +198,9 @@ public class StaticTest2DeeperLooking {
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
-
-
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -240,8 +238,8 @@ public class StaticTest2DeeperLooking {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -278,7 +276,6 @@ public class StaticTest2DeeperLooking {
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);
 	}
 
-	
 	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {

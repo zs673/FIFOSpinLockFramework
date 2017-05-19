@@ -27,7 +27,6 @@ import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorDef;
 
 public class DynamicTestWFandDM {
-	
 
 	ArrayList<Double> similarity = new ArrayList<>();
 
@@ -98,8 +97,9 @@ public class DynamicTestWFandDM {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+							range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -175,10 +175,12 @@ public class DynamicTestWFandDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 3 2 " + NoA, result);
 		System.out.println(result);
@@ -228,8 +230,9 @@ public class DynamicTestWFandDM {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+							cs_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -305,10 +308,12 @@ public class DynamicTestWFandDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
@@ -333,8 +338,9 @@ public class DynamicTestWFandDM {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
+							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -410,10 +416,12 @@ public class DynamicTestWFandDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 4 2 " + NoP, result);
 		System.out.println(result);
@@ -459,8 +467,9 @@ public class DynamicTestWFandDM {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+							range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -536,10 +545,12 @@ public class DynamicTestWFandDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 5 2 " + resourceSharingFactor, result);
 		System.out.println(result);
@@ -565,8 +576,8 @@ public class DynamicTestWFandDM {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true, range,
-							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS,
+							NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -641,17 +652,16 @@ public class DynamicTestWFandDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 1 2 " + NoT, result);
 		System.out.println(result);
 	}
-	
-	
-
 
 	public synchronized void addSimilarity(double value) {
 		similarity.add(value);
@@ -701,7 +711,6 @@ public class DynamicTestWFandDM {
 		Scombine = 0;
 		Dcombine = 0;
 	}
-	
 
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;

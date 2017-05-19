@@ -18,7 +18,8 @@ public class FIFONP {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
 
-				task.spin = directRemoteDelay(task, tasks, resources, response_time, response_time[i][j]) + task.pure_resource_execution_time;
+				task.spin = directRemoteDelay(task, tasks, resources, response_time, response_time[i][j])
+						+ task.pure_resource_execution_time;
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j]);
 
@@ -35,7 +36,8 @@ public class FIFONP {
 	/*
 	 * Calculate the spin delay for a given task t.
 	 */
-	private long directRemoteDelay(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long directRemoteDelay(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
@@ -64,15 +66,16 @@ public class FIFONP {
 	 * for a high priority task hpTask, return its back to back hit time when
 	 * the given task is pending
 	 */
-	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris, ArrayList<ArrayList<SporadicTask>> allTasks,
-			ArrayList<Resource> resources) {
+	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris,
+			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources) {
 		long BTBhit = 0;
 
 		for (int i = 0; i < hpTask.resource_required_index.size(); i++) {
 			/* for each resource that a high priority task request */
 			Resource resource = resources.get(hpTask.resource_required_index.get(i));
 
-			int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ris[hpTask.partition], Ri);
+			int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ris[hpTask.partition],
+					Ri);
 			int number_of_request_with_btb = (int) Math.ceil((double) (Ri + Rihp) / (double) hpTask.period)
 					* hpTask.number_of_access_in_one_release.get(i);
 
@@ -81,7 +84,8 @@ public class FIFONP {
 			for (int j = 0; j < resource.partitions.size(); j++) {
 				if (resource.partitions.get(j) != hpTask.partition) {
 					int remote_partition = resource.partitions.get(j);
-					int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ris[remote_partition], Ri);
+					int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ris[remote_partition],
+							Ri);
 
 					int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
 							: number_of_remote_request - number_of_higher_request;
@@ -164,7 +168,8 @@ public class FIFONP {
 	 * gives the number of requests from remote partitions for a resource that
 	 * is required by the given task.
 	 */
-	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long Ri) {
+	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
+			long Ri) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -176,11 +181,13 @@ public class FIFONP {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
-						number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
+						number_of_request_by_Remote_P += number_of_release
+								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
+						: number_of_request_by_Remote_P - getNoRFromHP;
 
 				int NoRFromT = task.number_of_access_in_one_release.get(getIndexRInTask(task, resource));
 				number_of_spin_dealy += Integer.min(possible_spin_delay, NoRFromT);
@@ -211,7 +218,8 @@ public class FIFONP {
 		return interference;
 	}
 
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
