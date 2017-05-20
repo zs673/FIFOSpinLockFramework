@@ -34,7 +34,7 @@ public class StaticTestMultiAlloc {
 	static double RESOURCE_SHARING_FACTOR = 0.4;
 	public static int TOTAL_PARTITIONS = 16;
 	public static boolean testSchedulability = true;
-	public static int PROTOCOLS = 4;
+	public static int PROTOCOLS = 4;  
 
 	public static void main(String[] args) throws Exception {
 		StaticTestMultiAlloc test = new StaticTestMultiAlloc();
