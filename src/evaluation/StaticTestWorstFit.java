@@ -23,7 +23,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorDef;
 
-public class StaticTestWFandDM {
+public class StaticTestWorstFit {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
@@ -38,7 +38,7 @@ public class StaticTestWFandDM {
 	public static int PROTOCOLS = 4;
 
 	public static void main(String[] args) throws Exception {
-		StaticTestWFandDM test = new StaticTestWFandDM();
+		StaticTestWorstFit test = new StaticTestWorstFit();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {

@@ -26,7 +26,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorDef;
 
-public class DynamicTestWFandDM {
+public class DynamicTestWF {
 
 	ArrayList<Double> similarity = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class DynamicTestWFandDM {
 	final double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		DynamicTestWFandDM test = new DynamicTestWFandDM();
+		DynamicTestWF test = new DynamicTestWF();
 		for (int i = 1; i < 10; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);

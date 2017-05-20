@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class IOAResultReader {
@@ -51,7 +52,7 @@ public class IOAResultReader {
 				} catch (IOException e) {
 				}
 				if (lines != null)
-					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
+					result += bigSet + "" + smallSet + " " + Arrays.deepToString(lines.toArray()) + "\n";
 			}
 		}
 

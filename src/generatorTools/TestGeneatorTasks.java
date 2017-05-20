@@ -19,7 +19,7 @@ public class TestGeneatorTasks {
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 		CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 		double RESOURCE_SHARING_FACTOR = 0.2;
-		int TOTAL_PARTITIONS = 12;
+		int TOTAL_PARTITIONS = 16;
 
 		SystemGeneratorWithAllocation geneator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
@@ -65,14 +65,19 @@ public class TestGeneatorTasks {
 					ALLOCATION_POLICY.RESOURCE_LOCAL_FIT);
 			geneator.testifyAllocatedTasksetAndResource(tasksRLF, resources);
 
-			// System.out.println("\n\n");
-			// System.out.println(" RESOURCE Length FIT");
-			// ArrayList<ArrayList<SporadicTask>> taskscslenF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.RESOURCE_LENGTH_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(taskscslenF,
-			// resources);
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE Length FIT");
+			ArrayList<ArrayList<SporadicTask>> taskscslendF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
+					ALLOCATION_POLICY.RESOURCE_LENGTH_DECREASE_FIT);
+			geneator.testifyAllocatedTasksetAndResource(taskscslendF, resources);
+			
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE Length FIT");
+			ArrayList<ArrayList<SporadicTask>> taskscsleniF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
+					ALLOCATION_POLICY.RESOURCE_LENGTH_INCREASE_FIT);
+			geneator.testifyAllocatedTasksetAndResource(taskscsleniF, resources);
 
+			System.err.println("\n\n " + j + " \n\n");
 		}
 
 	}
