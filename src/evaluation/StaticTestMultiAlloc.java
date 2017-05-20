@@ -31,16 +31,16 @@ public class StaticTestMultiAlloc {
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-	static double RESOURCE_SHARING_FACTOR = 0.2;
+	static double RESOURCE_SHARING_FACTOR = 0.4;
 	public static int TOTAL_PARTITIONS = 16;
-	public static boolean testSchedulability = false;
+	public static boolean testSchedulability = true;
 	public static int PROTOCOLS = 4;
 
 	public static void main(String[] args) throws Exception {
 		StaticTestMultiAlloc test = new StaticTestMultiAlloc();
 
-		final CountDownLatch cslencountdown = new CountDownLatch(6);
-		for (int i = 1; i < 7; i++) {
+		final CountDownLatch cslencountdown = new CountDownLatch(8);
+		for (int i = 1; i < 9; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				@Override
@@ -59,21 +59,27 @@ public class StaticTestMultiAlloc {
 		final CS_LENGTH_RANGE cs_range;
 		switch (cs_len) {
 		case 1:
-			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.EXTREME_SHORT_CSLEN;
 			break;
 		case 2:
-			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 			break;
 		case 3:
-			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 			break;
 		case 4:
-			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
+			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 			break;
 		case 5:
-			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
 			break;
 		case 6:
+			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			break;
+		case 7:
+			cs_range = CS_LENGTH_RANGE.EXTREME_LONG_CSLEN;
+			break;
+		case 8:
 			cs_range = CS_LENGTH_RANGE.RANDOM;
 			break;
 		default:

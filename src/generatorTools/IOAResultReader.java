@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 public class IOAResultReader {
@@ -42,7 +41,7 @@ public class IOAResultReader {
 		}
 
 		result += "CS Length \n";
-		for (int bigSet = 1; bigSet < 6; bigSet++) {
+		for (int bigSet = 1; bigSet < 10; bigSet++) {
 			for (int smallSet = 1; smallSet < 301; smallSet++) {
 				String filepath = "result/" + "ioa 2" + " " + bigSet + " " + smallSet + ".txt";
 
@@ -52,7 +51,7 @@ public class IOAResultReader {
 				} catch (IOException e) {
 				}
 				if (lines != null)
-					result += bigSet + "" + smallSet + " " + Arrays.deepToString(lines.toArray()) + "\n";
+					result += bigSet + "" + smallSet + " " + lines.get(0) + "\n";
 			}
 		}
 

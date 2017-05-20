@@ -195,23 +195,29 @@ public class SystemGeneratorWithAllocation {
 			long cs_len = 0;
 			if (csl == -1) {
 				switch (cs_len_range) {
+				case EXTREME_LONG_CSLEN:
+					cs_len = ran.nextInt(500 - 400) + 401;
+					break;
 				case VERY_LONG_CSLEN:
-					cs_len = ran.nextInt(300 - 200) + 201;
+					cs_len = ran.nextInt(400 - 300) + 301;
 					break;
 				case LONG_CSLEN:
-					cs_len = ran.nextInt(200 - 100) + 101;
+					cs_len = ran.nextInt(300 - 200) + 201;
 					break;
 				case MEDIUM_CS_LEN:
-					cs_len = ran.nextInt(100 - 50) + 51;
+					cs_len = ran.nextInt(200 - 100) + 101;
 					break;
 				case SHORT_CS_LEN:
-					cs_len = ran.nextInt(50 - 15) + 16;
+					cs_len = ran.nextInt(100 - 50) + 51;
 					break;
 				case VERY_SHORT_CS_LEN:
+					cs_len = ran.nextInt(50 - 15) + 16;
+					break;
+				case EXTREME_SHORT_CSLEN:
 					cs_len = ran.nextInt(15) + 1;
 					break;
 				case RANDOM:
-					cs_len = ran.nextInt(300) + 1;
+					cs_len = ran.nextInt(500) + 1;
 				default:
 					break;
 				}
