@@ -1,4 +1,4 @@
-package frameworkWFandDM;
+package discardedAlgorithms;
 
 import java.util.ArrayList;
 

@@ -160,15 +160,15 @@ public class TestSchedulability {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
@@ -200,15 +200,15 @@ public class TestSchedulability {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
@@ -239,15 +239,15 @@ public class TestSchedulability {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
@@ -322,15 +322,15 @@ public class TestSchedulability {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(5 + " " + cslen + " " + RSF + " times: " + i);
@@ -361,15 +361,15 @@ public class TestSchedulability {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasks, resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);

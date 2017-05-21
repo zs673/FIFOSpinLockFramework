@@ -209,7 +209,7 @@ public class GADynamicSolver {
 		for (int i = 0; i < resources.size(); i++) {
 			resources.get(i).protocol = gene[i];
 		}
-		long[][] Ris = framework.calculateResponseTime(tasks, resources, false, false, IOAAnalysisUtils.extendCalForGA);
+		long[][] Ris = framework.newRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForGA);
 
 		int sched_fitness = 0;
 		long rt_fitness = 0;

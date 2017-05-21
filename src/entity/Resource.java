@@ -4,15 +4,13 @@ import java.util.ArrayList;
 
 public class Resource {
 
-	public ArrayList<Integer> ceiling;
-	public long csl;
-
 	public int id;
-	public boolean isGlobal = false;
-	public ArrayList<Integer> partitions;
-
+	public long csl;
 	public int protocol;
+	public boolean isGlobal = false;
 
+	public ArrayList<Integer> ceiling;
+	public ArrayList<Integer> partitions;
 	public ArrayList<SporadicTask> requested_tasks;
 
 	public Resource(int id, long cs_len) {

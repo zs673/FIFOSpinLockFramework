@@ -7,8 +7,10 @@ import entity.SporadicTask;
 
 public class IAFIFONP {
 
-	public long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+	public long[][] NewRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal) {
+		if (tasks == null)
+			return null;
 		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
@@ -123,19 +125,60 @@ public class IAFIFONP {
 	}
 
 	/*
-	 * Return the index of a given resource in stored in a task.
+	 * gives the number of requests from remote partitions for a resource that
+	 * is required by the given task.
 	 */
-	private int getIndexRInTask(SporadicTask task, Resource resource) {
-		int indexR = -1;
-		if (task.resource_required_index.contains(resource.id - 1)) {
-			for (int j = 0; j < task.resource_required_index.size(); j++) {
-				if (resource.id - 1 == task.resource_required_index.get(j)) {
-					indexR = j;
-					break;
+	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
+			long Ri) {
+		int number_of_spin_dealy = 0;
+
+		for (int i = 0; i < tasks.size(); i++) {
+			if (i != task.partition) {
+				/* For each remote partition */
+				int number_of_request_by_Remote_P = 0;
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
+						SporadicTask remote_task = tasks.get(i).get(j);
+						int indexR = getIndexRInTask(remote_task, resource);
+						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
+						number_of_request_by_Remote_P += number_of_release
+								* remote_task.number_of_access_in_one_release.get(indexR);
+					}
 				}
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri);
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
+						: number_of_request_by_Remote_P - getNoRFromHP;
+
+				int NoRFromT = task.number_of_access_in_one_release.get(getIndexRInTask(task, resource));
+				number_of_spin_dealy += Integer.min(possible_spin_delay, NoRFromT);
 			}
 		}
-		return indexR;
+		return number_of_spin_dealy;
+	}
+
+	/*
+	 * Calculate the local high priority tasks' interference for a given task t.
+	 * CI is a set of computation time of local tasks, including spin delay.
+	 */
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long Ri, long[][] Ris,
+			ArrayList<Resource> resources) {
+		long interference = 0;
+		int partition = t.partition;
+		ArrayList<SporadicTask> tasks = allTasks.get(partition);
+
+		for (int i = 0; i < tasks.size(); i++) {
+			if (tasks.get(i).priority > t.priority) {
+				SporadicTask hpTask = tasks.get(i);
+				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET);
+				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period)
+						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
+
+				long btb_interference = getIndirectSpinDelay(hpTask, Ri, Ris[partition][i], Ris, allTasks, resources, t);
+				t.indirectspin += btb_interference;
+				interference += btb_interference;
+			}
+		}
+		return interference;
 	}
 
 	/*
@@ -183,6 +226,44 @@ public class IAFIFONP {
 
 		}
 		return BTBhit;
+	}
+
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
+		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
+		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
+		ArrayList<Double> overheads = new ArrayList<>();
+
+		for (int i = 0; i < LocalBlockingResources.size(); i++) {
+			Resource res = LocalBlockingResources.get(i);
+			long local_blocking = res.csl;
+			t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
+
+			if (res.isGlobal) {
+				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
+					int partition = res.partitions.get(parition_index);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri);
+					int norT = t.resource_required_index.contains(res.id - 1)
+							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri);
+
+					if (partition != t.partition && (norHP + norT) < norR) {
+						local_blocking += res.csl;
+						t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
+					}
+				}
+			}
+			local_blocking_each_resource.add(local_blocking);
+			overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK));
+		}
+
+		if (local_blocking_each_resource.size() >= 1) {
+			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
+			overheads.sort((l1, l2) -> -Double.compare(l1, l2));
+			t.implementation_overheads += overheads.get(0);
+		}
+
+		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
 	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources) {
@@ -251,97 +332,18 @@ public class IAFIFONP {
 	}
 
 	/*
-	 * gives the number of requests from remote partitions for a resource that
-	 * is required by the given task.
+	 * Return the index of a given resource in stored in a task.
 	 */
-	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
-			long Ri) {
-		int number_of_spin_dealy = 0;
-
-		for (int i = 0; i < tasks.size(); i++) {
-			if (i != task.partition) {
-				/* For each remote partition */
-				int number_of_request_by_Remote_P = 0;
-				for (int j = 0; j < tasks.get(i).size(); j++) {
-					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
-						SporadicTask remote_task = tasks.get(i).get(j);
-						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
-						number_of_request_by_Remote_P += number_of_release
-								* remote_task.number_of_access_in_one_release.get(indexR);
-					}
-				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
-						: number_of_request_by_Remote_P - getNoRFromHP;
-
-				int NoRFromT = task.number_of_access_in_one_release.get(getIndexRInTask(task, resource));
-				number_of_spin_dealy += Integer.min(possible_spin_delay, NoRFromT);
-			}
-		}
-		return number_of_spin_dealy;
-	}
-
-	/*
-	 * Calculate the local high priority tasks' interference for a given task t.
-	 * CI is a set of computation time of local tasks, including spin delay.
-	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long Ri, long[][] Ris,
-			ArrayList<Resource> resources) {
-		long interference = 0;
-		int partition = t.partition;
-		ArrayList<SporadicTask> tasks = allTasks.get(partition);
-
-		for (int i = 0; i < tasks.size(); i++) {
-			if (tasks.get(i).priority > t.priority) {
-				SporadicTask hpTask = tasks.get(i);
-				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period)
-						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
-
-				long btb_interference = getIndirectSpinDelay(hpTask, Ri, Ris[partition][i], Ris, allTasks, resources, t);
-				t.indirectspin += btb_interference;
-				interference += btb_interference;
-			}
-		}
-		return interference;
-	}
-
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri) {
-		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
-		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
-		ArrayList<Double> overheads = new ArrayList<>();
-
-		for (int i = 0; i < LocalBlockingResources.size(); i++) {
-			Resource res = LocalBlockingResources.get(i);
-			long local_blocking = res.csl;
-			t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
-
-			if (res.isGlobal) {
-				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
-					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri);
-					int norT = t.resource_required_index.contains(res.id - 1)
-							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri);
-
-					if (partition != t.partition && (norHP + norT) < norR) {
-						local_blocking += res.csl;
-						t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
-					}
+	private int getIndexRInTask(SporadicTask task, Resource resource) {
+		int indexR = -1;
+		if (task.resource_required_index.contains(resource.id - 1)) {
+			for (int j = 0; j < task.resource_required_index.size(); j++) {
+				if (resource.id - 1 == task.resource_required_index.get(j)) {
+					indexR = j;
+					break;
 				}
 			}
-			local_blocking_each_resource.add(local_blocking);
-			overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK));
 		}
-
-		if (local_blocking_each_resource.size() >= 1) {
-			local_blocking_each_resource.sort((l1, l2) -> -Double.compare(l1, l2));
-			overheads.sort((l1, l2) -> -Double.compare(l1, l2));
-			t.implementation_overheads += overheads.get(0);
-		}
-
-		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
+		return indexR;
 	}
 }

@@ -17,10 +17,10 @@ import analysis.IOAAnalysisUtils;
 import basicAnalysis.FIFONP;
 import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
+import discardedAlgorithms.StaticSolver;
 import entity.Resource;
 import entity.SporadicTask;
 import frameworkWFandDM.GADynamicSolver;
-import frameworkWFandDM.StaticSolver;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
@@ -114,27 +114,27 @@ public class DynamicTestWF {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
-					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfp();
 
-					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fnp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfnp();
 
-					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					Ris = mrsp.newRTATest(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
@@ -153,7 +153,7 @@ public class DynamicTestWF {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -247,27 +247,27 @@ public class DynamicTestWF {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
-					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfp();
 
-					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fnp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfnp();
 
-					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					Ris = mrsp.newRTATest(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
@@ -286,7 +286,7 @@ public class DynamicTestWF {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -355,27 +355,27 @@ public class DynamicTestWF {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
-					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfp();
 
-					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fnp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfnp();
 
-					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					Ris = mrsp.newRTATest(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
@@ -394,7 +394,7 @@ public class DynamicTestWF {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -484,27 +484,27 @@ public class DynamicTestWF {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
-					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfp();
 
-					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fnp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfnp();
 
-					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					Ris = mrsp.newRTATest(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
@@ -523,7 +523,7 @@ public class DynamicTestWF {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 
@@ -592,27 +592,27 @@ public class DynamicTestWF {
 					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 					IACombinedProtocol sCombine = new IACombinedProtocol();
 
-					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.NewMrsPRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
-					Ris = fp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfp();
 
-					Ris = fnp.NewMrsPRTATest(tasks, resources, false);
+					Ris = fnp.newRTATest(tasks, resources, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incfnp();
 
-					Ris = mrsp.getResponseTime(tasks, resources, 6, false);
+					Ris = mrsp.newRTATest(tasks, resources, 6, false);
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
@@ -631,7 +631,7 @@ public class DynamicTestWF {
 					for (int l = 0; l < resources.size(); l++) {
 						resources.get(l).protocol = protocols[l];
 					}
-					Ris = sCombine.calculateResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciaScombine();
 

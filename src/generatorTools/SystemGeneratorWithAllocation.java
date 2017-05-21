@@ -85,9 +85,9 @@ public class SystemGeneratorWithAllocation {
 		while (tasks == null) {
 			tasks = generateT();
 			if (tasks != null && (WorstFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					|| BestFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					|| FirstFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					|| NextFitAllocation(tasks, total_partitions, maxUtilPerCore) == null))
+					&& BestFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
+					&& FirstFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
+					&& NextFitAllocation(tasks, total_partitions, maxUtilPerCore) == null))
 				tasks = null;
 		}
 		return tasks;
