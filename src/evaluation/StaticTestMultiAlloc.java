@@ -25,16 +25,16 @@ import generatorTools.SystemGeneratorWithAllocation;
 
 public class StaticTestMultiAlloc {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
-	
+
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-	static double RESOURCE_SHARING_FACTOR = 0.4;
+	static double RESOURCE_SHARING_FACTOR = 0.3;
 	public static int TOTAL_PARTITIONS = 16;
 	public static boolean testSchedulability = true;
-	public static int PROTOCOLS = 4;  
+	public static int PROTOCOLS = 4;
 
 	public static void main(String[] args) throws Exception {
 		StaticTestMultiAlloc test = new StaticTestMultiAlloc();
@@ -59,28 +59,28 @@ public class StaticTestMultiAlloc {
 		final CS_LENGTH_RANGE cs_range;
 		switch (cs_len) {
 		case 1:
-			cs_range = CS_LENGTH_RANGE.EXTREME_SHORT_CSLEN;
+			cs_range = CS_LENGTH_RANGE.RANDOM;
 			break;
 		case 2:
-			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.EXTREME_SHORT_CSLEN;
 			break;
 		case 3:
-			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 			break;
 		case 4:
-			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 			break;
 		case 5:
-			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
+			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 			break;
 		case 6:
-			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
+			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
 			break;
 		case 7:
-			cs_range = CS_LENGTH_RANGE.EXTREME_LONG_CSLEN;
+			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
 			break;
 		case 8:
-			cs_range = CS_LENGTH_RANGE.RANDOM;
+			cs_range = CS_LENGTH_RANGE.EXTREME_LONG_CSLEN;
 			break;
 		default:
 			cs_range = null;
@@ -103,14 +103,14 @@ public class StaticTestMultiAlloc {
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			int maxAccess = 0;
 			int[] protocols = null;
-			
+
 			SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
 					NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range, RESOURCES_RANGE.PARTITIONS,
 					RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			
+
 			/**
 			 * WORST FIT
 			 */
@@ -152,7 +152,7 @@ public class StaticTestMultiAlloc {
 			 */
 			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources, TOTAL_PARTITIONS,
 					ALLOCATION_POLICY.BEST_FIT);
-			
+
 			Ris = fnp.NewMrsPRTATest(tasksBF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfnp++;
@@ -165,7 +165,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsmrsp++;
 
-			
 			for (int l = 0; l < tasksBF.size(); l++) {
 				for (int j = 0; j < tasksBF.get(l).size(); j++) {
 					SporadicTask task = tasksBF.get(l).get(j);
@@ -184,7 +183,7 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfscombine++;
-			
+
 			/**
 			 * FIRST FIT
 			 */
@@ -202,7 +201,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsmrsp++;
 
-			
 			for (int l = 0; l < tasksFF.size(); l++) {
 				for (int j = 0; j < tasksFF.get(l).size(); j++) {
 					SporadicTask task = tasksFF.get(l).get(j);
@@ -221,7 +219,7 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffscombine++;
-			
+
 			/**
 			 * NEXT FIT
 			 */
@@ -239,7 +237,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsmrsp++;
 
-			
 			for (int l = 0; l < tasksNF.size(); l++) {
 				for (int j = 0; j < tasksNF.get(l).size(); j++) {
 					SporadicTask task = tasksNF.get(l).get(j);
@@ -258,11 +255,11 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfscombine++;
-			
+
 			/**
 			 * RESOURCE REQUEST TASKS FIT
 			 */
-			
+
 			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources, TOTAL_PARTITIONS,
 					ALLOCATION_POLICY.RESOURCE_REQUEST_TASKS_FIT);
 			Ris = fnp.NewMrsPRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
@@ -277,7 +274,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsmrsp++;
 
-			
 			for (int l = 0; l < tasksRRF.size(); l++) {
 				for (int j = 0; j < tasksRRF.get(l).size(); j++) {
 					SporadicTask task = tasksRRF.get(l).get(j);
@@ -296,11 +292,11 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfscombine++;
-			
+
 			/**
 			 * RESOURCE LOCAL FIT
 			 */
-			
+
 			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources, TOTAL_PARTITIONS,
 					ALLOCATION_POLICY.RESOURCE_LOCAL_FIT);
 			Ris = fnp.NewMrsPRTATest(tasksRLF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
@@ -315,7 +311,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsmrsp++;
 
-			
 			for (int l = 0; l < tasksRLF.size(); l++) {
 				for (int j = 0; j < tasksRLF.get(l).size(); j++) {
 					SporadicTask task = tasksRLF.get(l).get(j);
@@ -334,11 +329,11 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfscombine++;
-			
+
 			/**
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
-			
+
 			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources, TOTAL_PARTITIONS,
 					ALLOCATION_POLICY.RESOURCE_LENGTH_DECREASE_FIT);
 			Ris = fnp.NewMrsPRTATest(tasksRLDF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
@@ -353,7 +348,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsmrsp++;
 
-			
 			for (int l = 0; l < tasksRLDF.size(); l++) {
 				for (int j = 0; j < tasksRLDF.get(l).size(); j++) {
 					SporadicTask task = tasksRLDF.get(l).get(j);
@@ -372,7 +366,7 @@ public class StaticTestMultiAlloc {
 					IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfscombine++;
-			
+
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
@@ -390,7 +384,6 @@ public class StaticTestMultiAlloc {
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
-			
 			for (int l = 0; l < tasksRLIF.size(); l++) {
 				for (int j = 0; j < tasksRLIF.get(l).size(); j++) {
 					SporadicTask task = tasksRLIF.get(l).get(j);
@@ -416,34 +409,36 @@ public class StaticTestMultiAlloc {
 		result += "WF: " + (double) wfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) wfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) wfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) wfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "BF: " + (double) bfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) bfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) bfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) bfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "FF: " + (double) ffsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) ffsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) ffsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) ffscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "NF: " + (double) nfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) nfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) nfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) nfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "RRF: " + (double) rrfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rrfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) rrfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) rrfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "RLF: " + (double) rlfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) rlfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ " " + (double) rlfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+
 		result += "RLDF: " + (double) rldfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) rldfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) rldfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) rldfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
-		
+				+ (double) rldfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) rldfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) rldfscombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
+
 		result += "RLIF: " + (double) rlifsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) rlifscombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) rlifscombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
