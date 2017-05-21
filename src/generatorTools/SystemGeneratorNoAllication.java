@@ -8,7 +8,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
-public class SystemGeneratorDef {
+public class SystemGeneratorNoAllication {
 	public CS_LENGTH_RANGE cs_len_range;
 	long csl = -1;
 	public boolean isLogUni;
@@ -24,8 +24,9 @@ public class SystemGeneratorDef {
 
 	public double util;
 
-	public SystemGeneratorDef(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
-			boolean isLogUni, CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access) {
+	public SystemGeneratorNoAllication(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
+			boolean isLogUni, CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf,
+			int number_of_max_access) {
 		this.minT = minT;
 		this.maxT = maxT;
 		this.util = util;
@@ -39,7 +40,7 @@ public class SystemGeneratorDef {
 		this.csl = -1;
 	}
 
-	public SystemGeneratorDef(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
+	public SystemGeneratorNoAllication(int minT, int maxT, double util, int total_partitions, int number_of_tasks_per_processor,
 			boolean isLogUni, CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access,
 			long csl) {
 		this.minT = minT;
@@ -268,7 +269,8 @@ public class SystemGeneratorDef {
 				for (int k = 0; k < task.resource_required_index.size(); k++) {
 					int number_of_requests = ran.nextInt(number_of_max_access) + 1;
 					task.number_of_access_in_one_release.add(number_of_requests);
-					total_resource_execution_time += number_of_requests * resources.get(task.resource_required_index.get(k)).csl;
+					total_resource_execution_time += number_of_requests
+							* resources.get(task.resource_required_index.get(k)).csl;
 				}
 
 				/*
@@ -324,7 +326,8 @@ public class SystemGeneratorDef {
 		return fails;
 	}
 
-	public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public void testifyGeneratedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks,
+			ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
 		for (int i = 0; i < tasks.size(); i++) {
 			double util = 0;

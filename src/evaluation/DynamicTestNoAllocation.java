@@ -9,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.IACombinedProtocol;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
@@ -17,18 +16,15 @@ import analysis.IOAAnalysisUtils;
 import basicAnalysis.FIFONP;
 import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
-import discardedAlgorithms.StaticSolver;
 import entity.Resource;
 import entity.SporadicTask;
 import frameworkWFandDM.GADynamicSolver;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorNoAllication;
 
-public class DynamicTestWF {
-
-	ArrayList<Double> similarity = new ArrayList<>();
+public class DynamicTestNoAllocation {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
@@ -38,7 +34,6 @@ public class DynamicTestWF {
 	int Dcombine = 0;
 	int fnp = 0;
 	int fp = 0;
-	int Scombine = 0;
 	int siafnp = 0;
 	int siafp = 0;
 	int siamrsp = 0;
@@ -49,7 +44,7 @@ public class DynamicTestWF {
 	final double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		DynamicTestWF test = new DynamicTestWF();
+		DynamicTestNoAllocation test = new DynamicTestNoAllocation();
 		for (int i = 1; i < 10; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);
@@ -71,12 +66,6 @@ public class DynamicTestWF {
 			test.parallelExperimentIncreasingrsf(i);
 		}
 		IOAResultReader.schedreader(null, false);
-
-		System.out.println("similarity: ");
-		for (int i = 0; i < test.similarity.size(); i++) {
-			System.out.print(test.similarity.get(i) + "    ");
-		}
-		System.out.println();
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA) {
@@ -97,9 +86,9 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-							range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
+					SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -111,8 +100,8 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
-					IACombinedProtocol sCombine = new IACombinedProtocol();
+					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -138,28 +127,8 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					int maxAccess = 0;
-					for (int l = 0; l < tasks.size(); l++) {
-						for (int j = 0; j < tasks.get(l).size(); j++) {
-							SporadicTask task = tasks.get(l).get(j);
-							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-									maxAccess = task.number_of_access_in_one_release.get(k);
-								}
-							}
-						}
-					}
-					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-					for (int l = 0; l < resources.size(); l++) {
-						resources.get(l).protocol = protocols[l];
-					}
-					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
-					if (isSystemSchedulable(tasks, Ris))
-						inciaScombine();
-
-					if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+					if (solver.findSchedulableProtocols(true) >= 0) {
 						inciaDcombine();
-						addSimilarity(solver.similarity);
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
@@ -175,11 +144,12 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 3 2 " + NoA, result);
@@ -230,9 +200,10 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-							cs_range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -244,8 +215,8 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
-					IACombinedProtocol sCombine = new IACombinedProtocol();
+					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -271,28 +242,8 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					int maxAccess = 0;
-					for (int l = 0; l < tasks.size(); l++) {
-						for (int j = 0; j < tasks.get(l).size(); j++) {
-							SporadicTask task = tasks.get(l).get(j);
-							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-									maxAccess = task.number_of_access_in_one_release.get(k);
-								}
-							}
-						}
-					}
-					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-					for (int l = 0; l < resources.size(); l++) {
-						resources.get(l).protocol = protocols[l];
-					}
-					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
-					if (isSystemSchedulable(tasks, Ris))
-						inciaScombine();
-
-					if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+					if (solver.findSchedulableProtocols(true) >= 0) {
 						inciaDcombine();
-						addSimilarity(solver.similarity);
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
@@ -308,11 +259,12 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
@@ -338,9 +290,9 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
-							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+							range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -352,8 +304,8 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
-					IACombinedProtocol sCombine = new IACombinedProtocol();
+					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -379,28 +331,8 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					int maxAccess = 0;
-					for (int l = 0; l < tasks.size(); l++) {
-						for (int j = 0; j < tasks.get(l).size(); j++) {
-							SporadicTask task = tasks.get(l).get(j);
-							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-									maxAccess = task.number_of_access_in_one_release.get(k);
-								}
-							}
-						}
-					}
-					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-					for (int l = 0; l < resources.size(); l++) {
-						resources.get(l).protocol = protocols[l];
-					}
-					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
-					if (isSystemSchedulable(tasks, Ris))
-						inciaScombine();
-
-					if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+					if (solver.findSchedulableProtocols(true) >= 0) {
 						inciaDcombine();
-						addSimilarity(solver.similarity);
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
@@ -416,11 +348,12 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 4 2 " + NoP, result);
@@ -467,9 +400,10 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-							range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
+							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -481,8 +415,8 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
-					IACombinedProtocol sCombine = new IACombinedProtocol();
+					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -508,28 +442,8 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					int maxAccess = 0;
-					for (int l = 0; l < tasks.size(); l++) {
-						for (int j = 0; j < tasks.get(l).size(); j++) {
-							SporadicTask task = tasks.get(l).get(j);
-							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-									maxAccess = task.number_of_access_in_one_release.get(k);
-								}
-							}
-						}
-					}
-					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-					for (int l = 0; l < resources.size(); l++) {
-						resources.get(l).protocol = protocols[l];
-					}
-					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
-					if (isSystemSchedulable(tasks, Ris))
-						inciaScombine();
-
-					if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+					if (solver.findSchedulableProtocols(true) >= 0) {
 						inciaDcombine();
-						addSimilarity(solver.similarity);
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
@@ -545,11 +459,12 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 5 2 " + resourceSharingFactor, result);
@@ -576,8 +491,9 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS,
-							NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+					SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT,
+							TOTAL_PARTITIONS, NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasks, resources);
@@ -589,8 +505,8 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
-					IACombinedProtocol sCombine = new IACombinedProtocol();
+					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -616,28 +532,8 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					int maxAccess = 0;
-					for (int l = 0; l < tasks.size(); l++) {
-						for (int j = 0; j < tasks.get(l).size(); j++) {
-							SporadicTask task = tasks.get(l).get(j);
-							for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-								if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-									maxAccess = task.number_of_access_in_one_release.get(k);
-								}
-							}
-						}
-					}
-					int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-					for (int l = 0; l < resources.size(); l++) {
-						resources.get(l).protocol = protocols[l];
-					}
-					Ris = sCombine.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
-					if (isSystemSchedulable(tasks, Ris))
-						inciaScombine();
-
-					if (solver.findSchedulableProtocols(true, maxAccess) >= 0) {
+					if (solver.findSchedulableProtocols(true) >= 0) {
 						inciaDcombine();
-						addSimilarity(solver.similarity);
 					}
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
@@ -652,19 +548,16 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Scombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 1 2 " + NoT, result);
 		System.out.println(result);
-	}
-
-	public synchronized void addSimilarity(double value) {
-		similarity.add(value);
 	}
 
 	public synchronized void incfnp() {
@@ -691,10 +584,6 @@ public class DynamicTestWF {
 		siamrsp++;
 	}
 
-	public synchronized void inciaScombine() {
-		Scombine++;
-	}
-
 	public synchronized void incmrsp() {
 		mrsp++;
 	}
@@ -708,7 +597,6 @@ public class DynamicTestWF {
 		siafp = 0;
 		siafnp = 0;
 
-		Scombine = 0;
 		Dcombine = 0;
 	}
 

@@ -18,7 +18,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorNoAllication;
 
 public class StaticTest2DeeperLooking {
 	public static int MAX_PERIOD = 1000;
@@ -119,9 +119,9 @@ public class StaticTest2DeeperLooking {
 			break;
 		}
 
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+				cs_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -152,16 +152,17 @@ public class StaticTest2DeeperLooking {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -192,15 +193,17 @@ public class StaticTest2DeeperLooking {
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -231,15 +234,16 @@ public class StaticTest2DeeperLooking {
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true,
-				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT,
+				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -270,7 +274,8 @@ public class StaticTest2DeeperLooking {
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);

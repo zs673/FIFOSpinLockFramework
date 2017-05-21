@@ -10,20 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.IACombinedProtocol;
 import analysis.IAFIFONP;
 import analysis.IAFIFOP;
 import analysis.IANewMrsPRTAWithMCNP;
 import analysis.IOAAnalysisUtils;
-import discardedAlgorithms.StaticSolver;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorNoAllication;
 
-public class StaticTestWorstFit {
+public class StaticTestNoAllocation {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
@@ -35,10 +33,10 @@ public class StaticTestWorstFit {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static boolean testSchedulability = false;
-	public static int PROTOCOLS = 4;
+	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
-		StaticTestWorstFit test = new StaticTestWorstFit();
+		StaticTestNoAllocation test = new StaticTestNoAllocation();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
@@ -122,21 +120,19 @@ public class StaticTestWorstFit {
 			break;
 		}
 
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+				cs_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		IACombinedProtocol sCombine = new IACombinedProtocol();
 
 		String result = "";
 		int sfnp = 0;
 		int sfp = 0;
 		int smrsp = 0;
-		int scombine = 0;
 
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
@@ -160,55 +156,32 @@ public class StaticTestWorstFit {
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			int maxAccess = 0;
-			for (int l = 0; l < tasks.size(); l++) {
-				for (int j = 0; j < tasks.get(l).size(); j++) {
-					SporadicTask task = tasks.get(l).get(j);
-					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-							maxAccess = task.number_of_access_in_one_release.get(k);
-						}
-					}
-				}
-			}
-			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-			for (int l = 0; l < resources.size(); l++) {
-				resources.get(l).protocol = protocols[l];
-			}
-			Ris = sCombine.newRTATest(tasks, resources, testSchedulability, false,
-					IOAAnalysisUtils.extendCalForStatic);
-			getUnschedulableTasks(tasks, Ris, results[3]);
-			if (isSystemSchedulable(tasks, Ris))
-				scombine++;
-
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) scombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
-		result += "    mrsp: " + Arrays.toString(results[2]);
-		result += "    scombine: " + Arrays.toString(results[3]) + "\n\n";
+		result += "    mrsp: " + Arrays.toString(results[2]) + "\n\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT, true,
-				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT,
+				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		IACombinedProtocol sCombine = new IACombinedProtocol();
 
 		String result = "";
 		int sfnp = 0;
 		int sfp = 0;
 		int smrsp = 0;
-		int scombine = 0;
 
 		long[][] results = new long[PROTOCOLS][NoT];
 
@@ -232,55 +205,33 @@ public class StaticTestWorstFit {
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			int maxAccess = 0;
-			for (int l = 0; l < tasks.size(); l++) {
-				for (int j = 0; j < tasks.get(l).size(); j++) {
-					SporadicTask task = tasks.get(l).get(j);
-					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-							maxAccess = task.number_of_access_in_one_release.get(k);
-						}
-					}
-				}
-			}
-			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-			for (int l = 0; l < resources.size(); l++) {
-				resources.get(l).protocol = protocols[l];
-			}
-			Ris = sCombine.newRTATest(tasks, resources, testSchedulability, false,
-					IOAAnalysisUtils.extendCalForStatic);
-			getUnschedulableTasks(tasks, Ris, results[3]);
-			if (isSystemSchedulable(tasks, Ris))
-				scombine++;
-
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) scombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
-		result += "    mrsp: " + Arrays.toString(results[2]);
-		result += "    scombine: " + Arrays.toString(results[3]) + "\n\n";
+		result += "    mrsp: " + Arrays.toString(results[2]) + "\n\n";
 
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		IACombinedProtocol sCombine = new IACombinedProtocol();
 
 		String result = "";
 		int sfnp = 0;
 		int sfp = 0;
 		int smrsp = 0;
-		int scombine = 0;
 
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
@@ -304,56 +255,33 @@ public class StaticTestWorstFit {
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			int maxAccess = 0;
-			for (int l = 0; l < tasks.size(); l++) {
-				for (int j = 0; j < tasks.get(l).size(); j++) {
-					SporadicTask task = tasks.get(l).get(j);
-					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-							maxAccess = task.number_of_access_in_one_release.get(k);
-						}
-					}
-				}
-			}
-			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-			for (int l = 0; l < resources.size(); l++) {
-				resources.get(l).protocol = protocols[l];
-			}
-			Ris = sCombine.newRTATest(tasks, resources, testSchedulability, false,
-					IOAAnalysisUtils.extendCalForStatic);
-			getUnschedulableTasks(tasks, Ris, results[3]);
-			if (isSystemSchedulable(tasks, Ris))
-				scombine++;
-
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) scombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
-		result += "    mrsp: " + Arrays.toString(results[2]);
-		result += "    scombine: " + Arrays.toString(results[3]) + "\n\n";
+		result += "    mrsp: " + Arrays.toString(results[2]) + "\n\n";
 
 		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NoA);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
-		IACombinedProtocol sCombine = new IACombinedProtocol();
 
 		String result = "";
 		int sfnp = 0;
 		int sfp = 0;
 		int smrsp = 0;
-		int scombine = 0;
 
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
@@ -377,41 +305,21 @@ public class StaticTestWorstFit {
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			int maxAccess = 0;
-			for (int l = 0; l < tasks.size(); l++) {
-				for (int j = 0; j < tasks.get(l).size(); j++) {
-					SporadicTask task = tasks.get(l).get(j);
-					for (int k = 0; k < task.number_of_access_in_one_release.size(); k++) {
-						if (maxAccess < task.number_of_access_in_one_release.get(k)) {
-							maxAccess = task.number_of_access_in_one_release.get(k);
-						}
-					}
-				}
-			}
-			int[] protocols = new StaticSolver().solve(tasks, resources, tasks.size(), maxAccess, false);
-			for (int l = 0; l < resources.size(); l++) {
-				resources.get(l).protocol = protocols[l];
-			}
-			Ris = sCombine.newRTATest(tasks, resources, testSchedulability, false,
-					IOAAnalysisUtils.extendCalForStatic);
-			getUnschedulableTasks(tasks, Ris, results[3]);
-			if (isSystemSchedulable(tasks, Ris))
-				scombine++;
-
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) scombine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
-		result += "    mrsp: " + Arrays.toString(results[2]);
-		result += "    scombine: " + Arrays.toString(results[3]) + "\n\n";
+		result += "    mrsp: " + Arrays.toString(results[2]) + "\n\n";
 
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
-	public ArrayList<SporadicTask> getUnschedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long[] results) {
+	public ArrayList<SporadicTask> getUnschedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
+			long[] results) {
 		ArrayList<SporadicTask> unschedulabletasks = new ArrayList<>();
 
 		for (int i = 0; i < tasks.size(); i++) {

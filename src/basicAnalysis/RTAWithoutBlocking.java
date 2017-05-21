@@ -7,7 +7,8 @@ import entity.SporadicTask;
 
 public class RTAWithoutBlocking {
 
-	public long[][] newRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
+	public long[][] newRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean printBebug) {
 		if (tasks == null)
 			return null;
 		long[][] init_Ri = new Utils().initResponseTime(tasks);
@@ -50,7 +51,8 @@ public class RTAWithoutBlocking {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] response_time) {
 		long[][] response_time_plus = new long[tasks.size()][];
 		for (int i = 0; i < response_time.length; i++)
 			response_time_plus[i] = new long[response_time[i].length];

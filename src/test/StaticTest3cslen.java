@@ -18,7 +18,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorNoAllication;
 
 public class StaticTest3cslen {
 	public static int MAX_PERIOD = 1000;
@@ -51,9 +51,10 @@ public class StaticTest3cslen {
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
+				null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
+				cs_len);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -85,7 +86,8 @@ public class StaticTest3cslen {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result = (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result = (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);

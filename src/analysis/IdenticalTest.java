@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGeneratorDef;
+import generatorTools.SystemGeneratorNoAllication;
 
 public class IdenticalTest {
 
@@ -28,7 +28,8 @@ public class IdenticalTest {
 			for (int j = 0; j < r1[i].length; j++) {
 				if (r1[i][j] != r2[i][j]) {
 					if (print)
-						System.out.println("not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
+						System.out.println(
+								"not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
 					isequal = false;
 				}
 			}
@@ -54,9 +55,10 @@ public class IdenticalTest {
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGeneratorDef generator = new SystemGeneratorDef(MIN_PERIOD, MAX_PERIOD, 0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
-				TOTAL_PARTITIONS, NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGeneratorNoAllication generator = new SystemGeneratorNoAllication(MIN_PERIOD, MAX_PERIOD,
+				0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
+				true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {

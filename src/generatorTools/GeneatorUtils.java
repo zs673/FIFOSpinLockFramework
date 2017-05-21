@@ -4,7 +4,14 @@ public class GeneatorUtils {
 
 	/* define how long the critical section can be */
 	public static enum CS_LENGTH_RANGE {
-		EXTREME_SHORT_CSLEN, VERY_SHORT_CS_LEN, SHORT_CS_LEN, MEDIUM_CS_LEN, LONG_CSLEN, VERY_LONG_CSLEN, EXTREME_LONG_CSLEN, RANDOM
+		EXTREME_SHORT_CSLEN, /* 1 - 15 us */
+		VERY_SHORT_CS_LEN, /* 16 - 50 us */
+		SHORT_CS_LEN, /* 51 - 100 us */
+		MEDIUM_CS_LEN, /* 101 - 200 us */
+		LONG_CSLEN, /* 201 - 300 us */
+		VERY_LONG_CSLEN, /* 301 - 400 us */
+		EXTREME_LONG_CSLEN, /* 401 - 500 us */
+		RANDOM /* 1 - 500 us */
 	};
 
 	/* define how many resources in the system */
@@ -16,6 +23,33 @@ public class GeneatorUtils {
 
 	/* define how long the critical section can be */
 	public static enum ALLOCATION_POLICY {
-		FIRST_FIT, BEST_FIT, WORST_FIT, NEXT_FIT, RESOURCE_REQUEST_TASKS_FIT, RESOURCE_LENGTH_DECREASE_FIT, RESOURCE_LOCAL_FIT, RESOURCE_LENGTH_INCREASE_FIT
+		FIRST_FIT, /* fit the task in the first available partition. */
+		BEST_FIT, /* fit the task in the partition with largest utilization. */
+		WORST_FIT, /*
+					 * fit the task in the partition with smallest utilization.
+					 */
+		NEXT_FIT, /*
+					 * fit the task in the next (next to last allocated
+					 * partition) available partition.
+					 */
+		RESOURCE_REQUEST_TASKS_FIT, /*
+									 * sort tasks based on resources and number
+									 * of requested tasks (tie break by
+									 * utilization) and then use FF.
+									 */
+		RESOURCE_LOCAL_FIT, /*
+							 * sort tasks based on resources (total requesting
+							 * tasks utilization) and then use FF.
+							 */
+		RESOURCE_LENGTH_DECREASE_FIT, /*
+										 * sort tasks based on resource length
+										 * in a decreasing order and then use
+										 * FF.
+										 */
+		RESOURCE_LENGTH_INCREASE_FIT /*
+										 * sort tasks based on resource length
+										 * in an increasing order and then use
+										 * FF.
+										 */
 	};
 }

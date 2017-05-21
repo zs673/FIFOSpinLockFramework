@@ -52,7 +52,8 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	public SystemGeneratorWithAllocation(int minT, int maxT, int total_partitions, int totalTasks, boolean isLogUni,
-			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, long csl, boolean print) {
+			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, long csl,
+			boolean print) {
 		this.minT = minT;
 		this.maxT = maxT;
 		this.totalUtil = 0.1 * (double) totalTasks;
@@ -277,7 +278,8 @@ public class SystemGeneratorWithAllocation {
 			for (int k = 0; k < task.resource_required_index.size(); k++) {
 				int number_of_requests = ran.nextInt(number_of_max_access) + 1;
 				task.number_of_access_in_one_release.add(number_of_requests);
-				total_resource_execution_time += number_of_requests * resources.get(task.resource_required_index.get(k)).csl;
+				total_resource_execution_time += number_of_requests
+						* resources.get(task.resource_required_index.get(k)).csl;
 			}
 
 			if (total_resource_execution_time > task.WCET) {
@@ -386,8 +388,8 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> WorstFitAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
-			double maxUtilPerCore) {
+	private ArrayList<ArrayList<SporadicTask>> WorstFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
+			int partitions, double maxUtilPerCore) {
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
 		}
@@ -437,8 +439,8 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> BestFitAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
-			double maxUtilPerCore) {
+	private ArrayList<ArrayList<SporadicTask>> BestFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
+			int partitions, double maxUtilPerCore) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -486,8 +488,8 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> FirstFitAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
-			double maxUtilPerCore) {
+	private ArrayList<ArrayList<SporadicTask>> FirstFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
+			int partitions, double maxUtilPerCore) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -528,8 +530,8 @@ public class SystemGeneratorWithAllocation {
 		return tasks;
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> NextFitAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
-			double maxUtilPerCore) {
+	private ArrayList<ArrayList<SporadicTask>> NextFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
+			int partitions, double maxUtilPerCore) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -596,7 +598,8 @@ public class SystemGeneratorWithAllocation {
 		for (int j = 0; j < tasksToAllocate.size(); j++) {
 			SporadicTask task = tasksToAllocate.get(j);
 			for (int k = 0; k < task.resource_required_index.size(); k++) {
-				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + 1);
+				NoQT.get(task.resource_required_index.get(k)).set(1,
+						NoQT.get(task.resource_required_index.get(k)).get(1) + 1);
 			}
 		}
 
@@ -625,8 +628,8 @@ public class SystemGeneratorWithAllocation {
 		return FirstFitAllocation(sortedTasks, partitions, maxUtilPerCore);
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate, int partitions,
-			double maxUtilPerCore, ArrayList<Resource> resources) {
+	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate,
+			int partitions, double maxUtilPerCore, ArrayList<Resource> resources) {
 		ArrayList<SporadicTask> UnAllocatedT = new ArrayList<>(tasksToAllocate);
 
 		for (int i = 0; i < UnAllocatedT.size(); i++) {
@@ -703,15 +706,16 @@ public class SystemGeneratorWithAllocation {
 
 		newUtil.sort((p1, p2) -> Double.compare(p1.get(1), p2.get(1)));
 
-		//System.out.println("new Util: " + Arrays.deepToString(newUtil.toArray()));
-		//System.out.println(Arrays.deepToString(resourcesRequestT.toArray()));
+		// System.out.println("new Util: " +
+		// Arrays.deepToString(newUtil.toArray()));
+		// System.out.println(Arrays.deepToString(resourcesRequestT.toArray()));
 
 		ArrayList<ArrayList<SporadicTask>> newAllocT = new ArrayList<>();
 		for (int i = 0; i < newUtil.size(); i++) {
 			int task_row_index = newUtil.get(i).get(2).intValue();
 			newAllocT.add(resourcesRequestT.get(task_row_index));
 		}
-		//System.out.println(Arrays.deepToString(newAllocT.toArray()));
+		// System.out.println(Arrays.deepToString(newAllocT.toArray()));
 
 		for (int i = 0; i < newUtil.size(); i++) {
 			if (newUtil.get(i).get(1) > maxUtilPerCore) {
@@ -818,7 +822,8 @@ public class SystemGeneratorWithAllocation {
 		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
 	}
 
-	public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks,
+			ArrayList<Resource> resources) {
 		System.out.println("----------------------------------------------------");
 		if (tasks == null) {
 			System.out.println("no tasks generated.");
