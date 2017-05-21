@@ -9,7 +9,7 @@ import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 
-public class PreGASolver {
+public class PreGASolverNoAllocation {
 
 	boolean print;
 	ArrayList<Resource> resources;
@@ -19,7 +19,7 @@ public class PreGASolver {
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	public PreGASolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean print) {
+	public PreGASolverNoAllocation(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean print) {
 		this.tasks = tasks;
 		this.resources = resources;
 		this.print = print;

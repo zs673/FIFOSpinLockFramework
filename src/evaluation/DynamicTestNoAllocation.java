@@ -18,7 +18,7 @@ import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import frameworkWFandDM.GADynamicSolver;
+import frameworkWFandDM.GASolverNoAllocation;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
@@ -100,7 +100,7 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
@@ -215,7 +215,7 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
@@ -304,7 +304,7 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
@@ -415,7 +415,7 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
@@ -505,7 +505,7 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GADynamicSolver solver = new GADynamicSolver(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);

@@ -9,7 +9,7 @@ import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 
-public class GADynamicSolver {
+public class GASolverNoAllocation {
 	ArrayList<ArrayList<SporadicTask>> tasks;
 	ArrayList<Resource> resources;
 	IACombinedProtocol framework = new IACombinedProtocol();
@@ -39,7 +39,7 @@ public class GADynamicSolver {
 
 	/****************** GA Properties ******************/
 
-	public GADynamicSolver(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population,
+	public GASolverNoAllocation(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population,
 			int maxGeneration, int elitismSize, double crossoverRate, double mutationRate, int mutationBound,
 			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.tasks = tasks;
@@ -62,7 +62,7 @@ public class GADynamicSolver {
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, isPrint);
+		PreGASolverNoAllocation preSovler = new PreGASolverNoAllocation(tasks, resources, isPrint);
 		int initial = preSovler.initialCheck();
 
 		if (initial != 0) {
