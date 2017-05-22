@@ -261,14 +261,12 @@ public class GASolverWithAllocation {
 				IOAAnalysisUtils.extendCalForGA);
 
 		if (Ris == null) {
-			int not = 0;
-			for (int i = 0; i < tasksWithAllocation.size(); i++) {
-				for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-					not++;
-				}
+			int NoT = 0;
+			for (int i = 0; i < tasks.size(); i++) {
+					NoT++;
 			}
-			fitness[0] = not;
-			fitness[1] = 0;
+			fitness[0] = NoT;
+			fitness[1] = Long.MAX_VALUE;
 		} else {
 			int sched_fitness = 0;
 			long rt_fitness = 0;

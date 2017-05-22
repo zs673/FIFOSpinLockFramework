@@ -35,6 +35,10 @@ public class PreGASolverWithAllocation {
 			if (result > 0)
 				return result;
 		}
+		
+		if(print){
+			System.out.println("not schedulable by any protocol. need GA");
+		}
 		return 0;
 	}
 
@@ -53,7 +57,7 @@ public class PreGASolverWithAllocation {
 				mrsp.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
-			for (int j = 0; j < tasksWithAlloc.get(0).size(); j++) {
+			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {
 				if (taskschedule_fifonp[i][j] == 0)
 					fifonp_sched++;
 				if (taskschedule_fifop[i][j] == 0)
@@ -83,8 +87,11 @@ public class PreGASolverWithAllocation {
 	}
 
 	int[][] getTaskSchedulability(ArrayList<ArrayList<SporadicTask>> tasks, long[][] rt) {
-		try{
-			int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
+			int[][] tasksrt = new int[tasks.size()][];
+			for(int i=0;i<tasks.size();i++){
+				tasksrt[i] = new int[tasks.get(i).size()];
+			}
+			
 			for (int i = 0; i < tasks.size(); i++) {
 				for (int j = 0; j < tasks.get(i).size(); j++) {
 					if (tasks.get(i).get(j).deadline < rt[i][j])
@@ -95,9 +102,5 @@ public class PreGASolverWithAllocation {
 			}
 			
 			return tasksrt;
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
-		return null;		
 	}
 }

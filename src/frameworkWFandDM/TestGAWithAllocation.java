@@ -14,10 +14,10 @@ public class TestGAWithAllocation {
 
 		int MAX_PERIOD = 1000;
 		int MIN_PERIOD = 1;
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
+		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 5;
+		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 6;
 		CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-		double RESOURCE_SHARING_FACTOR = 0.2;
+		double RESOURCE_SHARING_FACTOR = 0.3;
 		int TOTAL_PARTITIONS = 16;
 
 		SystemGeneratorWithAllocation geneator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
@@ -28,7 +28,7 @@ public class TestGAWithAllocation {
 		ArrayList<Resource> resources = geneator.generateResources();
 		geneator.generateResourceUsage(tasks, resources);
 
-		GASolverWithAllocation gene = new GASolverWithAllocation(tasks, resources, geneator, 100, 100, 5, 0.5, 0.1, 5, 5, 5, false);
+		GASolverWithAllocation gene = new GASolverWithAllocation(tasks, resources, geneator, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 		gene.findSchedulableProtocols(true);
 	}
 
