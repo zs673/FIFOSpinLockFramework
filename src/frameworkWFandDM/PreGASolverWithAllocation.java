@@ -13,10 +13,10 @@ import generatorTools.SystemGeneratorWithAllocation;
 public class PreGASolverWithAllocation {
 
 	boolean print;
-	ArrayList<Resource> resources;
 	ArrayList<SporadicTask> tasks;
-
+	ArrayList<Resource> resources;
 	SystemGeneratorWithAllocation geneator;
+	
 	IAFIFONP fifonp = new IAFIFONP();
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
@@ -40,7 +40,6 @@ public class PreGASolverWithAllocation {
 
 	private int checkwithOneAllocationPolicy(int allocPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
-		boolean isPossible = true;
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
@@ -58,19 +57,7 @@ public class PreGASolverWithAllocation {
 					fifop_sched++;
 				if (taskschedule_mrsp[i][j] == 0)
 					mrsp_sched++;
-
-				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
-						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
-					isPossible = false;
-
-				}
 			}
-		}
-
-		if (!isPossible) {
-			if (print)
-				System.out.println("not schedulable");
-			return -1;
 		}
 
 		if (fifonp_sched == 0) {
