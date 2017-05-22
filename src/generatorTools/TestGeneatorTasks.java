@@ -31,60 +31,51 @@ public class TestGeneatorTasks {
 			geneator.generateResourceUsage(tasks, resources);
 
 			System.out.println(" WORST FIT");
-			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
+			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources,
 					ALLOCATION_POLICY.WORST_FIT);
 			geneator.testifyAllocatedTasksetAndResource(tasksWF, resources);
 
-			// System.out.println("\n\n");
-			// System.out.println(" BEST FIT");
-			// ArrayList<ArrayList<SporadicTask>> tasksBF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.BEST_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(tasksBF, resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" FIRST FIT");
-			// ArrayList<ArrayList<SporadicTask>> tasksFF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.FIRST_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(tasksFF, resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" NEXT FIT");
-			// ArrayList<ArrayList<SporadicTask>> tasksNF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.NEXT_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(tasksNF, resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" RESOURCE REQUEST FIT");
-			// ArrayList<ArrayList<SporadicTask>> tasksRRF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.RESOURCE_REQUEST_TASKS_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(tasksRRF, resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" RESOURCE LOCAL FIT");
-			// ArrayList<ArrayList<SporadicTask>> tasksRLF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.RESOURCE_LOCAL_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(tasksRLF, resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" RESOURCE Length FIT");
-			// ArrayList<ArrayList<SporadicTask>> taskscslendF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.RESOURCE_LENGTH_DECREASE_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(taskscslendF,
-			// resources);
-			//
-			// System.out.println("\n\n");
-			// System.out.println(" RESOURCE Length FIT");
-			// ArrayList<ArrayList<SporadicTask>> taskscsleniF =
-			// geneator.allocateTasks(tasks, resources, TOTAL_PARTITIONS,
-			// ALLOCATION_POLICY.RESOURCE_LENGTH_INCREASE_FIT);
-			// geneator.testifyAllocatedTasksetAndResource(taskscsleniF,
-			// resources);
+			System.out.println("\n\n");
+			System.out.println(" BEST FIT");
+			ArrayList<ArrayList<SporadicTask>> tasksBF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.BEST_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksBF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" FIRST FIT");
+			ArrayList<ArrayList<SporadicTask>> tasksFF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.FIRST_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksFF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" NEXT FIT");
+			ArrayList<ArrayList<SporadicTask>> tasksNF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.NEXT_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksNF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE REQUEST FIT");
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.RESOURCE_REQUEST_TASKS_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksRRF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE LOCAL FIT");
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.RESOURCE_LOCAL_FIT);
+			geneator.testifyAllocatedTasksetAndResource(tasksRLF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE Length FIT");
+			ArrayList<ArrayList<SporadicTask>> taskscslendF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.RESOURCE_LENGTH_DECREASE_FIT);
+			geneator.testifyAllocatedTasksetAndResource(taskscslendF, resources);
+
+			System.out.println("\n\n");
+			System.out.println(" RESOURCE Length FIT");
+			ArrayList<ArrayList<SporadicTask>> taskscsleniF = geneator.allocateTasks(tasks, resources,
+					ALLOCATION_POLICY.RESOURCE_LENGTH_INCREASE_FIT);
+			geneator.testifyAllocatedTasksetAndResource(taskscsleniF, resources);
 
 			System.err.println("\n\n " + j + " \n\n");
 

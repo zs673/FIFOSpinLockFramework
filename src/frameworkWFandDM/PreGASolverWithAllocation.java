@@ -8,37 +8,50 @@ import analysis.IANewMrsPRTAWithMCNP;
 import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.SystemGeneratorWithAllocation;
 
 public class PreGASolverWithAllocation {
 
 	boolean print;
 	ArrayList<Resource> resources;
-	ArrayList<ArrayList<SporadicTask>> tasks;
+	ArrayList<SporadicTask> tasks;
 
+	SystemGeneratorWithAllocation geneator;
 	IAFIFONP fifonp = new IAFIFONP();
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	public PreGASolverWithAllocation(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean print) {
+	public PreGASolverWithAllocation(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
+			SystemGeneratorWithAllocation geneator, boolean print) {
+		this.geneator = geneator;
 		this.tasks = tasks;
 		this.resources = resources;
 		this.print = print;
 	}
 
 	public int initialCheck() {
+		for (int i = 0; i < 8; i++) {
+			int result = checkwithOneAllocationPolicy(i);
+			if (result > 0)
+				return result;
+		}
+		return 0;
+	}
 
-		int[][] taskschedule_fifonp = getTaskSchedulability(
-				fifonp.NewRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
-		int[][] taskschedule_fifop = getTaskSchedulability(
-				fifop.newRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
-		int[][] taskschedule_mrsp = getTaskSchedulability(
-				mrsp.newRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
-
+	private int checkwithOneAllocationPolicy(int allocPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(0).size(); j++) {
+		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
+		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
+				fifonp.NewRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
+				fifop.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
+				mrsp.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+
+		for (int i = 0; i < tasksWithAlloc.size(); i++) {
+			for (int j = 0; j < tasksWithAlloc.get(0).size(); j++) {
 				if (taskschedule_fifonp[i][j] == 0)
 					fifonp_sched++;
 				if (taskschedule_fifop[i][j] == 0)
@@ -79,7 +92,7 @@ public class PreGASolverWithAllocation {
 		return 0;
 	}
 
-	int[][] getTaskSchedulability(long[][] rt) {
+	int[][] getTaskSchedulability(ArrayList<ArrayList<SporadicTask>> tasks, long[][] rt) {
 		int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
 
 		for (int i = 0; i < tasks.size(); i++) {

@@ -8,9 +8,11 @@ import analysis.IACombinedProtocol;
 import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.SystemGeneratorWithAllocation;
 
 public class GASolverWithAllocation {
-	ArrayList<ArrayList<SporadicTask>> tasks;
+	SystemGeneratorWithAllocation geneator;
+	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
 	IACombinedProtocol framework = new IACombinedProtocol();
 
@@ -24,7 +26,7 @@ public class GASolverWithAllocation {
 	long[] schedFitness;
 
 	/****************** GA Properties ******************/
-
+	int ALLOCATION_POLICY_NUMBER = 8;
 	int PROTOCOL_SIZE = 3;
 	boolean isPrint;
 	int population;
@@ -39,11 +41,20 @@ public class GASolverWithAllocation {
 
 	/****************** GA Properties ******************/
 
-	public GASolverWithAllocation(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int population,
-			int maxGeneration, int elitismSize, double crossoverRate, double mutationRate, int mutationBound,
-			int toumamentSize1, int toumamentSize2, boolean isPrint) {
+	public GASolverWithAllocation(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
+			SystemGeneratorWithAllocation geneator, int population, int maxGeneration, int elitismSize,
+			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2,
+			boolean isPrint) {
+		if (population < 30) {
+			System.err.println("population too small");
+			System.exit(-1);
+		}
+
+		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
+		this.geneator = geneator;
+
 		this.population = population;
 		this.maxGeneration = maxGeneration;
 		this.elitismSize = elitismSize;
@@ -52,17 +63,17 @@ public class GASolverWithAllocation {
 		this.mutationBound = mutationBound;
 		this.toumamentSize1 = toumamentSize1;
 		this.toumamentSize2 = toumamentSize2;
-		this.isPrint = isPrint;
 
-		nextGenes = new int[population][resources.size()];
-		parentGenes = new int[population][resources.size()];
+		nextGenes = new int[population][resources.size() + 1];
+		parentGenes = new int[population][resources.size() + 1];
+		elitismGene = new int[elitismSize][resources.size() + 1];
+
 		schedFitness = new long[population];
 		rtFitness = new long[population];
-		elitismGene = new int[elitismSize][resources.size()];
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolverNoAllocation preSovler = new PreGASolverNoAllocation(tasks, resources, isPrint);
+		PreGASolverWithAllocation preSovler = new PreGASolverWithAllocation(tasks, resources, geneator, isPrint);
 		int initial = preSovler.initialCheck();
 
 		if (initial != 0) {
@@ -86,14 +97,14 @@ public class GASolverWithAllocation {
 		while (currentGeneration <= maxGeneration) {
 			currentGeneration++;
 			for (int i = 0; i < population; i++) {
-				for (int j = 0; j < resources.size(); j++) {
+				for (int j = 0; j < resources.size() + 1; j++) {
 					parentGenes[i][j] = nextGenes[i][j];
 				}
 			}
 			if (useGA) {
 				int nextGeneIndex = elitismSize;
 				for (int i = 0; i < elitismSize; i++) {
-					for (int j = 0; j < resources.size(); j++) {
+					for (int j = 0; j < resources.size() + 1; j++) {
 						nextGenes[i][j] = elitismGene[i][j];
 					}
 				}
@@ -124,13 +135,20 @@ public class GASolverWithAllocation {
 					double crossover = ran.nextDouble();
 					if (crossover <= crossoverRate) {
 						int crosspoint = ran.nextInt(resources.size() - 1) + 1;
-						int[] newGene = new int[resources.size()];
+						int[] newGene = new int[resources.size() + 1];
 						for (int j = 0; j < resources.size(); j++) {
 							if (j < crosspoint)
 								newGene[j] = parentGenes[(int) index1][j];
 							else
 								newGene[j] = parentGenes[(int) index2][j];
 						}
+						
+						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
+							newGene[resources.size()] = parentGenes[(int) index1][resources.size()];
+						} else {
+							newGene[resources.size()] = parentGenes[(int) index2][resources.size()];
+						}
+						
 						nextGenes[i] = newGene;
 
 					} else {
@@ -152,8 +170,9 @@ public class GASolverWithAllocation {
 							int temp = nextGenes[i][muteindex1];
 							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
 							nextGenes[i][muteindex2] = temp;
-
 						}
+						
+						nextGenes[i][resources.size()] = ran.nextInt(randomBound) % 8;
 					}
 				}
 			} else {
@@ -178,16 +197,18 @@ public class GASolverWithAllocation {
 	}
 
 	private void getFirstGene() {
-		for (int i = 0; i < PROTOCOL_SIZE; i++) {
-			for (int j = 0; j < nextGenes[i].length; j++) {
-				nextGenes[i][j] = i + 1;
+		for (int i = 0; i < PROTOCOL_SIZE * ALLOCATION_POLICY_NUMBER; i++) {
+			for (int j = 0; j < resources.size(); j++) {
+				nextGenes[i][j] = i % 3 + 1;
 			}
+			nextGenes[i][resources.size()] = i / 3;
 		}
 
 		for (int i = PROTOCOL_SIZE; i < nextGenes.length; i++) {
-			for (int j = 0; j < nextGenes[i].length; j++) {
+			for (int j = 0; j < resources.size(); j++) {
 				nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
 			}
+			nextGenes[i][resources.size()] = ran.nextInt(randomBound) % 8;
 		}
 	}
 
@@ -224,6 +245,48 @@ public class GASolverWithAllocation {
 					+ fitness.get(0).get(1) + "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
+	private long[] computeFitness(int[] gene) {
+		long[] fitness = new long[2];
+		if (gene.length != resources.size() + 1 || gene[resources.size()] >= 8) {
+			System.err.println(" gene length error! or alloc gene error");
+			System.exit(-1);
+		}
+		for (int i = 0; i < resources.size(); i++) {
+			resources.get(i).protocol = gene[i];
+		}
+
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources,
+				gene[resources.size()]);
+		long[][] Ris = framework.newRTATest(tasksWithAllocation, resources, false, false,
+				IOAAnalysisUtils.extendCalForGA);
+
+		if (Ris == null) {
+			int not = 0;
+			for (int i = 0; i < tasksWithAllocation.size(); i++) {
+				for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
+					not++;
+				}
+			}
+			fitness[0] = not;
+			fitness[1] = 0;
+		} else {
+			int sched_fitness = 0;
+			long rt_fitness = 0;
+			for (int i = 0; i < tasksWithAllocation.size(); i++) {
+				for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
+					if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
+						sched_fitness++;
+						rt_fitness += Ris[i][j] - tasksWithAllocation.get(i).get(j).deadline;
+					}
+				}
+			}
+			fitness[0] = sched_fitness;
+			fitness[1] = rt_fitness;
+		}
+
+		return fitness;
+	}
+
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {
 		long a0 = a.get(0), a1 = a.get(1), a2 = a.get(2);
 		long b0 = b.get(0), b1 = b.get(1), b2 = b.get(2);
@@ -256,28 +319,6 @@ public class GASolverWithAllocation {
 
 		System.exit(-1);
 		return 100;
-	}
-
-	private long[] computeFitness(int[] gene) {
-		long[] fitness = new long[2];
-		for (int i = 0; i < resources.size(); i++) {
-			resources.get(i).protocol = gene[i];
-		}
-		long[][] Ris = framework.newRTATest(tasks, resources, false, false, IOAAnalysisUtils.extendCalForGA);
-
-		int sched_fitness = 0;
-		long rt_fitness = 0;
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < Ris[i][j]) {
-					sched_fitness++;
-					rt_fitness += Ris[i][j] - tasks.get(i).get(j).deadline;
-				}
-			}
-		}
-		fitness[0] = sched_fitness;
-		fitness[1] = rt_fitness;
-		return fitness;
 	}
 
 }

@@ -296,35 +296,126 @@ public class SystemGeneratorWithAllocation {
 		}
 
 	}
-
+	
 	public ArrayList<ArrayList<SporadicTask>> allocateTasks(ArrayList<SporadicTask> tasksToAllocate,
-			ArrayList<Resource> resources, int partitions, ALLOCATION_POLICY policy) {
+			ArrayList<Resource> resources, ALLOCATION_POLICY policy) {
 
 		ArrayList<ArrayList<SporadicTask>> tasks;
 		switch (policy) {
 		case WORST_FIT:
-			tasks = WorstFitAllocation(tasksToAllocate, partitions, maxUtilPerCore);
+			tasks = WorstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
 			break;
 		case BEST_FIT:
-			tasks = BestFitAllocation(tasksToAllocate, partitions, maxUtilPerCore);
+			tasks = BestFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
 			break;
 		case FIRST_FIT:
-			tasks = FirstFitAllocation(tasksToAllocate, partitions, maxUtilPerCore);
+			tasks = FirstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
 			break;
 		case NEXT_FIT:
-			tasks = NextFitAllocation(tasksToAllocate, partitions, maxUtilPerCore);
+			tasks = NextFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
 			break;
 		case RESOURCE_REQUEST_TASKS_FIT:
-			tasks = ResourceRequestTasksAllocation(tasksToAllocate, partitions, maxUtilPerCore, resources);
+			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
 			break;
 		case RESOURCE_LOCAL_FIT:
-			tasks = ResourceLocalAllocation(tasksToAllocate, partitions, maxUtilPerCore, resources);
+			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
 			break;
 		case RESOURCE_LENGTH_DECREASE_FIT:
-			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
 			break;
 		case RESOURCE_LENGTH_INCREASE_FIT:
-			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			break;
+		default:
+			tasks = null;
+			break;
+		}
+
+		if (tasks != null) {
+			for (int i = 0; i < tasks.size(); i++) {
+				if (tasks.get(i).size() == 0) {
+					tasks.remove(i);
+					i--;
+				}
+			}
+
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					tasks.get(i).get(j).partition = i;
+				}
+			}
+		}
+
+		if (resources != null && tasks != null) {
+			for (int i = 0; i < resources.size(); i++) {
+				Resource res = resources.get(i);
+				res.ceiling.clear();
+				res.isGlobal = false;
+				res.partitions.clear();
+				res.requested_tasks.clear();
+			}
+
+			/* for each resource */
+			for (int i = 0; i < resources.size(); i++) {
+				Resource resource = resources.get(i);
+
+				/* for each partition */
+				for (int j = 0; j < tasks.size(); j++) {
+					int ceiling = 0;
+
+					/* for each task in the given partition */
+					for (int k = 0; k < tasks.get(j).size(); k++) {
+						SporadicTask task = tasks.get(j).get(k);
+
+						if (task.resource_required_index.contains(resource.id - 1)) {
+							resource.requested_tasks.add(task);
+							ceiling = task.priority > ceiling ? task.priority : ceiling;
+							if (!resource.partitions.contains(task.partition)) {
+								resource.partitions.add(task.partition);
+							}
+						}
+					}
+
+					if (ceiling > 0)
+						resource.ceiling.add(ceiling);
+				}
+
+				if (resource.partitions.size() > 1)
+					resource.isGlobal = true;
+			}
+		}
+
+		return tasks;
+	}
+
+	public ArrayList<ArrayList<SporadicTask>> allocateTasks(ArrayList<SporadicTask> tasksToAllocate,
+			ArrayList<Resource> resources, int policy) {
+
+		ArrayList<ArrayList<SporadicTask>> tasks;
+		switch (policy) {
+		case 0:
+			tasks = WorstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			break;
+		case 1:
+			tasks = BestFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			break;
+		case 2:
+			tasks = FirstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			break;
+		case 3:
+			tasks = NextFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			break;
+		case 4:
+			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			break;
+		case 5:
+			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			break;
+		case 6:
+			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			break;
+		case 7:
+			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
 			break;
 		default:
 			tasks = null;
