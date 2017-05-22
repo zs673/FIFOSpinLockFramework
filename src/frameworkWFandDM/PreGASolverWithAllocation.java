@@ -42,6 +42,9 @@ public class PreGASolverWithAllocation {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
+		if(tasksWithAlloc == null)
+			return 0;
+		
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
 				fifonp.NewRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
@@ -80,17 +83,21 @@ public class PreGASolverWithAllocation {
 	}
 
 	int[][] getTaskSchedulability(ArrayList<ArrayList<SporadicTask>> tasks, long[][] rt) {
-		int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
-
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < rt[i][j])
-					tasksrt[i][j] = 0;
-				else
-					tasksrt[i][j] = 1;
+		try{
+			int[][] tasksrt = new int[tasks.size()][tasks.get(0).size()];
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					if (tasks.get(i).get(j).deadline < rt[i][j])
+						tasksrt[i][j] = 0;
+					else
+						tasksrt[i][j] = 1;
+				}
 			}
+			
+			return tasksrt;
+		}catch (Exception e) {
+			// TODO: handle exception
 		}
-
-		return tasksrt;
+		return null;		
 	}
 }
