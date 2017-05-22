@@ -1,4 +1,4 @@
-package frameworkWFandDM;
+package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 import java.util.Arrays;
