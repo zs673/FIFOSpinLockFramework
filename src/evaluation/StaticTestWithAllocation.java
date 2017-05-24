@@ -96,28 +96,28 @@ public class StaticTestWithAllocation {
 		final CS_LENGTH_RANGE cs_range;
 		switch (cs_len) {
 		case 1:
-			cs_range = CS_LENGTH_RANGE.RANDOM;
-			break;
-		case 2:
 			cs_range = CS_LENGTH_RANGE.EXTREME_SHORT_CSLEN;
 			break;
-		case 3:
+		case 2:
 			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 			break;
-		case 4:
+		case 3:
 			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 			break;
-		case 5:
+		case 4:
 			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 			break;
-		case 6:
+		case 5:
 			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
 			break;
-		case 7:
+		case 6:
 			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
 			break;
-		case 8:
+		case 7:
 			cs_range = CS_LENGTH_RANGE.EXTREME_LONG_CSLEN;
+			break;
+		case 8:
+			cs_range = CS_LENGTH_RANGE.RANDOM;
 			break;
 		default:
 			cs_range = null;

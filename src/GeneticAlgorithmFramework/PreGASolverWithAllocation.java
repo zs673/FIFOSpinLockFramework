@@ -32,32 +32,20 @@ public class PreGASolverWithAllocation {
 	}
 
 	public int initialCheck() {
-		int notpossibleCount = 0;
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
 			int result = checkwithOneAllocationPolicy(i);
 			if (result > 0)
 				return result;
-			if (result == -1)
-				notpossibleCount++;
 		}
-
-		if (notpossibleCount == ALLOCATION_POLICY_NUMBER) {
-			if (print) {
-				System.out.println("not possible to be scheduled at all.");
-			}
-			return 0;
-		}
-
 		return 0;
 	}
 
 	private int checkwithOneAllocationPolicy(int allocPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
-		boolean isPossible = true;
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
 		if (tasksWithAlloc == null)
-			return -1;
+			return 0;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
 				fifonp.NewRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
@@ -66,7 +54,7 @@ public class PreGASolverWithAllocation {
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
 				mrsp.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 
-		outerloop: for (int i = 0; i < tasksWithAlloc.size(); i++) {
+		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {
 				if (taskschedule_fifonp[i][j] == 0)
 					fifonp_sched++;
@@ -74,20 +62,7 @@ public class PreGASolverWithAllocation {
 					fifop_sched++;
 				if (taskschedule_mrsp[i][j] == 0)
 					mrsp_sched++;
-
-				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
-						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
-					System.out.println("bing");
-					isPossible = false;
-					break outerloop;
-				}
 			}
-		}
-
-		if (!isPossible) {
-			if (print)
-				System.out.println("not possible to schedule with allocation: " + allocPolicy);
-			return -1;
 		}
 
 		if (fifonp_sched == 0) {
