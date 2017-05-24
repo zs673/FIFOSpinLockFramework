@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import analysis.IACombinedProtocol;
-import analysis.IOAAnalysisUtils;
+import analysisWithImplementationOverheads.IACombinedProtocol;
+import analysisWithImplementationOverheads.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGeneratorWithAllocation;
@@ -38,6 +38,7 @@ public class GASolverWithAllocation {
 	int randomBound = 65535;
 	public int currentGeneration = 0;
 	int toumamentSize1, toumamentSize2;
+	ArrayList<Integer> allocations = new ArrayList<>();
 
 	/****************** GA Properties ******************/
 
@@ -79,6 +80,15 @@ public class GASolverWithAllocation {
 		if (initial != 0) {
 			return initial;
 		}
+
+		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
+			if (geneator.allocateTasks(tasks, resources, i) != null) {
+				allocations.add(i);
+			}
+		}
+
+		if (allocations.size() == 0)
+			return -1;
 
 		int result = solve(useGA);
 		return result;
@@ -142,13 +152,13 @@ public class GASolverWithAllocation {
 							else
 								newGene[j] = parentGenes[(int) index2][j];
 						}
-						
+
 						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
 							newGene[resources.size()] = parentGenes[(int) index1][resources.size()];
 						} else {
 							newGene[resources.size()] = parentGenes[(int) index2][resources.size()];
 						}
-						
+
 						nextGenes[i] = newGene;
 
 					} else {
@@ -171,7 +181,7 @@ public class GASolverWithAllocation {
 							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
 							nextGenes[i][muteindex2] = temp;
 						}
-						
+
 						nextGenes[i][resources.size()] = ran.nextInt(randomBound) % 8;
 					}
 				}
@@ -197,18 +207,18 @@ public class GASolverWithAllocation {
 	}
 
 	private void getFirstGene() {
-		for (int i = 0; i < PROTOCOL_SIZE * ALLOCATION_POLICY_NUMBER; i++) {
+		for (int i = 0; i < PROTOCOL_SIZE * allocations.size(); i++) {
 			for (int j = 0; j < resources.size(); j++) {
 				nextGenes[i][j] = i % 3 + 1;
 			}
-			nextGenes[i][resources.size()] = i / 3;
+			nextGenes[i][resources.size()] = i / PROTOCOL_SIZE;
 		}
 
 		for (int i = PROTOCOL_SIZE; i < nextGenes.length; i++) {
 			for (int j = 0; j < resources.size(); j++) {
 				nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
 			}
-			nextGenes[i][resources.size()] = ran.nextInt(randomBound) % 8;
+			nextGenes[i][resources.size()] = allocations.get(ran.nextInt(randomBound) % allocations.size());
 		}
 	}
 
@@ -263,10 +273,10 @@ public class GASolverWithAllocation {
 		if (Ris == null) {
 			int NoT = 0;
 			for (int i = 0; i < tasks.size(); i++) {
-					NoT++;
+				NoT++;
 			}
 			fitness[0] = NoT;
-			fitness[1] = Long.MAX_VALUE;
+			fitness[1] = 0;
 		} else {
 			int sched_fitness = 0;
 			long rt_fitness = 0;

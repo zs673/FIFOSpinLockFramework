@@ -2,10 +2,10 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
-import analysis.IOAAnalysisUtils;
+import analysisWithImplementationOverheads.IAFIFONP;
+import analysisWithImplementationOverheads.IAFIFOP;
+import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
+import analysisWithImplementationOverheads.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGeneratorWithAllocation;
