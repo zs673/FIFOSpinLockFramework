@@ -74,7 +74,8 @@ public class GASolverWithAllocation {
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolverWithAllocation preSovler = new PreGASolverWithAllocation(tasks, resources, geneator, isPrint);
+		PreGASolverWithAllocation preSovler = new PreGASolverWithAllocation(tasks, resources, geneator,
+				ALLOCATION_POLICY_NUMBER, isPrint);
 		int initial = preSovler.initialCheck();
 
 		if (initial != 0) {

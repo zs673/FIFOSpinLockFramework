@@ -32,7 +32,7 @@ public class StaticTestWithAllocation {
 	static double RESOURCE_SHARING_FACTOR = 0.3;
 	public static int TOTAL_PARTITIONS = 16;
 	public static boolean testSchedulability = true;
-	public static int PROTOCOLS = 4;
+	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
 		StaticTestWithAllocation test = new StaticTestWithAllocation();

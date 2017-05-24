@@ -85,10 +85,10 @@ public class SystemGeneratorWithAllocation {
 		ArrayList<SporadicTask> tasks = null;
 		while (tasks == null) {
 			tasks = generateT();
-			if (tasks != null && (WorstFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					&& BestFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					&& FirstFitAllocation(tasks, total_partitions, maxUtilPerCore) == null
-					&& NextFitAllocation(tasks, total_partitions, maxUtilPerCore) == null))
+			if (tasks != null && (WorstFitAllocation(tasks, total_partitions) == null
+					&& BestFitAllocation(tasks, total_partitions) == null
+					&& FirstFitAllocation(tasks, total_partitions) == null
+					&& NextFitAllocation(tasks, total_partitions) == null))
 				tasks = null;
 		}
 		return tasks;
@@ -296,35 +296,35 @@ public class SystemGeneratorWithAllocation {
 		}
 
 	}
-	
+
 	public ArrayList<ArrayList<SporadicTask>> allocateTasks(ArrayList<SporadicTask> tasksToAllocate,
 			ArrayList<Resource> resources, ALLOCATION_POLICY policy) {
 
 		ArrayList<ArrayList<SporadicTask>> tasks;
 		switch (policy) {
 		case WORST_FIT:
-			tasks = WorstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = WorstFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case BEST_FIT:
-			tasks = BestFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = BestFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case FIRST_FIT:
-			tasks = FirstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = FirstFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case NEXT_FIT:
-			tasks = NextFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = NextFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case RESOURCE_REQUEST_TASKS_FIT:
-			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case RESOURCE_LOCAL_FIT:
-			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case RESOURCE_LENGTH_DECREASE_FIT:
-			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case RESOURCE_LENGTH_INCREASE_FIT:
-			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		default:
 			tasks = null;
@@ -394,28 +394,28 @@ public class SystemGeneratorWithAllocation {
 		ArrayList<ArrayList<SporadicTask>> tasks;
 		switch (policy) {
 		case 0:
-			tasks = WorstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = WorstFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case 1:
-			tasks = BestFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = BestFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case 2:
-			tasks = FirstFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = FirstFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case 3:
-			tasks = NextFitAllocation(tasksToAllocate, total_partitions, maxUtilPerCore);
+			tasks = NextFitAllocation(tasksToAllocate, total_partitions);
 			break;
 		case 4:
-			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceRequestTasksAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case 5:
-			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLocalAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case 6:
-			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthDecreaseAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		case 7:
-			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, maxUtilPerCore, resources);
+			tasks = ResourceLengthIncreaseAllocation(tasksToAllocate, total_partitions, resources);
 			break;
 		default:
 			tasks = null;
@@ -480,7 +480,7 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> WorstFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore) {
+			int partitions) {
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
 		}
@@ -531,7 +531,7 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> BestFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore) {
+			int partitions) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -552,8 +552,8 @@ public class SystemGeneratorWithAllocation {
 			int target = -1;
 			double maxUtil = -1;
 			for (int j = 0; j < partitions; j++) {
-				if (maxUtil < utilPerPartition.get(j)
-						&& (maxUtilPerCore - utilPerPartition.get(j) >= tasksToAllocate.get(i).util)) {
+				if (maxUtil < utilPerPartition.get(j) && ((maxUtilPerCore - utilPerPartition.get(j) >= task.util)
+						|| (task.util > maxUtilPerCore && 1 - utilPerPartition.get(j) >= task.util))) {
 					maxUtil = utilPerPartition.get(j);
 					target = j;
 				}
@@ -580,7 +580,7 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> FirstFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore) {
+			int partitions) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -599,7 +599,8 @@ public class SystemGeneratorWithAllocation {
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			SporadicTask task = tasksToAllocate.get(i);
 			for (int j = 0; j < partitions; j++) {
-				if (maxUtilPerCore - utilPerPartition.get(j) >= task.util) {
+				if ((maxUtilPerCore - utilPerPartition.get(j) >= task.util)
+						|| (task.util > maxUtilPerCore && 1 - utilPerPartition.get(j) >= task.util)) {
 					task.partition = j;
 					utilPerPartition.set(j, utilPerPartition.get(j) + task.util);
 					break;
@@ -622,7 +623,7 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> NextFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore) {
+			int partitions) {
 
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -644,7 +645,8 @@ public class SystemGeneratorWithAllocation {
 			SporadicTask task = tasksToAllocate.get(i);
 
 			for (int j = 0; j < partitions; j++) {
-				if (maxUtilPerCore - utilPerPartition.get(currentIndex) >= task.util) {
+				if ((maxUtilPerCore - utilPerPartition.get(j) >= task.util)
+						|| (task.util > maxUtilPerCore && 1 - utilPerPartition.get(j) >= task.util)) {
 					task.partition = currentIndex;
 					utilPerPartition.set(currentIndex, utilPerPartition.get(currentIndex) + task.util);
 					break;
@@ -671,7 +673,7 @@ public class SystemGeneratorWithAllocation {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore, ArrayList<Resource> resources) {
+			int partitions, ArrayList<Resource> resources) {
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
 		}
@@ -716,11 +718,11 @@ public class SystemGeneratorWithAllocation {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+		return FirstFitAllocation(sortedTasks, partitions);
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore, ArrayList<Resource> resources) {
+			int partitions, ArrayList<Resource> resources) {
 		ArrayList<SporadicTask> UnAllocatedT = new ArrayList<>(tasksToAllocate);
 
 		for (int i = 0; i < UnAllocatedT.size(); i++) {
@@ -845,11 +847,11 @@ public class SystemGeneratorWithAllocation {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return FirstFitAllocation(sortedT, partitions);
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLengthDecreaseAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore, ArrayList<Resource> resources) {
+			int partitions, ArrayList<Resource> resources) {
 		ArrayList<SporadicTask> unallocT = new ArrayList<>(tasksToAllocate);
 
 		for (int i = 0; i < unallocT.size(); i++) {
@@ -876,11 +878,11 @@ public class SystemGeneratorWithAllocation {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return FirstFitAllocation(sortedT, partitions);
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLengthIncreaseAllocation(ArrayList<SporadicTask> tasksToAllocate,
-			int partitions, double maxUtilPerCore, ArrayList<Resource> resources) {
+			int partitions, ArrayList<Resource> resources) {
 		ArrayList<Resource> resources_copy = new ArrayList<>(resources);
 		resources_copy.sort((p1, p2) -> Double.compare(p1.csl, p2.csl));
 
@@ -910,7 +912,7 @@ public class SystemGeneratorWithAllocation {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return FirstFitAllocation(sortedT, partitions);
 	}
 
 	public void testifyAllocatedTasksetAndResource(ArrayList<ArrayList<SporadicTask>> tasks,
