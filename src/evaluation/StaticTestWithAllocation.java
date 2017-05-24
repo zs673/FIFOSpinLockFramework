@@ -49,46 +49,46 @@ public class StaticTestWithAllocation {
 			}).start();
 		}
 
-		final CountDownLatch workloadcountdown = new CountDownLatch(9);
-		for (int i = 1; i < 10; i++) {
-			final int workload = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingWorkLoad(workload);
-					workloadcountdown.countDown();
-				}
-			}).start();
-		}
-
-		final CountDownLatch accesscountdown = new CountDownLatch(20);
-		for (int i = 1; i < 21; i++) {
-			final int access = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingContention(access);
-					accesscountdown.countDown();
-				}
-			}).start();
-		}
-
-		final CountDownLatch processorscountdown = new CountDownLatch(16);
-		for (int i = 1; i < 17; i++) {
-			final int processors = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingParallel(processors);
-					processorscountdown.countDown();
-				}
-			}).start();
-		}
+//		final CountDownLatch workloadcountdown = new CountDownLatch(9);
+//		for (int i = 1; i < 10; i++) {
+//			final int workload = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingWorkLoad(workload);
+//					workloadcountdown.countDown();
+//				}
+//			}).start();
+//		}
+//
+//		final CountDownLatch accesscountdown = new CountDownLatch(20);
+//		for (int i = 1; i < 21; i++) {
+//			final int access = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingContention(access);
+//					accesscountdown.countDown();
+//				}
+//			}).start();
+//		}
+//
+//		final CountDownLatch processorscountdown = new CountDownLatch(16);
+//		for (int i = 1; i < 17; i++) {
+//			final int processors = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingParallel(processors);
+//					processorscountdown.countDown();
+//				}
+//			}).start();
+//		}
 
 		cslencountdown.await();
-		workloadcountdown.await();
-		accesscountdown.await();
-		processorscountdown.await();
+//		workloadcountdown.await();
+//		accesscountdown.await();
+//		processorscountdown.await();
 		IOAResultReader.schedreader(null, false);
 	}
 
