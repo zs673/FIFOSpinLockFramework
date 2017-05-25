@@ -4,14 +4,12 @@ public class GeneatorUtils {
 
 	/* define how long the critical section can be */
 	public static enum CS_LENGTH_RANGE {
-		EXTREME_SHORT_CSLEN, /* 1 - 15 us */
-		VERY_SHORT_CS_LEN, /* 16 - 50 us */
-		SHORT_CS_LEN, /* 51 - 100 us */
-		MEDIUM_CS_LEN, /* 101 - 200 us */
-		LONG_CSLEN, /* 201 - 300 us */
-		VERY_LONG_CSLEN, /* 301 - 400 us */
-		EXTREME_LONG_CSLEN, /* 401 - 500 us */
-		RANDOM /* 1 - 500 us */
+		VERY_SHORT_CS_LEN, /* 1 - 15 us */
+		SHORT_CS_LEN, /* 16 - 50 us */
+		MEDIUM_CS_LEN, /* 51 - 100 us */
+		LONG_CSLEN, /* 101 - 200 us */
+		VERY_LONG_CSLEN, /* 201 - 300 us */
+		RANDOM, /* 1 - 300 us */
 	};
 
 	/* define how many resources in the system */

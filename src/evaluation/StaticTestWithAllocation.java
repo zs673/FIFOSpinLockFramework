@@ -37,8 +37,8 @@ public class StaticTestWithAllocation {
 	public static void main(String[] args) throws Exception {
 		StaticTestWithAllocation test = new StaticTestWithAllocation();
 
-		final CountDownLatch cslencountdown = new CountDownLatch(8);
-		for (int i = 1; i < 9; i++) {
+		final CountDownLatch cslencountdown = new CountDownLatch(6);
+		for (int i = 1; i < 7; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				@Override
@@ -62,7 +62,7 @@ public class StaticTestWithAllocation {
 		}
 
 		final CountDownLatch accesscountdown = new CountDownLatch(20);
-		for (int i = 1; i < 21; i++) {
+		for (int i = 1; i < 22; i = i + 5) {
 			final int access = i;
 			new Thread(new Runnable() {
 				@Override
@@ -74,7 +74,7 @@ public class StaticTestWithAllocation {
 		}
 
 		final CountDownLatch processorscountdown = new CountDownLatch(16);
-		for (int i = 1; i < 17; i++) {
+		for (int i = 2; i < 17; i = i + 2) {
 			final int processors = i;
 			new Thread(new Runnable() {
 				@Override
@@ -96,27 +96,21 @@ public class StaticTestWithAllocation {
 		final CS_LENGTH_RANGE cs_range;
 		switch (cs_len) {
 		case 1:
-			cs_range = CS_LENGTH_RANGE.EXTREME_SHORT_CSLEN;
-			break;
-		case 2:
 			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
 			break;
-		case 3:
+		case 2:
 			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 			break;
-		case 4:
+		case 3:
 			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 			break;
-		case 5:
+		case 4:
 			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
 			break;
-		case 6:
+		case 5:
 			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
 			break;
-		case 7:
-			cs_range = CS_LENGTH_RANGE.EXTREME_LONG_CSLEN;
-			break;
-		case 8:
+		case 6:
 			cs_range = CS_LENGTH_RANGE.RANDOM;
 			break;
 		default:
