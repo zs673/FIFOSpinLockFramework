@@ -17,7 +17,7 @@ public class TestGAWithAllocation {
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 		int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 		CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-		double RESOURCE_SHARING_FACTOR = 0.25;
+		double RESOURCE_SHARING_FACTOR = 0.3;
 		int TOTAL_PARTITIONS = 16;
 		int schedulable = 0;
 
@@ -25,7 +25,7 @@ public class TestGAWithAllocation {
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			ArrayList<SporadicTask> tasks = geneator.generateTasks();
 			ArrayList<Resource> resources = geneator.generateResources();
 			geneator.generateResourceUsage(tasks, resources);
