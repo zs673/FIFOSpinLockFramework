@@ -28,7 +28,7 @@ public class StaticTestWithAllocation {
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
+	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.3;
 	public static int TOTAL_PARTITIONS = 16;
 	public static boolean testSchedulability = true;
