@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import GeneticAlgorithmFramework.GASolverWithAllocation;
 import analysisWithImplementationOverheads.IAFIFONP;
 import analysisWithImplementationOverheads.IAFIFOP;
 import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
@@ -125,18 +126,26 @@ public class DynamicTestWithAllocation {
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
 
-		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
-
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
 		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
+
+		int combine = 0;
+
+		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
+
+			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+					0.5, 0.1, 5, 5, 5, true);
+			if (gene.findSchedulableProtocols(true) > 0) {
+				combine++;
+			}
 
 			/**
 			 * WORST FIT
@@ -313,6 +322,8 @@ public class DynamicTestWithAllocation {
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
 
+		result += " combine: " + combine;
+
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
 
@@ -324,6 +335,8 @@ public class DynamicTestWithAllocation {
 		int wfsfp = 0, ffsfp = 0, bfsfp = 0, nfsfp = 0, rrfsfp = 0, rlfsfp = 0, rldfsfp = 0, rlifsfp = 0;
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
+
+		int combine = 0;
 
 		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
@@ -337,6 +350,12 @@ public class DynamicTestWithAllocation {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
+
+			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+					0.5, 0.1, 5, 5, 5, true);
+			if (gene.findSchedulableProtocols(true) > 0) {
+				combine++;
+			}
 
 			/**
 			 * WORST FIT
@@ -512,7 +531,7 @@ public class DynamicTestWithAllocation {
 		result += "RLIF: " + (double) rlifsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
-
+		result += " combine: " + combine;
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);
 	}
 
@@ -524,6 +543,7 @@ public class DynamicTestWithAllocation {
 		int wfsfp = 0, ffsfp = 0, bfsfp = 0, nfsfp = 0, rrfsfp = 0, rlfsfp = 0, rldfsfp = 0, rlifsfp = 0;
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
+		int combine = 0;
 
 		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD, NoP,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, true, range, RESOURCES_RANGE.PARTITIONS,
@@ -537,6 +557,12 @@ public class DynamicTestWithAllocation {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
+
+			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+					0.5, 0.1, 5, 5, 5, true);
+			if (gene.findSchedulableProtocols(true) > 0) {
+				combine++;
+			}
 
 			/**
 			 * WORST FIT
@@ -712,7 +738,7 @@ public class DynamicTestWithAllocation {
 		result += "RLIF: " + (double) rlifsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
-
+		result += " combine: " + combine;
 		writeSystem(("ioa " + 4 + " " + 1 + " " + NoP), result);
 	}
 
@@ -724,6 +750,7 @@ public class DynamicTestWithAllocation {
 		int wfsfp = 0, ffsfp = 0, bfsfp = 0, nfsfp = 0, rrfsfp = 0, rlfsfp = 0, rldfsfp = 0, rlifsfp = 0;
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
+		int combine = 0;
 
 		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
@@ -737,6 +764,12 @@ public class DynamicTestWithAllocation {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
+
+			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+					0.5, 0.1, 5, 5, 5, true);
+			if (gene.findSchedulableProtocols(true) > 0) {
+				combine++;
+			}
 
 			/**
 			 * WORST FIT
@@ -912,7 +945,7 @@ public class DynamicTestWithAllocation {
 		result += "RLIF: " + (double) rlifsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
-
+		result += " combine: " + combine;
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
