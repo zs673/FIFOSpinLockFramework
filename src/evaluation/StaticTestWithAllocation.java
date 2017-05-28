@@ -878,7 +878,7 @@ public class StaticTestWithAllocation {
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
-			writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
+			System.out.println("ioa " + 3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
 		result += "WF: " + (double) wfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "

@@ -38,29 +38,29 @@ public class DynamicTestWithAllocation {
 	public static void main(String[] args) throws Exception {
 		DynamicTestWithAllocation test = new DynamicTestWithAllocation();
 
-//		final CountDownLatch cslencountdown = new CountDownLatch(6);
-//		for (int i = 1; i < 7; i++) {
-//			final int cslen = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingCriticalSectionLength(cslen);
-//					cslencountdown.countDown();
-//				}
-//			}).start();
-//		}
-//
-//		final CountDownLatch workloadcountdown = new CountDownLatch(9);
-//		for (int i = 1; i < 10; i++) {
-//			final int workload = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingWorkLoad(workload);
-//					workloadcountdown.countDown();
-//				}
-//			}).start();
-//		}
+		// final CountDownLatch cslencountdown = new CountDownLatch(6);
+		// for (int i = 1; i < 7; i++) {
+		// final int cslen = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingCriticalSectionLength(cslen);
+		// cslencountdown.countDown();
+		// }
+		// }).start();
+		// }
+		//
+		// final CountDownLatch workloadcountdown = new CountDownLatch(9);
+		// for (int i = 1; i < 10; i++) {
+		// final int workload = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingWorkLoad(workload);
+		// workloadcountdown.countDown();
+		// }
+		// }).start();
+		// }
 
 		final CountDownLatch accesscountdown = new CountDownLatch(5);
 		for (int i = 1; i < 22; i = i + 5) {
@@ -74,22 +74,22 @@ public class DynamicTestWithAllocation {
 			}).start();
 		}
 
-//		final CountDownLatch processorscountdown = new CountDownLatch(8);
-//		for (int i = 2; i < 17; i = i + 2) {
-//			final int processors = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					test.experimentIncreasingParallel(processors);
-//					processorscountdown.countDown();
-//				}
-//			}).start();
-//		}
+		// final CountDownLatch processorscountdown = new CountDownLatch(8);
+		// for (int i = 2; i < 17; i = i + 2) {
+		// final int processors = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingParallel(processors);
+		// processorscountdown.countDown();
+		// }
+		// }).start();
+		// }
 
-//		cslencountdown.await();
-//		workloadcountdown.await();
+		// cslencountdown.await();
+		// workloadcountdown.await();
 		accesscountdown.await();
-//		processorscountdown.await();
+		// processorscountdown.await();
 		IOAResultReader.schedreader(null, false);
 	}
 
@@ -532,7 +532,7 @@ public class DynamicTestWithAllocation {
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
 		result += " combine: " + (double) combine / (double) TOTAL_NUMBER_OF_SYSTEMS;
-		
+
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);
 	}
 
@@ -912,7 +912,7 @@ public class DynamicTestWithAllocation {
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
-			writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
+			System.out.println("ioa " + 3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
 		result += "WF: " + (double) wfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
@@ -946,9 +946,9 @@ public class DynamicTestWithAllocation {
 		result += "RLIF: " + (double) rlifsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) rlifsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " ";
-		
-		result += " combine: " + (double) combine/ (double) TOTAL_NUMBER_OF_SYSTEMS;
-		
+
+		result += " combine: " + (double) combine / (double) TOTAL_NUMBER_OF_SYSTEMS;
+
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
