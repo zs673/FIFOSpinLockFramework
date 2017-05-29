@@ -39,7 +39,7 @@ public class DynamicTestWithAllocation {
 		DynamicTestWithAllocation test = new DynamicTestWithAllocation();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
-		for (int i = 1; i < 7; i++) {
+		for (int i = 1; i < 5; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				@Override

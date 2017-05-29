@@ -32,16 +32,23 @@ public class PreGASolverWithAllocation {
 	}
 
 	public int initialCheck() {
+		int notpossiblecount = 0;
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
 			int result = checkwithOneAllocationPolicy(i);
 			if (result > 0)
 				return result;
+			if (result == -1)
+				notpossiblecount++;
 		}
+		if (notpossiblecount == 8)
+			return -1;
+
 		return 0;
 	}
 
 	private int checkwithOneAllocationPolicy(int allocPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
+		boolean isPossible = true;
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
 		if (tasksWithAlloc == null)
@@ -62,7 +69,19 @@ public class PreGASolverWithAllocation {
 					fifop_sched++;
 				if (taskschedule_mrsp[i][j] == 0)
 					mrsp_sched++;
+
+				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
+						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
+					isPossible = false;
+
+				}
 			}
+		}
+
+		if (!isPossible) {
+			if (print)
+				System.out.println("not schedulable");
+			return -1;
 		}
 
 		if (fifonp_sched == 0) {
