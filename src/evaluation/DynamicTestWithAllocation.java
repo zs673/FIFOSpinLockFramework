@@ -51,31 +51,31 @@ public class DynamicTestWithAllocation {
 //		}
 //		workloadcountdown.await();
 
-		final CountDownLatch cslencountdown = new CountDownLatch(6);
-		for (int i = 1; i < 7; i++) {
-			final int cslen = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingCriticalSectionLength(cslen);
-					cslencountdown.countDown();
-				}
-			}).start();
-		}
-		cslencountdown.await();
+//		final CountDownLatch cslencountdown = new CountDownLatch(6);
+//		for (int i = 1; i < 7; i++) {
+//			final int cslen = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingCriticalSectionLength(cslen);
+//					cslencountdown.countDown();
+//				}
+//			}).start();
+//		}
+//		cslencountdown.await();
 
-		final CountDownLatch accesscountdown = new CountDownLatch(5);
-		for (int i = 1; i < 10; i++) {
-			final int access = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingContention(access);
-					accesscountdown.countDown();
-				}
-			}).start();
-		}
-		accesscountdown.await();
+//		final CountDownLatch accesscountdown = new CountDownLatch(5);
+//		for (int i = 1; i < 30; i= i+5) {
+//			final int access = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingContention(access);
+//					accesscountdown.countDown();
+//				}
+//			}).start();
+//		}
+//		accesscountdown.await();
 
 		final CountDownLatch processorscountdown = new CountDownLatch(8);
 		for (int i = 2; i < 50; i = i*2) {
