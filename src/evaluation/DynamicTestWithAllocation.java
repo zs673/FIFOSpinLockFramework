@@ -78,7 +78,7 @@ public class DynamicTestWithAllocation {
 //		accesscountdown.await();
 
 		final CountDownLatch processorscountdown = new CountDownLatch(8);
-		for (int i = 2; i < 50; i = i*2) {
+		for (int i = 2; i < 33; i = i+2) {
 			final int processors = i;
 			new Thread(new Runnable() {
 				@Override
