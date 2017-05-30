@@ -49,8 +49,8 @@ public class PreGASolverNoAllocation {
 				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
 						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
 					isPossible = false;
-
 				}
+				
 			}
 		}
 
