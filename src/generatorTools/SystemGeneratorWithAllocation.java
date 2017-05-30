@@ -639,7 +639,7 @@ public class SystemGeneratorWithAllocation {
 			SporadicTask task = tasksToAllocate.get(i);
 
 			for (int j = 0; j < partitions; j++) {
-				if ((maxUtilPerCore - utilPerPartition.get(j) >= task.util)
+				if ((maxUtilPerCore - utilPerPartition.get(currentIndex) >= task.util)
 						|| (task.util > maxUtilPerCore && 1 - utilPerPartition.get(j) >= task.util)) {
 					task.partition = currentIndex;
 					utilPerPartition.set(currentIndex, utilPerPartition.get(currentIndex) + task.util);
