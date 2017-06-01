@@ -1,6 +1,3 @@
 /native/
-/evaluation/
-/GeneticAlgorithmFramework/
+/.gitignore
 /generatorTools/
-/test/
-/analysisWithImplementationOverheads/

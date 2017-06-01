@@ -475,15 +475,19 @@ public class SystemGeneratorWithAllocation {
 
 	private ArrayList<ArrayList<SporadicTask>> WorstFitAllocation(ArrayList<SporadicTask> tasksToAllocate,
 			int partitions) {
+		// clear tasks' partitions
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
 		}
+		
+		// Init allocated tasks array
 		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>();
 		for (int i = 0; i < partitions; i++) {
 			ArrayList<SporadicTask> task = new ArrayList<>();
 			tasks.add(task);
 		}
 
+		// init util array
 		ArrayList<Double> utilPerPartition = new ArrayList<>();
 		for (int i = 0; i < partitions; i++) {
 			utilPerPartition.add((double) 0);
@@ -502,7 +506,7 @@ public class SystemGeneratorWithAllocation {
 
 			if (target == -1) {
 				System.err.println("WF error!");
-				System.exit(-1);
+				return null;
 			}
 
 			if ((double) 1 - minUtil >= task.util) {
