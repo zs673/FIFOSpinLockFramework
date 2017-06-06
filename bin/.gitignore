@@ -1,4 +1,9 @@
 /native/
 /.gitignore
-/generatorTools/
+/GeneticAlgorithmFramework/
+/analysisWithImplementationOverheads/
+/basicAnalysis/
+/entity/
 /evaluation/
+/generatorTools/
+/test/
