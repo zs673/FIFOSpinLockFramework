@@ -161,8 +161,6 @@ public class SystemGeneratorWithAllocation {
 			task_id++;
 			tasks.add(t);
 		}
-
-		new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks, total_tasks);
 		tasks.sort((p1, p2) -> -Double.compare(p1.util, p2.util));
 		return tasks;
 	}
@@ -340,6 +338,13 @@ public class SystemGeneratorWithAllocation {
 		}
 
 		if (resources != null && tasks != null) {
+			// ASSIGN PRIORITIES
+			for(int i=0;i<tasks.size();i++)
+			{
+				new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks.get(i), tasks.get(i).size());
+			}
+			
+			
 			for (int i = 0; i < resources.size(); i++) {
 				Resource res = resources.get(i);
 				res.ceiling.clear();
