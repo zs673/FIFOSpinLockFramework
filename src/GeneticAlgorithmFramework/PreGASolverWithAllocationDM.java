@@ -10,7 +10,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGeneratorWithAllocation;
 
-public class PreGASolverWithAllocation {
+public class PreGASolverWithAllocationDM {
 	int ALLOCATION_POLICY_NUMBER;
 
 	boolean print;
@@ -22,7 +22,7 @@ public class PreGASolverWithAllocation {
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	public PreGASolverWithAllocation(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
+	public PreGASolverWithAllocationDM(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
 			SystemGeneratorWithAllocation geneator, int ALLOCATION_POLICY_NUMBER, boolean print) {
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
 		this.geneator = geneator;
@@ -50,7 +50,10 @@ public class PreGASolverWithAllocation {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator
+				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, allocPolicy), resources);
+
+		;
 		if (tasksWithAlloc == null)
 			return 0;
 

@@ -20,7 +20,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorWithAllocation;
 
-public class StaticTestWithAllocation {
+public class StaticTestWithAllocationDM {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 
 	public static int MAX_PERIOD = 1000;
@@ -34,7 +34,7 @@ public class StaticTestWithAllocation {
 	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
-		StaticTestWithAllocation test = new StaticTestWithAllocation();
+		StaticTestWithAllocationDM test = new StaticTestWithAllocationDM();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
@@ -140,8 +140,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources,
-					0);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					0), resources);
 			Ris = fnp.NewRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
@@ -157,8 +157,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources,
-					1);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					1), resources);
 
 			Ris = fnp.NewRTATest(tasksBF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
@@ -175,8 +175,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources,
-					2);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					2), resources);
 			Ris = fnp.NewRTATest(tasksFF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
@@ -192,8 +192,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources,
-					3);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					3), resources);
 			Ris = fnp.NewRTATest(tasksNF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
@@ -210,8 +210,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources,
-					4);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					4), resources);
 			Ris = fnp.NewRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
@@ -228,8 +228,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources,
-					5);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					5), resources);
 			Ris = fnp.NewRTATest(tasksRLF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
@@ -246,8 +246,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources,
-					6);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					6), resources);
 			Ris = fnp.NewRTATest(tasksRLDF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
@@ -263,8 +263,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources,
-					7);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					7), resources);
 			Ris = fnp.NewRTATest(tasksRLIF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
@@ -340,8 +340,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources,
-					0);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					0), resources);
 			Ris = fnp.NewRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
@@ -357,8 +357,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources,
-					1);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					1), resources);
 
 			Ris = fnp.NewRTATest(tasksBF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
@@ -375,8 +375,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources,
-					2);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					2), resources);
 			Ris = fnp.NewRTATest(tasksFF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
@@ -392,8 +392,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources,
-					3);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					3), resources);
 			Ris = fnp.NewRTATest(tasksNF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
@@ -410,8 +410,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources,
-					4);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					4), resources);
 			Ris = fnp.NewRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
@@ -428,8 +428,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources,
-					5);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF =generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					5), resources);
 			Ris = fnp.NewRTATest(tasksRLF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
@@ -446,8 +446,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources,
-					6);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					6), resources);
 			Ris = fnp.NewRTATest(tasksRLDF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
@@ -463,8 +463,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources,
-					7);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					7), resources);
 			Ris = fnp.NewRTATest(tasksRLIF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
@@ -540,8 +540,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources,
-					0);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					0), resources);
 			Ris = fnp.NewRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
@@ -557,8 +557,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources,
-					1);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					1), resources);
 
 			Ris = fnp.NewRTATest(tasksBF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
@@ -575,8 +575,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources,
-					2);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					2), resources);
 			Ris = fnp.NewRTATest(tasksFF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
@@ -592,8 +592,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources,
-					3);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					3), resources);
 			Ris = fnp.NewRTATest(tasksNF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
@@ -610,8 +610,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources,
-					4);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					4), resources);
 			Ris = fnp.NewRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
@@ -628,8 +628,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources,
-					5);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					5), resources);
 			Ris = fnp.NewRTATest(tasksRLF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
@@ -646,8 +646,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources,
-					6);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					6), resources);
 			Ris = fnp.NewRTATest(tasksRLDF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
@@ -663,8 +663,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources,
-					7);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					7), resources);
 			Ris = fnp.NewRTATest(tasksRLIF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
@@ -740,8 +740,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources,
-					0);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					0), resources);
 			Ris = fnp.NewRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
@@ -757,8 +757,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources,
-					1);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					1), resources);
 
 			Ris = fnp.NewRTATest(tasksBF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksBF, Ris))
@@ -775,8 +775,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources,
-					2);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					2), resources);
 			Ris = fnp.NewRTATest(tasksFF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
@@ -792,8 +792,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources,
-					3);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					3), resources);
 			Ris = fnp.NewRTATest(tasksNF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
@@ -810,8 +810,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources,
-					4);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					4), resources);
 			Ris = fnp.NewRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
@@ -828,8 +828,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources,
-					5);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					5), resources);
 			Ris = fnp.NewRTATest(tasksRLF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
@@ -846,8 +846,8 @@ public class StaticTestWithAllocation {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources,
-					6);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					6), resources);
 			Ris = fnp.NewRTATest(tasksRLDF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
@@ -863,8 +863,8 @@ public class StaticTestWithAllocation {
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources,
-					7);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+					7), resources);
 			Ris = fnp.NewRTATest(tasksRLIF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;

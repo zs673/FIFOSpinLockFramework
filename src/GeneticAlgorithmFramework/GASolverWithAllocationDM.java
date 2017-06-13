@@ -10,7 +10,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGeneratorWithAllocation;
 
-public class GASolverWithAllocation {
+public class GASolverWithAllocationDM {
 	SystemGeneratorWithAllocation geneator;
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
@@ -42,7 +42,7 @@ public class GASolverWithAllocation {
 
 	/****************** GA Properties ******************/
 
-	public GASolverWithAllocation(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
+	public GASolverWithAllocationDM(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
 			SystemGeneratorWithAllocation geneator, int population, int maxGeneration, int elitismSize,
 			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2,
 			boolean isPrint) {
@@ -74,7 +74,7 @@ public class GASolverWithAllocation {
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolverWithAllocation preSovler = new PreGASolverWithAllocation(tasks, resources, geneator,
+		PreGASolverWithAllocationDM preSovler = new PreGASolverWithAllocationDM(tasks, resources, geneator,
 				ALLOCATION_POLICY_NUMBER, isPrint);
 		int initial = preSovler.initialCheck();
 
@@ -266,8 +266,8 @@ public class GASolverWithAllocation {
 			resources.get(i).protocol = gene[i];
 		}
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources,
-				gene[resources.size()]);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator
+				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, gene[resources.size()]), resources);
 		long[][] Ris = framework.newRTATest(tasksWithAllocation, resources, false, false,
 				IOAAnalysisUtils.extendCalForGA);
 

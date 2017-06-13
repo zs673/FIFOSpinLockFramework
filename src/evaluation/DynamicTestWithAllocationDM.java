@@ -9,7 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import GeneticAlgorithmFramework.GASolverWithAllocation;
+import GeneticAlgorithmFramework.GASolverWithAllocationDM;
 import analysisWithImplementationOverheads.IAFIFONP;
 import analysisWithImplementationOverheads.IAFIFOP;
 import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
@@ -21,7 +21,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorWithAllocation;
 
-public class DynamicTestWithAllocation {
+public class DynamicTestWithAllocationDM {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 
 	public static int MAX_PERIOD = 1000;
@@ -35,7 +35,7 @@ public class DynamicTestWithAllocation {
 	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
-		DynamicTestWithAllocation test = new DynamicTestWithAllocation();
+		DynamicTestWithAllocationDM test = new DynamicTestWithAllocationDM();
 
 		final CountDownLatch workloadcountdown = new CountDownLatch(9);
 		for (int i = 1; i < 10; i++) {
@@ -140,7 +140,7 @@ public class DynamicTestWithAllocation {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasksToAlloc, resources, generator, 100, 100, 5,
 					0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
@@ -342,7 +342,7 @@ public class DynamicTestWithAllocation {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasksToAlloc, resources, generator, 100, 100, 5,
 					0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
@@ -542,7 +542,7 @@ public class DynamicTestWithAllocation {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasksToAlloc, resources, generator, 100, 100, 5,
 					0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
@@ -741,7 +741,7 @@ public class DynamicTestWithAllocation {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolverWithAllocation gene = new GASolverWithAllocation(tasksToAlloc, resources, generator, 100, 100, 5,
+			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasksToAlloc, resources, generator, 100, 100, 5,
 					0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;

@@ -30,7 +30,7 @@ public class TestGAWithAllocation {
 			ArrayList<Resource> resources = geneator.generateResources();
 			geneator.generateResourceUsage(tasks, resources);
 
-			GASolverWithAllocation gene = new GASolverWithAllocation(tasks, resources, geneator, 100, 100, 5, 0.5, 0.1,
+			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasks, resources, geneator, 100, 100, 5, 0.5, 0.1,
 					5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) >= 0) {
 				schedulable++;
