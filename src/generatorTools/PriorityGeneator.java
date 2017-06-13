@@ -20,7 +20,7 @@ public class PriorityGeneator {
 	private ArrayList<Integer> generatePriorities(int number) {
 		ArrayList<Integer> priorities = new ArrayList<>();
 		for (int i = 0; i < number; i++)
-			priorities.add(MAX_PRIORITY - i * 2);
+			priorities.add(MAX_PRIORITY - (i + 1) * 2);
 		return priorities;
 	}
 }
