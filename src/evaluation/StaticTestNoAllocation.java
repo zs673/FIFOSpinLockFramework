@@ -22,7 +22,7 @@ import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorNoAllicationDM;
 
 public class StaticTestNoAllocation {
-	public static int MAX_PERIOD = 1000;
+	public static int MAX_PERIOD = 5000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;

@@ -21,7 +21,7 @@ import generatorTools.IOAResultReader;
 import generatorTools.SystemGeneratorWithAllocation;
 
 public class StaticTestWithAllocationAOP {
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
