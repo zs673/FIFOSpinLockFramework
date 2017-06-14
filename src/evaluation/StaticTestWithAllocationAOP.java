@@ -80,9 +80,9 @@ public class StaticTestWithAllocationAOP {
 
 		long[][] Ris;
 		String result = "";
-		int wfsfnp = 0, rrfsfnp = 0;
-		int wfsfp = 0, rrfsfp = 0;
-		int wfsmrsp = 0, rrfsmrsp = 0;
+		int fnpDM = 0;
+		int fpDM = 0;
+		int mrspDM = 0;
 
 		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range,
@@ -100,50 +100,29 @@ public class StaticTestWithAllocationAOP {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources, 0);
+			tasksWF = generator.assignPrioritiesByDM(tasksWF, resources);
 
 			Ris = fnp.NewRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
-				wfsfnp++;
+				fnpDM++;
 
 			Ris = fp.newRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
-				wfsfp++;
+				fpDM++;
 
 			Ris = mrsp.newRTATest(tasksWF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasksWF, Ris))
-				wfsmrsp++;
+				mrspDM++;
 
-			/**
-			 * RESOURCE REQUEST TASKS FIT
-			 */
-
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 4), resources);
-
-			Ris = fnp.NewRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
-			if (isSystemSchedulable(tasksRRF, Ris))
-				rrfsfnp++;
-
-			Ris = fp.newRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
-			if (isSystemSchedulable(tasksRRF, Ris))
-				rrfsfp++;
-
-			Ris = mrsp.newRTATest(tasksRRF, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
-			if (isSystemSchedulable(tasksRRF, Ris))
-				rrfsmrsp++;
 
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += "WF: " + (double) wfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) wfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) wfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
+		result += "DM: " + (double) fnpDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) fpDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) mrspDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
 
-		result += "RRF: " + (double) rrfsfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) rrfsfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) rrfsmrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "  ";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}
