@@ -20,7 +20,7 @@ import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGenerator;
 
-public class StaticTest2DeeperLooking {
+public class DeeperLooking {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
@@ -34,7 +34,7 @@ public class StaticTest2DeeperLooking {
 	public static boolean testSchedulability = true;
 
 	public static void main(String[] args) throws Exception {
-		StaticTest2DeeperLooking test = new StaticTest2DeeperLooking();
+		DeeperLooking test = new DeeperLooking();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
