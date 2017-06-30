@@ -1,4 +1,4 @@
-package generatorTools;
+package test;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import generatorTools.SystemGenerator;
 
 public class TestGeneatorTasks {
 
@@ -20,7 +21,7 @@ public class TestGeneatorTasks {
 		double RESOURCE_SHARING_FACTOR = 0.2;
 		int TOTAL_PARTITIONS = 16;
 
-		SystemGeneratorWithAllocation geneator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 

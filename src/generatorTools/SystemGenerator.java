@@ -8,7 +8,7 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 
-public class SystemGeneratorWithAllocation {
+public class SystemGenerator {
 	public CS_LENGTH_RANGE cs_len_range;
 	long csl = -1;
 	public boolean isLogUni;
@@ -26,7 +26,7 @@ public class SystemGeneratorWithAllocation {
 
 	double maxUtilPerCore = 1;
 
-	public SystemGeneratorWithAllocation(int minT, int maxT, int total_partitions, int totalTasks, boolean isLogUni,
+	public SystemGenerator(int minT, int maxT, int total_partitions, int totalTasks, boolean isLogUni,
 			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, boolean print) {
 		this.minT = minT;
 		this.maxT = maxT;
@@ -50,7 +50,7 @@ public class SystemGeneratorWithAllocation {
 			maxUtilPerCore = 1;
 	}
 
-	public SystemGeneratorWithAllocation(int minT, int maxT, int total_partitions, int totalTasks, boolean isLogUni,
+	public SystemGenerator(int minT, int maxT, int total_partitions, int totalTasks, boolean isLogUni,
 			CS_LENGTH_RANGE cs_len_range, RESOURCES_RANGE range, double rsf, int number_of_max_access, long csl,
 			boolean print) {
 		this.minT = minT;

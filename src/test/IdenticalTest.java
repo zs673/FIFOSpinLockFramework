@@ -1,12 +1,16 @@
-package analysisWithImplementationOverheads;
+package test;
 
 import java.util.ArrayList;
 
+import analysisWithImplementationOverheads.IACombinedProtocol;
+import analysisWithImplementationOverheads.IAFIFONP;
+import analysisWithImplementationOverheads.IAFIFOP;
+import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGeneratorNoAllicationDM;
+import generatorTools.SystemGenerator;
 
 public class IdenticalTest {
 
@@ -55,16 +59,17 @@ public class IdenticalTest {
 		long[][] r1, r2;
 		int i = 0;
 
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-				0.1 * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION,
-				true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
+				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 3;
@@ -77,7 +82,7 @@ public class IdenticalTest {
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyGeneratedTasksetAndResource(tasks, resources);
+				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
@@ -89,9 +94,11 @@ public class IdenticalTest {
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 1;
@@ -104,7 +111,7 @@ public class IdenticalTest {
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyGeneratedTasksetAndResource(tasks, resources);
+				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
@@ -116,9 +123,11 @@ public class IdenticalTest {
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 2;
@@ -131,7 +140,7 @@ public class IdenticalTest {
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyGeneratedTasksetAndResource(tasks, resources);
+				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);

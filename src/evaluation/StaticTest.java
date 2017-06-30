@@ -18,9 +18,9 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorWithAllocation;
+import generatorTools.SystemGenerator;
 
-public class StaticTestWithAllocationDM {
+public class StaticTest {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 5000;
 
 	public static int MAX_PERIOD = 1000;
@@ -34,7 +34,7 @@ public class StaticTestWithAllocationDM {
 	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
-		StaticTestWithAllocationDM test = new StaticTestWithAllocationDM();
+		StaticTest test = new StaticTest();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
@@ -124,7 +124,7 @@ public class StaticTestWithAllocationDM {
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
 
-		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
@@ -324,7 +324,7 @@ public class StaticTestWithAllocationDM {
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
 
-		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
@@ -524,7 +524,7 @@ public class StaticTestWithAllocationDM {
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
 
-		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD, NoP,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
 				NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, true, range, RESOURCES_RANGE.PARTITIONS,
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
@@ -724,7 +724,7 @@ public class StaticTestWithAllocationDM {
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0,
 				rlifsmrsp = 0;
 
-		SystemGeneratorWithAllocation generator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
 

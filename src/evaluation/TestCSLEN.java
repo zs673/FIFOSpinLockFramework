@@ -1,4 +1,4 @@
-package test;
+package evaluation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,9 +18,9 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorNoAllicationDM;
+import generatorTools.SystemGenerator;
 
-public class StaticTest3cslen {
+public class TestCSLEN {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
@@ -32,7 +32,7 @@ public class StaticTest3cslen {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
-		StaticTest3cslen test = new StaticTest3cslen();
+		TestCSLEN test = new TestCSLEN();
 
 		final CountDownLatch workloadcd = new CountDownLatch(300);
 		for (int i = 1; i < 301; i++) {
@@ -51,10 +51,9 @@ public class StaticTest3cslen {
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-				null, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
-				cs_len);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -67,10 +66,12 @@ public class StaticTest3cslen {
 		int smrsp = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
-
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
+			
 			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;

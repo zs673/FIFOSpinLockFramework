@@ -9,7 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import GeneticAlgorithmFramework.GASolverNoAllocation;
+import GeneticAlgorithmFramework.GASolver;
 import analysisWithImplementationOverheads.IAFIFONP;
 import analysisWithImplementationOverheads.IAFIFOP;
 import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
@@ -22,9 +22,9 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorNoAllicationDM;
+import generatorTools.SystemGenerator;
 
-public class DynamicTestNoAllocation {
+public class DynamicTestWF {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
@@ -44,7 +44,7 @@ public class DynamicTestNoAllocation {
 	final double RSF = 0.3;
 
 	public static void main(String[] args) throws InterruptedException {
-		DynamicTestNoAllocation test = new DynamicTestNoAllocation();
+		DynamicTestWF test = new DynamicTestWF();
 		for (int i = 1; i < 10; i++) {
 			test.initResults();
 			test.parallelExperimentIncreasingWorkload(i);
@@ -86,12 +86,14 @@ public class DynamicTestNoAllocation {
 
 				@Override
 				public void run() {
-					SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF, NoA);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
+							RESOURCES_RANGE.PARTITIONS, RSF, NoA, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+							0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -100,8 +102,8 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
-							true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
+							5, true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -200,13 +202,14 @@ public class DynamicTestNoAllocation {
 
 				@Override
 				public void run() {
-					SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range,
+							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+							0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -215,8 +218,8 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
-							true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
+							5, true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -290,12 +293,14 @@ public class DynamicTestNoAllocation {
 
 				@Override
 				public void run() {
-					SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-							range, RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
+							NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+							0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -304,8 +309,8 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
-							true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
+							5, true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -400,13 +405,14 @@ public class DynamicTestNoAllocation {
 
 				@Override
 				public void run() {
-					SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-							0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS,
-							NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
+							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+							0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -415,8 +421,8 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
-							true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
+							5, true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
@@ -491,12 +497,14 @@ public class DynamicTestNoAllocation {
 
 				@Override
 				public void run() {
-					SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT,
-							TOTAL_PARTITIONS, NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
-							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+							TOTAL_PARTITIONS * NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasks, resources);
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
+							0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -505,8 +513,8 @@ public class DynamicTestNoAllocation {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolverNoAllocation solver = new GASolverNoAllocation(tasks, resources, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
-							true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
+							5, true);
 
 					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))

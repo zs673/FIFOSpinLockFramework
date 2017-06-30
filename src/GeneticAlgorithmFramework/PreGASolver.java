@@ -8,22 +8,22 @@ import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
 import analysisWithImplementationOverheads.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.SystemGeneratorWithAllocation;
+import generatorTools.SystemGenerator;
 
-public class PreGASolverWithAllocationDM {
+public class PreGASolver {
 	int ALLOCATION_POLICY_NUMBER;
 
 	boolean print;
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
-	SystemGeneratorWithAllocation geneator;
+	SystemGenerator geneator;
 
 	IAFIFONP fifonp = new IAFIFONP();
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	public PreGASolverWithAllocationDM(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
-			SystemGeneratorWithAllocation geneator, int ALLOCATION_POLICY_NUMBER, boolean print) {
+	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
+			SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER, boolean print) {
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
 		this.geneator = geneator;
 		this.tasks = tasks;
@@ -40,7 +40,7 @@ public class PreGASolverWithAllocationDM {
 			if (result == -1)
 				notpossiblecount++;
 		}
-		if (notpossiblecount == 8)
+		if (notpossiblecount == ALLOCATION_POLICY_NUMBER)
 			return -1;
 
 		return 0;

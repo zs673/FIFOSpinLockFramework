@@ -19,9 +19,9 @@ import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
-import generatorTools.SystemGeneratorNoAllicationDM;
+import generatorTools.SystemGenerator;
 
-public class StaticTestNoAllocation {
+public class StaticTestWF {
 	public static int MAX_PERIOD = 5000;
 	public static int MIN_PERIOD = 1;
 	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
@@ -36,7 +36,7 @@ public class StaticTestNoAllocation {
 	public static int PROTOCOLS = 3;
 
 	public static void main(String[] args) throws Exception {
-		StaticTestNoAllocation test = new StaticTestNoAllocation();
+		StaticTestWF test = new StaticTestWF();
 
 		final CountDownLatch cslencountdown = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
@@ -120,9 +120,9 @@ public class StaticTestNoAllocation {
 			break;
 		}
 
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-				cs_range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -137,9 +137,11 @@ public class StaticTestNoAllocation {
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -170,8 +172,9 @@ public class StaticTestNoAllocation {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD, 0.1 * NoT, TOTAL_PARTITIONS, NoT,
-				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -186,9 +189,11 @@ public class StaticTestNoAllocation {
 		long[][] results = new long[PROTOCOLS][NoT];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -219,9 +224,9 @@ public class StaticTestNoAllocation {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -236,9 +241,11 @@ public class StaticTestNoAllocation {
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -269,9 +276,9 @@ public class StaticTestNoAllocation {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGeneratorNoAllicationDM generator = new SystemGeneratorNoAllicationDM(MIN_PERIOD, MAX_PERIOD,
-				0.1 * NUMBER_OF_TASKS_ON_EACH_PARTITION, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION, true,
-				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -286,9 +293,11 @@ public class StaticTestNoAllocation {
 		long[][] results = new long[PROTOCOLS][NUMBER_OF_TASKS_ON_EACH_PARTITION];
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.generateTasks();
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasks, resources);
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);

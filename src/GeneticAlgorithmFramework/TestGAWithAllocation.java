@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
 import generatorTools.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.SystemGeneratorWithAllocation;
+import generatorTools.SystemGenerator;
 
 public class TestGAWithAllocation {
 
@@ -21,7 +21,7 @@ public class TestGAWithAllocation {
 		int TOTAL_PARTITIONS = 16;
 		int schedulable = 0;
 
-		SystemGeneratorWithAllocation geneator = new SystemGeneratorWithAllocation(MIN_PERIOD, MAX_PERIOD,
+		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
 				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
@@ -30,7 +30,7 @@ public class TestGAWithAllocation {
 			ArrayList<Resource> resources = geneator.generateResources();
 			geneator.generateResourceUsage(tasks, resources);
 
-			GASolverWithAllocationDM gene = new GASolverWithAllocationDM(tasks, resources, geneator, 100, 100, 5, 0.5, 0.1,
+			GASolver gene = new GASolver(tasks, resources, geneator, 1, 100, 100, 5, 0.5, 0.1,
 					5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) >= 0) {
 				schedulable++;
