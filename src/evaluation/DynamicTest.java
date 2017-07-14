@@ -131,17 +131,16 @@ public class DynamicTest {
 
 		int combine = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100,
-					100, 5, 0.5, 0.1, 5, 5, 5, true);
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
 			}
@@ -337,9 +336,9 @@ public class DynamicTest {
 
 		int combine = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
+				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
@@ -350,8 +349,7 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100,
-					100, 5, 0.5, 0.1, 5, 5, 5, true);
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
 			}
@@ -558,8 +556,7 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100,
-					100, 5, 0.5, 0.1, 5, 5, 5, true);
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
 			}
@@ -752,9 +749,9 @@ public class DynamicTest {
 				rlifsmrsp = 0;
 		int combine = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NoA, false);
 
 		IAFIFONP fnp = new IAFIFONP();
 		IAFIFOP fp = new IAFIFOP();
@@ -765,8 +762,7 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100,
-					100, 5, 0.5, 0.1, 5, 5, 5, true);
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) > 0) {
 				combine++;
 			}

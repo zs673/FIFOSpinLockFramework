@@ -21,17 +21,16 @@ public class TestGAWithAllocation {
 		int TOTAL_PARTITIONS = 16;
 		int schedulable = 0;
 
-		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
+		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
+				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
 		for (int i = 0; i < 1000; i++) {
 			ArrayList<SporadicTask> tasks = geneator.generateTasks();
 			ArrayList<Resource> resources = geneator.generateResources();
 			geneator.generateResourceUsage(tasks, resources);
 
-			GASolver gene = new GASolver(tasks, resources, geneator, 1, 100, 100, 5, 0.5, 0.1,
-					5, 5, 5, true);
+			GASolver gene = new GASolver(tasks, resources, geneator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 			if (gene.findSchedulableProtocols(true) >= 0) {
 				schedulable++;
 			}

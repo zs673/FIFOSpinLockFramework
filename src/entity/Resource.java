@@ -26,7 +26,8 @@ public class Resource {
 	@Override
 	public String toString() {
 		return "R" + this.id + " : cs len = " + this.csl + ", partitions: " + partitions.size() + ", tasks: "
-				+ requested_tasks.size() + ", isGlobal: " + isGlobal + " ceiling: " + Arrays.toString(ceiling.toArray());
+				+ requested_tasks.size() + ", isGlobal: " + isGlobal + " ceiling: "
+				+ Arrays.toString(ceiling.toArray());
 	}
 
 }

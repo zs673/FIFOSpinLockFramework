@@ -71,7 +71,7 @@ public class TestCSLEN {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
-			
+
 			Ris = mrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;

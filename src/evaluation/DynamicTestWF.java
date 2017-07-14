@@ -92,8 +92,8 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
-							0), resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator
+							.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -208,8 +208,8 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
-							0), resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator
+							.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -299,8 +299,8 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
-							0), resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator
+							.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -411,8 +411,8 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
-							0), resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator
+							.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
@@ -503,8 +503,8 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources,
-							0), resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = generator
+							.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 					long[][] Ris;
 					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();

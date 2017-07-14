@@ -16,8 +16,8 @@ public class AudsleyAlgorithm {
 	public AudsleyAlgorithm(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		this.tasks = tasks;
 		this.resources = resources;
-		
-		for(int i=0;i<tasks.size();i++){
+
+		for (int i = 0; i < tasks.size(); i++) {
 			tasks.get(i).sort((p1, p2) -> -Double.compare(p1.deadline, p2.deadline));
 		}
 
@@ -43,7 +43,7 @@ public class AudsleyAlgorithm {
 				tasks.get(i).get(j).priority = priorities.get(i).get(j);
 			}
 		}
-		
+
 		return tasks;
 	}
 }

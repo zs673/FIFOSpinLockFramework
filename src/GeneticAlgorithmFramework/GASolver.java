@@ -42,10 +42,9 @@ public class GASolver {
 
 	/****************** GA Properties ******************/
 
-	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
-			SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER, int population, int maxGeneration, int elitismSize,
-			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2,
-			boolean isPrint) {
+	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
+			int ALLOCATION_POLICY_NUMBER, int population, int maxGeneration, int elitismSize, double crossoverRate,
+			double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -70,8 +69,7 @@ public class GASolver {
 	}
 
 	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator,
-				ALLOCATION_POLICY_NUMBER, isPrint);
+		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, ALLOCATION_POLICY_NUMBER, isPrint);
 		int initial = preSovler.initialCheck();
 
 		if (initial != 0) {

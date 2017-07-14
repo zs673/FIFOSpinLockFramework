@@ -22,8 +22,8 @@ public class PreGASolver {
 	IAFIFOP fifop = new IAFIFOP();
 	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
 
-	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources,
-			SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER, boolean print) {
+	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
+			int ALLOCATION_POLICY_NUMBER, boolean print) {
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
 		this.geneator = geneator;
 		this.tasks = tasks;
