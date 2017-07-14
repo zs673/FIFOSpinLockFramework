@@ -2,7 +2,7 @@ package generatorTools;
 
 import java.util.ArrayList;
 
-import analysisWithImplementationOverheads.IACombinedProtocol;
+import analysisIOStaticPriorities.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 

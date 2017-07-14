@@ -2,10 +2,10 @@ package test;
 
 import java.util.ArrayList;
 
-import analysisWithImplementationOverheads.IACombinedProtocol;
-import analysisWithImplementationOverheads.IAFIFONP;
-import analysisWithImplementationOverheads.IAFIFOP;
-import analysisWithImplementationOverheads.IANewMrsPRTAWithMCNP;
+import analysisIOStaticPriorities.IACombinedProtocol;
+import analysisIOStaticPriorities.IAFIFONP;
+import analysisIOStaticPriorities.IAFIFOP;
+import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;

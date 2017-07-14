@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import analysisWithImplementationOverheads.IACombinedProtocol;
-import analysisWithImplementationOverheads.IOAAnalysisUtils;
+import analysisIOStaticPriorities.IACombinedProtocol;
+import analysisIOStaticPriorities.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
