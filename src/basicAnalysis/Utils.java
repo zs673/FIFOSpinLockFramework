@@ -46,8 +46,8 @@ public class Utils {
 		int task_id = 1;
 		for (int i = 0; i < Ris.length; i++) {
 			for (int j = 0; j < Ris[i].length; j++) {
-				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline
-						+ ", S = " + tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = "
+				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = "
+						+ tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = "
 						+ tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
 						+ tasks.get(i).get(j).pure_resource_execution_time);
 

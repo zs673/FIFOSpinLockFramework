@@ -2,10 +2,10 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysisIOStaticPriorities.IAFIFONP;
-import analysisIOStaticPriorities.IAFIFOP;
-import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
-import analysisIOStaticPriorities.IOAAnalysisUtils;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -58,11 +58,11 @@ public class PreGASolver {
 			return 0;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.NewRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				fifop.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.newRTATest(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {
@@ -73,8 +73,8 @@ public class PreGASolver {
 				if (taskschedule_mrsp[i][j] == 0)
 					mrsp_sched++;
 
-				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j]
-						&& taskschedule_fifop[i][j] == taskschedule_mrsp[i][j] && taskschedule_mrsp[i][j] == 0) {
+				if (taskschedule_fifonp[i][j] == taskschedule_fifop[i][j] && taskschedule_fifop[i][j] == taskschedule_mrsp[i][j]
+						&& taskschedule_mrsp[i][j] == 0) {
 					isPossible = false;
 
 				}

@@ -9,10 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysisIOStaticPriorities.IAFIFONP;
-import analysisIOStaticPriorities.IAFIFOP;
-import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
-import analysisIOStaticPriorities.IOAAnalysisUtils;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -140,22 +140,21 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
@@ -183,31 +182,29 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
-				NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NoA, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -226,31 +223,29 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				TOTAL_PARTITIONS * NoT, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -269,22 +264,21 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem(("ioa " + 1 + " " + 1 + " " + NoT), result);

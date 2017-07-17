@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
-import analysisIOStaticPriorities.IAFIFONP;
-import analysisIOStaticPriorities.IAFIFOP;
-import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
-import analysisIOStaticPriorities.IOAAnalysisUtils;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -143,17 +143,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -161,8 +161,7 @@ public class StaticTestWF {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
@@ -172,9 +171,8 @@ public class StaticTestWF {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				NoT * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true,
+				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -195,17 +193,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -213,8 +211,7 @@ public class StaticTestWF {
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
@@ -224,9 +221,8 @@ public class StaticTestWF {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NoA, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP,
+				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
 		IAFIFONP fnp = new IAFIFONP();
@@ -247,17 +243,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -265,8 +261,7 @@ public class StaticTestWF {
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
@@ -299,17 +294,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.NewRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.newRTATest(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -317,8 +312,7 @@ public class StaticTestWF {
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
 		}
 
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS;
 		result += "    fifonp: " + Arrays.toString(results[0]);
 		result += "    fifop: " + Arrays.toString(results[1]);
@@ -327,8 +321,7 @@ public class StaticTestWF {
 		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
 	}
 
-	public ArrayList<SporadicTask> getUnschedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
-			long[] results) {
+	public ArrayList<SporadicTask> getUnschedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long[] results) {
 		ArrayList<SporadicTask> unschedulabletasks = new ArrayList<>();
 
 		for (int i = 0; i < tasks.size(); i++) {

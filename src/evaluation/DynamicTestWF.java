@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
-import analysisIOStaticPriorities.IAFIFONP;
-import analysisIOStaticPriorities.IAFIFOP;
-import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
-import analysisIOStaticPriorities.IOAAnalysisUtils;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
+import analysis.IOAAnalysisUtils;
 import basicAnalysis.FIFONP;
 import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;
@@ -87,8 +87,8 @@ public class DynamicTestWF {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
-							RESOURCES_RANGE.PARTITIONS, RSF, NoA, false);
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NoA, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
@@ -102,18 +102,17 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
-							5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
-					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -146,12 +145,10 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 3 2 " + NoA, result);
@@ -203,8 +200,8 @@ public class DynamicTestWF {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range,
-							RESOURCES_RANGE.PARTITIONS, RSF, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
@@ -218,18 +215,17 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
-							5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
-					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -262,12 +258,10 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
@@ -309,18 +303,17 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
-							5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
-					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -353,12 +346,10 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 4 2 " + NoP, result);
@@ -406,8 +397,8 @@ public class DynamicTestWF {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range,
-							RESOURCES_RANGE.PARTITIONS, rsf, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
@@ -421,18 +412,17 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
-							5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
-					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -465,12 +455,10 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 5 2 " + resourceSharingFactor, result);
@@ -513,18 +501,17 @@ public class DynamicTestWF {
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
 					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5,
-							5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
-					Ris = IOAmrsp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAmrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.NewRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.newRTATest(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+					Ris = IOAfp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -556,12 +543,10 @@ public class DynamicTestWF {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) siafnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) siafp / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ " " + (double) siamrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 1 2 " + NoT, result);

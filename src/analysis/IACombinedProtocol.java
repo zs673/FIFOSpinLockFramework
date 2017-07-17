@@ -1,4 +1,4 @@
-package analysisIOStaticPriorities;
+package analysis;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,7 @@ import entity.SporadicTask;
 
 public class IACombinedProtocol {
 
-	public long[][] newRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal) {
 		if (tasks == null)
 			return null;
@@ -67,16 +67,15 @@ public class IACombinedProtocol {
 		}
 
 		if (printDebug) {
-			System.out.println(
-					"FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
+			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
 			IOAAnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] response_time, double oneMig, long np, boolean testSchedulability, int extendCal) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
+			double oneMig, long np, boolean testSchedulability, int extendCal) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -95,22 +94,20 @@ public class IACombinedProtocol {
 				task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
 
 				task.implementation_overheads += IOAAnalysisUtils.FULL_CONTEXT_SWTICH1;
-				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig,
-						np, task);
-				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources,
-						oneMig, np);
+				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np,
+						task);
+				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig,
+						np);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np);
 
-				long implementation_overheads = (long) Math
-						.ceil(task.implementation_overheads + task.migration_overheads_plus);
+				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
 						+ implementation_overheads;
 
 				task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
 						+ (long) Math.ceil(task.blocking_overheads);
 				if (task.total_blocking < 0) {
-					System.err
-							.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
+					System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
 					System.exit(-1);
 				}
 
@@ -125,9 +122,8 @@ public class IACombinedProtocol {
 	/***************************************************
 	 ************* Direct Spin Delay *******************
 	 ***************************************************/
-	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np,
-			SporadicTask calT) {
+	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long time, long jitter, double oneMig, long np, SporadicTask calT) {
 		long resourceTime = 0;
 		resourceTime += FIFONPResourceTime(task, tasks, resources, Ris, time);
 		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time, Ris);
@@ -138,8 +134,8 @@ public class IACombinedProtocol {
 	/**
 	 * FIFO-NP resource accessing time.
 	 */
-	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
@@ -163,8 +159,8 @@ public class IACombinedProtocol {
 	 * gives the number of requests from remote partitions for a resource that
 	 * is required by the given task.
 	 */
-	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			long[][] Ris, long Ri) {
+	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
+			long Ri) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -175,8 +171,7 @@ public class IACombinedProtocol {
 					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math
-								.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
+						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
@@ -257,8 +252,8 @@ public class IACombinedProtocol {
 		return spin;
 	}
 
-	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			Resource resource, long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP) {
+	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource,
+			long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP) {
 		long spin = 0;
 		long ncs = 0;
 
@@ -266,8 +261,7 @@ public class IACombinedProtocol {
 			SporadicTask hpTask = tasks.get(task.partition).get(i);
 			if (hpTask.priority > task.priority && hpTask.resource_required_index.contains(resource.id - 1)) {
 				ncs += (int) Math.ceil((double) (time + Ris[hpTask.partition][i]) / (double) hpTask.period)
-						* hpTask.number_of_access_in_one_release
-								.get(hpTask.resource_required_index.indexOf(resource.id - 1));
+						* hpTask.number_of_access_in_one_release.get(hpTask.resource_required_index.indexOf(resource.id - 1));
 			}
 		}
 
@@ -283,8 +277,7 @@ public class IACombinedProtocol {
 						if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 							SporadicTask remote_task = tasks.get(i).get(j);
 							int indexR = getIndexRInTask(remote_task, resource);
-							int number_of_release = (int) Math
-									.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
+							int number_of_release = (int) Math.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
 							number_of_request_by_Remote_P += number_of_release
 									* remote_task.number_of_access_in_one_release.get(indexR);
 						}
@@ -300,8 +293,8 @@ public class IACombinedProtocol {
 
 		task.implementation_overheads += (spin + ncs) * (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 		task.blocking_overheads += (spin + ncs
-				- (task.resource_required_index.contains(resource.id - 1) ? task.number_of_access_in_one_release
-						.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
+				- (task.resource_required_index.contains(resource.id - 1)
+						? task.number_of_access_in_one_release.get(task.resource_required_index.indexOf(resource.id - 1)) : 0))
 				* (IOAAnalysisUtils.FIFOP_LOCK + IOAAnalysisUtils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
@@ -311,8 +304,7 @@ public class IACombinedProtocol {
 	 */
 
 	private long MrsPresourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np,
-			SporadicTask calT) {
+			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np, SporadicTask calT) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
@@ -346,9 +338,8 @@ public class IACombinedProtocol {
 		return resource_accessing_time;
 	}
 
-	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long time, long jitter, int n,
-			SporadicTask calTask) {
+	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
+			long[][] Ris, long time, long jitter, int n, SporadicTask calTask) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -359,8 +350,7 @@ public class IACombinedProtocol {
 					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math
-								.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
+						int number_of_release = (int) Math.ceil((double) (time + Ris[i][j]) / (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
@@ -375,10 +365,8 @@ public class IACombinedProtocol {
 		// account for the request of the task itself
 		number_of_access++;
 
-		calTask.implementation_overheads += number_of_access
-				* (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
-		calTask.blocking_overheads += (number_of_access - 1)
-				* (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+		calTask.implementation_overheads += number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+		calTask.blocking_overheads += (number_of_access - 1) * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}
@@ -386,8 +374,8 @@ public class IACombinedProtocol {
 	/***************************************************
 	 ************* InDirect Spin Delay *******************
 	 ***************************************************/
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time,
-			long[][] Ris, ArrayList<Resource> resources, double oneMig, long np) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris,
+			ArrayList<Resource> resources, double oneMig, long np) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -399,10 +387,9 @@ public class IACombinedProtocol {
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
 						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
 
-				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources,
+				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t);
+				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i], oneMig, np,
 						t);
-				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time, Ris[partition][i],
-						oneMig, np, t);
 				t.indirectspin += btb_interference;
 				interference += btb_interference;
 			}
@@ -504,8 +491,8 @@ public class IACombinedProtocol {
 		return localblocking;
 	}
 
-	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = FIFONPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -575,8 +562,8 @@ public class IACombinedProtocol {
 		return localBlockingResources;
 	}
 
-	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long Ri) {
+	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long Ri) {
 		ArrayList<Resource> LocalBlockingResources = FIFOPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -650,8 +637,8 @@ public class IACombinedProtocol {
 			return false;
 	}
 
-	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long[][] Ris, long time, double oneMig, long np) {
+	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long time, double oneMig, long np) {
 		ArrayList<Resource> LocalBlockingResources = MrsPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -680,8 +667,7 @@ public class IACombinedProtocol {
 						migration_targets.add(partition);
 					}
 				}
-				arrivalBlockingOverheads += remoteblocking
-						* (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+				arrivalBlockingOverheads += remoteblocking * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
 				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);
@@ -740,8 +726,8 @@ public class IACombinedProtocol {
 	/***************************************************
 	 ************* Migration Cost Calculation **********
 	 ***************************************************/
-	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT) {
+	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -751,8 +737,7 @@ public class IACombinedProtocol {
 			if (i != task.partition) {
 				int number_requests_left = 0;
 				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time)
-						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time)
-						- request_number + 1;
+						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time) - request_number + 1;
 
 				if (number_requests_left > 0)
 					migration_targets.add(i);
@@ -762,8 +747,8 @@ public class IACombinedProtocol {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
 	}
 
-	private double migrationCostForArrival(double oneMig, long np, ArrayList<Integer> migration_targets,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
+	private double migrationCostForArrival(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
 		return migrationCost(oneMig, np, migration_targets, resource, tasks, calT);
 	}
 
@@ -812,12 +797,12 @@ public class IACombinedProtocol {
 			else {
 				if (np > 0) {
 					double migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
-					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks,
-							calT, migCostWithNP);
+					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT,
+							migCostWithNP);
 					migration_cost_for_one_access = Math.min(migCostWithHP, migCostWithNP);
 				} else {
-					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource,
-							tasks, calT, -1);
+					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks,
+							calT, -1);
 				}
 			}
 
@@ -827,12 +812,11 @@ public class IACombinedProtocol {
 		return migrationCost;
 	}
 
-	private double migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, double oneMig,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT, double migByNP) {
+	private double migrationCostBusyWindow(ArrayList<Integer> migration_targets_with_P, double oneMig, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT, double migByNP) {
 		double migCost = 0;
 
-		double newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource,
-				tasks);
+		double newMigCost = migrationCostOneCal(migration_targets_with_P, oneMig, resource.csl + migCost, resource, tasks);
 
 		while (migCost != newMigCost) {
 			migCost = newMigCost;
@@ -920,4 +904,5 @@ public class IACombinedProtocol {
 		}
 		return indexR;
 	}
+
 }

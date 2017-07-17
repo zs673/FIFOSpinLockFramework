@@ -2,10 +2,10 @@ package test;
 
 import java.util.ArrayList;
 
-import analysisIOStaticPriorities.IACombinedProtocol;
-import analysisIOStaticPriorities.IAFIFONP;
-import analysisIOStaticPriorities.IAFIFOP;
-import analysisIOStaticPriorities.IANewMrsPRTAWithMCNP;
+import analysis.IACombinedProtocol;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
@@ -32,8 +32,7 @@ public class IdenticalTest {
 			for (int j = 0; j < r1[i].length; j++) {
 				if (r1[i][j] != r2[i][j]) {
 					if (print)
-						System.out.println(
-								"not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
+						System.out.println("not equal at:  i=" + i + "  j=" + j + "   r1: " + r1[i][j] + "   r2:" + r2[i][j]);
 					isequal = false;
 				}
 			}
@@ -75,16 +74,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 3;
 			}
 
-			r1 = mrsp.newRTATest(tasks, resources, testSchedulability, false, extendCal);
-			r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, false, extendCal);
+			r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
-				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;
@@ -104,16 +103,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 1;
 			}
 
-			r1 = fnp.NewRTATest(tasks, resources, testSchedulability, false, extendCal);
-			r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, false, extendCal);
+			r1 = fnp.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
-				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;
@@ -133,16 +132,16 @@ public class IdenticalTest {
 				resources.get(j).protocol = 2;
 			}
 
-			r1 = fp.newRTATest(tasks, resources, testSchedulability, false, extendCal);
-			r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, false, extendCal);
+			r1 = fp.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
+			r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, false, extendCal);
 			boolean isEqual = isEqual(r1, r2, false);
 
 			if (!isEqual) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = mrsp.newRTATest(tasks, resources, testSchedulability, true, extendCal);
-				r2 = combined_analysis.newRTATest(tasks, resources, testSchedulability, true, extendCal);
+				r1 = mrsp.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
+				r2 = combined_analysis.getResponseTime(tasks, resources, testSchedulability, true, extendCal);
 				System.exit(0);
 			}
 			i++;
