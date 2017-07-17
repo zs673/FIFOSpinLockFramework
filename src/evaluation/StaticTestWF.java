@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
-import analysis.IOAAnalysisUtils;
+import analysisWithRiOnly.IAFIFONP;
+import analysisWithRiOnly.IAFIFOP;
+import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
-import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import utils.AnalysisUtils;
+import utils.GeneatorUtils.CS_LENGTH_RANGE;
+import utils.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGenerator;
 
@@ -143,17 +143,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -193,17 +193,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -243,17 +243,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -294,17 +294,17 @@ public class StaticTestWF {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;

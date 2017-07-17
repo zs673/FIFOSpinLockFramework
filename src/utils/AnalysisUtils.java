@@ -1,10 +1,10 @@
-package analysis;
+package utils;
 
 import java.util.ArrayList;
 
 import entity.SporadicTask;
 
-public class IOAAnalysisUtils {
+public class AnalysisUtils {
 	public static int extendCalForGA = 5;
 	public static int extendCalForStatic = 1;
 
@@ -100,7 +100,7 @@ public class IOAAnalysisUtils {
 
 	public static void main(String args[]) {
 		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   "
-				+ (IOAAnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + IOAAnalysisUtils.FIFOP_RE_REQUEST));
+				+ (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST));
 		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK);
 		System.out.println(
 				" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
@@ -121,5 +121,8 @@ public class IOAAnalysisUtils {
 			System.out.println();
 		}
 	}
+	
+	
+	
 
 }

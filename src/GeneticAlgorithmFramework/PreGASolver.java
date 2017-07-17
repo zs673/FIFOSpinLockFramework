@@ -2,13 +2,13 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
-import analysis.IOAAnalysisUtils;
+import analysisWithRiOnly.IAFIFONP;
+import analysisWithRiOnly.IAFIFOP;
+import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
+import utils.AnalysisUtils;
 
 public class PreGASolver {
 	int ALLOCATION_POLICY_NUMBER;
@@ -58,11 +58,11 @@ public class PreGASolver {
 			return 0;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				fifop.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, IOAAnalysisUtils.extendCalForStatic));
+				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {

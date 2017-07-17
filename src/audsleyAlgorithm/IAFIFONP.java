@@ -1,17 +1,18 @@
-package analysis;
+package audsleyAlgorithm;
 
 import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import utils.AnalysisUtils;
 
-public class IAFIFONP {
+public class IAFIFONP{
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug, int extendCal) {
+			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
 		if (tasks == null)
 			return null;
-		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
+		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
 
@@ -21,13 +22,13 @@ public class IAFIFONP {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		IOAAnalysisUtils.cloneList(init_Ri, response_time);
+		AnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, testSchedulability, extendCal);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, testSchedulability, extendCal, useRi);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -44,7 +45,7 @@ public class IAFIFONP {
 			}
 
 			count++;
-			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
+			AnalysisUtils.cloneList(response_time_plus, response_time);
 
 			if (testSchedulability) {
 				if (missdeadline)
@@ -57,14 +58,14 @@ public class IAFIFONP {
 
 		if (printDebug) {
 			System.out.println("FIFONP JAVA    after " + count + " tims of recursion, we got the response time.");
-			IOAAnalysisUtils.printResponseTime(response_time, tasks);
+			AnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
 	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
-			boolean testSchedulability, int extendCal) {
+			boolean testSchedulability, int extendCal, boolean useRi) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -85,11 +86,11 @@ public class IAFIFONP {
 				}
 				task.indirectspin = 0;
 				task.implementation_overheads = 0;
-				task.implementation_overheads += IOAAnalysisUtils.FULL_CONTEXT_SWTICH1;
+				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
 
-				task.spin = directRemoteDelay(task, tasks, resources, response_time, response_time[i][j]);
-				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources);
-				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j]);
+				task.spin = directRemoteDelay(task, tasks, resources, response_time, response_time[i][j], useRi);
+				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, useRi);
+				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], useRi);
 
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads);
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
@@ -107,19 +108,19 @@ public class IAFIFONP {
 	 * Calculate the spin delay for a given task t.
 	 */
 	private long directRemoteDelay(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri) {
+			long[][] Ris, long Ri, boolean useRi) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
-			long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri);
+			long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri, useRi);
 			spin_delay += (NoS + t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
 					* resource.csl;
 			t.implementation_overheads += (NoS
 					+ t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
-					* (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+					* (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 
 			t.fifonp[resource.id - 1] += (NoS + t.number_of_access_in_one_release.get(k))
-					* (resource.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+					* (resource.csl + AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 		}
 		return spin_delay;
 	}
@@ -129,7 +130,7 @@ public class IAFIFONP {
 	 * is required by the given task.
 	 */
 	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
-			long Ri) {
+			long Ri, boolean useRi) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -140,12 +141,13 @@ public class IAFIFONP {
 					if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
-						int number_of_release = (int) Math.ceil((double) (Ri + Ris[i][j]) / (double) remote_task.period);
+						int number_of_release = (int) Math
+								.ceil((double) (Ri + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri);
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri, useRi);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP;
 
@@ -161,7 +163,7 @@ public class IAFIFONP {
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
 	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long Ri, long[][] Ris,
-			ArrayList<Resource> resources) {
+			ArrayList<Resource> resources, boolean useRi) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -171,9 +173,9 @@ public class IAFIFONP {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET);
 				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period)
-						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
+						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
 
-				long btb_interference = getIndirectSpinDelay(hpTask, Ri, Ris[partition][i], Ris, allTasks, resources, t);
+				long btb_interference = getIndirectSpinDelay(hpTask, Ri, Ris[partition][i], Ris, allTasks, resources, t, useRi);
 				t.indirectspin += btb_interference;
 				interference += btb_interference;
 			}
@@ -186,7 +188,7 @@ public class IAFIFONP {
 	 * the given task is pending
 	 */
 	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris,
-			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask) {
+			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask, boolean useRi) {
 		long BTBhit = 0;
 
 		for (int i = 0; i < hpTask.resource_required_index.size(); i++) {
@@ -194,21 +196,22 @@ public class IAFIFONP {
 			Resource resource = resources.get(hpTask.resource_required_index.get(i));
 
 			int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ris[hpTask.partition],
-					Ri);
-			int number_of_request_with_btb = (int) Math.ceil((double) (Ri + Rihp) / (double) hpTask.period)
+					Ri, useRi);
+			int number_of_request_with_btb = (int) Math
+					.ceil((double) (Ri + (useRi ? Rihp : hpTask.deadline)) / (double) hpTask.period)
 					* hpTask.number_of_access_in_one_release.get(i);
 
 			BTBhit += number_of_request_with_btb * resource.csl;
 			calTask.implementation_overheads += number_of_request_with_btb
-					* (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+					* (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 			calTask.fifonp[resource.id - 1] += number_of_request_with_btb * resource.csl
-					+ number_of_request_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+					+ number_of_request_with_btb * (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 
 			for (int j = 0; j < resource.partitions.size(); j++) {
 				if (resource.partitions.get(j) != hpTask.partition) {
 					int remote_partition = resource.partitions.get(j);
 					int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ris[remote_partition],
-							Ri);
+							Ri, useRi);
 
 					int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
 							: number_of_remote_request - number_of_higher_request;
@@ -217,10 +220,10 @@ public class IAFIFONP {
 
 					BTBhit += spin_delay_with_btb * resource.csl;
 					calTask.implementation_overheads += spin_delay_with_btb
-							* (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+							* (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 
 					calTask.fifonp[resource.id - 1] += spin_delay_with_btb * resource.csl
-							+ spin_delay_with_btb * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK);
+							+ spin_delay_with_btb * (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK);
 				}
 			}
 
@@ -229,7 +232,7 @@ public class IAFIFONP {
 	}
 
 	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri) {
+			long[][] Ris, long Ri, boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -237,24 +240,24 @@ public class IAFIFONP {
 		for (int i = 0; i < LocalBlockingResources.size(); i++) {
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
-			t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
+			t.fifonp[res.id - 1] += res.csl + AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK;
 
 			if (res.isGlobal) {
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri, useRi);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri);
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri, useRi);
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
-						t.fifonp[res.id - 1] += res.csl + IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK;
+						t.fifonp[res.id - 1] += res.csl + AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK;
 					}
 				}
 			}
 			local_blocking_each_resource.add(local_blocking);
-			overheads.add((local_blocking / res.csl) * (IOAAnalysisUtils.FIFONP_LOCK + IOAAnalysisUtils.FIFONP_UNLOCK));
+			overheads.add((local_blocking / res.csl) * (AnalysisUtils.FIFONP_LOCK + AnalysisUtils.FIFONP_UNLOCK));
 		}
 
 		if (local_blocking_each_resource.size() >= 1) {
@@ -302,7 +305,8 @@ public class IAFIFONP {
 	 * gives that number of requests from HP local tasks for a resource that is
 	 * required by the given task.
 	 */
-	private int getNoRFromHP(Resource resource, SporadicTask task, ArrayList<SporadicTask> tasks, long[] Ris, long Ri) {
+	private int getNoRFromHP(Resource resource, SporadicTask task, ArrayList<SporadicTask> tasks, long[] Ris, long Ri,
+			boolean useRi) {
 		int number_of_request_by_HP = 0;
 		int priority = task.priority;
 
@@ -310,21 +314,22 @@ public class IAFIFONP {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math.ceil((double) (Ri + Ris[i]) / (double) hpTask.period)
+				number_of_request_by_HP += Math.ceil((double) (Ri + (useRi ? Ris[i] : hpTask.deadline)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;
 	}
 
-	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri) {
+	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean useRi) {
 		int number_of_request_by_Remote_P = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask remote_task = tasks.get(i);
 				int indexR = getIndexRInTask(remote_task, resource);
-				number_of_request_by_Remote_P += Math.ceil((double) (Ri + Ris[i]) / (double) remote_task.period)
+				number_of_request_by_Remote_P += Math
+						.ceil((double) (Ri + (useRi ? Ris[i] : remote_task.deadline)) / (double) remote_task.period)
 						* remote_task.number_of_access_in_one_release.get(indexR);
 			}
 		}

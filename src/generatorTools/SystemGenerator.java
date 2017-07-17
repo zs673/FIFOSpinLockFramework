@@ -5,8 +5,8 @@ import java.util.Random;
 
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
-import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import utils.GeneatorUtils.CS_LENGTH_RANGE;
+import utils.GeneatorUtils.RESOURCES_RANGE;
 
 public class SystemGenerator {
 	public CS_LENGTH_RANGE cs_len_range;

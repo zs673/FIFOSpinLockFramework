@@ -9,14 +9,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
-import analysis.IOAAnalysisUtils;
+import analysisWithRiOnly.IAFIFONP;
+import analysisWithRiOnly.IAFIFOP;
+import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.GeneatorUtils.CS_LENGTH_RANGE;
-import generatorTools.GeneatorUtils.RESOURCES_RANGE;
+import utils.AnalysisUtils;
+import utils.GeneatorUtils.CS_LENGTH_RANGE;
+import utils.GeneatorUtils.RESOURCES_RANGE;
 import generatorTools.IOAResultReader;
 import generatorTools.SystemGenerator;
 
@@ -72,15 +72,15 @@ public class TestCSLEN {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, true, false, IOAAnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 

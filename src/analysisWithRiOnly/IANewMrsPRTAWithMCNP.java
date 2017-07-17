@@ -1,9 +1,10 @@
-package analysis;
+package analysisWithRiOnly;
 
 import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import utils.AnalysisUtils;
 
 public class IANewMrsPRTAWithMCNP {
 
@@ -28,7 +29,7 @@ public class IANewMrsPRTAWithMCNP {
 	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long np,
 			boolean testSchedulability, boolean printDebug, int extendCal) {
 		long count = 0;
-		long[][] init_Ri = IOAAnalysisUtils.initResponseTime(tasks);
+		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missdeadline = false;
 
@@ -36,14 +37,14 @@ public class IANewMrsPRTAWithMCNP {
 			response_time[i] = new long[init_Ri[i].length];
 		}
 
-		IOAAnalysisUtils.cloneList(init_Ri, response_time);
+		AnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
 			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					IOAAnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability, extendCal);
+					AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability, extendCal);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -60,7 +61,7 @@ public class IANewMrsPRTAWithMCNP {
 			}
 
 			count++;
-			IOAAnalysisUtils.cloneList(response_time_plus, response_time);
+			AnalysisUtils.cloneList(response_time_plus, response_time);
 
 			if (testSchedulability) {
 				if (missdeadline)
@@ -73,7 +74,7 @@ public class IANewMrsPRTAWithMCNP {
 
 		if (printDebug) {
 			System.out.println("MrsP NP    after " + count + " tims of recursion, we got the response time.");
-			IOAAnalysisUtils.printResponseTime(response_time, tasks);
+			AnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;
@@ -105,7 +106,7 @@ public class IANewMrsPRTAWithMCNP {
 				task.indirectspin = 0;
 				task.implementation_overheads = 0;
 				task.migration_overheads_plus = 0;
-				task.implementation_overheads += IOAAnalysisUtils.FULL_CONTEXT_SWTICH1;
+				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
 
 				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np,
 						task);
@@ -176,7 +177,7 @@ public class IANewMrsPRTAWithMCNP {
 				interference += indriectblocking;
 				t.indirectspin += indriectblocking;
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
-						* (IOAAnalysisUtils.FULL_CONTEXT_SWTICH1 + IOAAnalysisUtils.FULL_CONTEXT_SWTICH2);
+						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 
@@ -242,10 +243,10 @@ public class IANewMrsPRTAWithMCNP {
 		// account for the request of the task itself
 		number_of_access++;
 
-		calTask.implementation_overheads += number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+		calTask.implementation_overheads += number_of_access * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
 
 		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl
-				+ number_of_access * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+				+ number_of_access * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}
@@ -265,8 +266,8 @@ public class IANewMrsPRTAWithMCNP {
 
 			Resource res = LocalBlockingResources.get(i);
 			long local_blocking = res.csl;
-			t.mrsp[res.id - 1] += res.csl + IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK;
-			arrivalBlockingOverheads += IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK;
+			t.mrsp[res.id - 1] += res.csl + AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK;
+			arrivalBlockingOverheads += AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK;
 
 			migration_targets.add(t.partition);
 			if (res.isGlobal) {
@@ -286,12 +287,12 @@ public class IANewMrsPRTAWithMCNP {
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
 						remoteblocking++;
-						t.mrsp[res.id - 1] += res.csl + IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK;
+						t.mrsp[res.id - 1] += res.csl + AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK;
 						migration_targets.add(partition);
 					}
 				}
 
-				arrivalBlockingOverheads += remoteblocking * (IOAAnalysisUtils.MrsP_LOCK + IOAAnalysisUtils.MrsP_UNLOCK);
+				arrivalBlockingOverheads += remoteblocking * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
 				double mc_plus = 0;
 				if (oneMig != 0) {
 					double mc = migrationCostForArrival(oneMig, np, migration_targets, res, tasks, t);

@@ -4,20 +4,21 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import utils.AnalysisUtils;
 
 public class RTAWithoutBlocking {
 
 	public long[][] newRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
 		if (tasks == null)
 			return null;
-		long[][] init_Ri = new Utils().initResponseTime(tasks);
+		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
 		long[][] response_time = new long[tasks.size()][];
 		boolean isEqual = false, missDeadline = false;
 		long count = 0;
 
 		for (int i = 0; i < init_Ri.length; i++)
 			response_time[i] = new long[init_Ri[i].length];
-		new Utils().cloneList(init_Ri, response_time);
+		AnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
@@ -34,7 +35,7 @@ public class RTAWithoutBlocking {
 			}
 
 			count++;
-			new Utils().cloneList(response_time_plus, response_time);
+			AnalysisUtils.cloneList(response_time_plus, response_time);
 			if (missDeadline)
 				break;
 		}
@@ -44,7 +45,7 @@ public class RTAWithoutBlocking {
 				System.out.println("after " + count + " tims of recursion, the tasks miss the deadline.");
 			else
 				System.out.println("after " + count + " tims of recursion, we got the response time.");
-			new Utils().printResponseTime(response_time, tasks);
+			AnalysisUtils.printResponseTime(response_time, tasks);
 		}
 
 		return response_time;

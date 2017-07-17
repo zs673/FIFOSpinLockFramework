@@ -1,4 +1,4 @@
-package generatorTools;
+package utils;
 
 public class GeneatorUtils {
 
