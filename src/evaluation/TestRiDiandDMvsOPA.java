@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import analysisWithRiOnly.IACombinedProtocol;
 import audsleyAlgorithm.AudsleyOptimalPriorityAssignment;
 import entity.Resource;
 import entity.SporadicTask;
@@ -45,6 +45,7 @@ public class TestRiDiandDMvsOPA {
 			}).start();
 		}
 		work.await();
+
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
@@ -80,9 +81,9 @@ public class TestRiDiandDMvsOPA {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
-		IACombinedProtocol ri = new IACombinedProtocol();
-		analysisWithDiorRi.IACombinedProtocol di = new analysisWithDiorRi.IACombinedProtocol();
+		AudsleyOptimalPriorityAssignment fifonp_opa = new AudsleyOptimalPriorityAssignment();
+		analysisWithDiorRi.IACombinedProtocol fifonp_di = new analysisWithDiorRi.IACombinedProtocol();
+		analysisWithRiOnly.IACombinedProtocol fifonp_ri = new analysisWithRiOnly.IACombinedProtocol();
 
 		String result = "";
 		int RiDM = 0;
@@ -97,48 +98,25 @@ public class TestRiDiandDMvsOPA {
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
 			for (int k = 0; k < resources.size(); k++) {
-				resources.get(k).protocol = 1;
+				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
+				// resources.get(k).protocol = 1;
+				// resources.get(k).protocol = 2;
+				// resources.get(k).protocol = 3;
 			}
 
-			Ris = ri.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = fifonp_ri.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
-			Ris = di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-			if (isSystemSchedulable(tasks, Ris)) {
+			Ris = fifonp_di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			if (isSystemSchedulable(tasks, Ris))
 				DiDM++;
-			}
 
-			ArrayList<ArrayList<SporadicTask>> opa_result = opa.AssignedSchedulableTasks(tasks, resources);
-			if (opa_result != null) {
+			tasks = fifonp_opa.AssignedSchedulableTasks(tasks, resources);
+			if (tasks != null)
 				OPA++;
-			}
 
-//			if (diS && !opaS) {
-//				System.out.println("-------------------------------------");
-//				for (int j = 0; j < tasks.size(); j++) {
-//					System.out.println();
-//					for (int k = 0; k < tasks.get(j).size(); k++) {
-//						System.out.print(Ris[j][k] + " vs" + tasks.get(j).get(k).Ri + "		");
-//					}
-//				}
-//				System.out.println("\n-------------------------------------");
-//
-//				tasks = generator.assignPrioritiesByDM(tasks, resources);
-//				Ris = di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-//				opa_result = opa.AssignedSchedulableTasks(tasks, resources);
-//
-//				System.out.println("-------------------------------------");
-//				for (int j = 0; j < tasks.size(); j++) {
-//					System.out.println();
-//					for (int k = 0; k < tasks.get(j).size(); k++) {
-//						System.out.print(Ris[j][k] + " vs" + tasks.get(j).get(k).Ri + "		");
-//					}
-//				}
-//				System.out.println("\n-------------------------------------");
-//			}
-
-			 System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
 		result = (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "

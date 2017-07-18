@@ -82,7 +82,9 @@ public class AnalysisUtils {
 			for (int j = 0; j < task_on_a_partition.size(); j++) {
 				SporadicTask t = task_on_a_partition.get(j);
 				Ri[j] = t.Ri = t.WCET + t.pure_resource_execution_time;
-				t.interference = t.local = t.spin = t.indirectspin = 0;
+				t.spin = t.interference = t.local = t.indirectspin = t.total_blocking = 0;
+				t.blocking_overheads = t.np_section = t.implementation_overheads = t.migration_overheads_plus = t.mrsp_arrivalblocking_overheads = t.fifonp_arrivalblocking_overheads = t.fifop_arrivalblocking_overheads = 0;
+
 			}
 			response_times[i] = Ri;
 		}
@@ -121,8 +123,5 @@ public class AnalysisUtils {
 			System.out.println();
 		}
 	}
-	
-	
-	
 
 }

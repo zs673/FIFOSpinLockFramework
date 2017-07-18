@@ -8,6 +8,37 @@ import utils.AnalysisUtils;
 
 public class AudsleyOptimalPriorityAssignment {
 
+	
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+		if (tasks == null)
+			return null;
+
+		long np = 0; // The NP section length if MrsP is applied
+		long npsection = 0;
+
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
+		}
+		np = npsection;
+
+		
+		long[][] responseTime = new long[tasks.size()][];
+		for (int i = 0; i < tasks.size(); i++) {
+			responseTime[i] = new long[tasks.get(i).size()];
+		}
+
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				SporadicTask task = tasks.get(i).get(j);
+				responseTime[i][j] = busyWindow(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
+			}
+		}
+		
+		return responseTime;
+	}
+	
 	public ArrayList<ArrayList<SporadicTask>> AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks,
 			ArrayList<Resource> resources) {
 
@@ -22,10 +53,10 @@ public class AudsleyOptimalPriorityAssignment {
 		for (int i = 0; i < tasks.size(); i++) {
 
 			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
-			
-			for (int startingPrio = 10; startingPrio <= 10 * tasks.get(i).size(); startingPrio += 10){
+
+			for (int startingPrio = 10; startingPrio <= 10 * tasks.get(i).size(); startingPrio += 10) {
 				boolean isTaskSchedulable = false;
-				
+
 				for (int j = unassignedTasks.size() - 1; j >= 0; j--) {
 					SporadicTask task = unassignedTasks.get(j);
 					task.priority = startingPrio;
@@ -39,12 +70,11 @@ public class AudsleyOptimalPriorityAssignment {
 						break;
 					}
 				}
-				
-				if(!isTaskSchedulable)
-					return null;
-				
-			}
 
+				if (!isTaskSchedulable)
+					return null;
+
+			}
 
 		}
 
@@ -73,14 +103,24 @@ public class AudsleyOptimalPriorityAssignment {
 			return false;
 	}
 
+
+
 	private long busyWindow(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			double oneMig, long np) {
 
 		SporadicTask task = caltask;
 		long Ri = 0;
-		long newRi = task.WCET+task.pure_resource_execution_time;
+		long newRi = task.WCET + task.pure_resource_execution_time;
+		
+		if (newRi > task.deadline) {
+			return newRi;
+		}
 
 		while (Ri != newRi) {
+			if (newRi > task.deadline) {
+				return newRi;
+			}
+			
 			Ri = newRi;
 
 			task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;

@@ -3,6 +3,7 @@ package test;
 import java.util.ArrayList;
 import java.util.Random;
 
+import audsleyAlgorithm.AudsleyOptimalPriorityAssignment;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -58,6 +59,8 @@ public class IdenticalTest {
 		analysisWithRiOnly.IANewMrsPRTAWithMCNP mrsp_ri = new analysisWithRiOnly.IANewMrsPRTAWithMCNP();
 		analysisWithRiOnly.IACombinedProtocol combined_analysis_ri = new analysisWithRiOnly.IACombinedProtocol();
 		
+		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
+		
 
 		long[][] r1, r2, r3, r4;
 		int i = 0;
@@ -65,6 +68,40 @@ public class IdenticalTest {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
 				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		
+		i = 0;
+		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator
+					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
+			
+			Random random = new Random();
+
+			for (int j = 0; j < resources.size(); j++) {
+				resources.get(j).protocol = random.nextInt(65535) % 3 + 1;
+			}
+
+			r1 = opa.getResponseTime(tasks, resources);
+			r2 = combined_analysis.getResponseTime(tasks, resources, false, false, extendCal, false);
+		
+			
+			boolean isEqual1 = isEqual(r1, r2, false);
+
+			if (!isEqual1) {
+				System.out.println("not equal");
+				isEqual(r1, r2, true);
+				generator.testifyAllocatedTasksetAndResource(tasks, resources);
+				r1 = opa.getResponseTime(tasks, resources);
+				r2 = combined_analysis.getResponseTime(tasks, resources, false, true, extendCal, false);
+				System.exit(0);
+			}
+			i++;
+			System.out.println(i);
+		}
+		
+		System.out.println("!!!!!");
 		
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {

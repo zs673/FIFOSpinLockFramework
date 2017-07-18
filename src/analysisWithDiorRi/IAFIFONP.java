@@ -6,7 +6,7 @@ import entity.Resource;
 import entity.SporadicTask;
 import utils.AnalysisUtils;
 
-public class IAFIFONP{
+public class IAFIFONP {
 
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
