@@ -46,6 +46,10 @@ public class TestRiDiandDMvsOPA {
 		}
 		work.await();
 
+		// for (int i = 1; i < 7; i++) {
+		// test.experimentIncreasingCriticalSectionLength(i);
+		// }
+
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
@@ -81,9 +85,9 @@ public class TestRiDiandDMvsOPA {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		AudsleyOptimalPriorityAssignment fifonp_opa = new AudsleyOptimalPriorityAssignment();
-		analysisWithDiorRi.IACombinedProtocol fifonp_di = new analysisWithDiorRi.IACombinedProtocol();
-		analysisWithRiOnly.IACombinedProtocol fifonp_ri = new analysisWithRiOnly.IACombinedProtocol();
+		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
+		analysisWithDiorRi.IACombinedProtocol dm_deadline = new analysisWithDiorRi.IACombinedProtocol();
+		analysisWithRiOnly.IACombinedProtocol dm_rt = new analysisWithRiOnly.IACombinedProtocol();
 
 		String result = "";
 		int RiDM = 0;
@@ -99,22 +103,35 @@ public class TestRiDiandDMvsOPA {
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
-				// resources.get(k).protocol = 1;
-				// resources.get(k).protocol = 2;
-				// resources.get(k).protocol = 3;
 			}
 
-			Ris = fifonp_ri.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = dm_rt.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
-			Ris = fifonp_di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-			if (isSystemSchedulable(tasks, Ris))
+			boolean b1 = false, b2 = false;
+			Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
+				b1 = true;
+			}
 
-			tasks = fifonp_opa.AssignedSchedulableTasks(tasks, resources);
-			if (tasks != null)
+			if (opa.AssignedSchedulableTasks(tasks, resources, false)) {
 				OPA++;
+				b2 = true;
+			}
+
+			if (b1 && !b2) {
+				generator.assignPrioritiesByDM(tasks, resources);
+				Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+
+				opa.AssignedSchedulableTasks(tasks, resources, true);
+
+				generator.assignPrioritiesByDM(tasks, resources);
+				Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+
+				opa.AssignedSchedulableTasks(tasks, resources, true);
+			}
 
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}

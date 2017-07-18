@@ -8,7 +8,6 @@ import utils.AnalysisUtils;
 
 public class AudsleyOptimalPriorityAssignment {
 
-	
 	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 		if (tasks == null)
 			return null;
@@ -23,7 +22,6 @@ public class AudsleyOptimalPriorityAssignment {
 		}
 		np = npsection;
 
-		
 		long[][] responseTime = new long[tasks.size()][];
 		for (int i = 0; i < tasks.size(); i++) {
 			responseTime[i] = new long[tasks.get(i).size()];
@@ -35,35 +33,40 @@ public class AudsleyOptimalPriorityAssignment {
 				responseTime[i][j] = busyWindow(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
 			}
 		}
-		
+
 		return responseTime;
 	}
-	
-	public ArrayList<ArrayList<SporadicTask>> AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources) {
 
-		// init priorities to the highest priority
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				tasks.get(i).get(j).priority = 1000;
-			}
-		}
+	public boolean AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks,
+			ArrayList<Resource> resources, boolean isprint) {
+
+//		// init priorities to the highest priority
+//		for (int i = 0; i < tasks.size(); i++) {
+//			for (int j = 0; j < tasks.get(i).size(); j++) {
+//				tasks.get(i).get(j).priority = 998;
+//			}
+//		}
 
 		// now we check each task. we begin from the task with largest deadline
 		for (int i = 0; i < tasks.size(); i++) {
-
 			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
 
-			for (int startingPrio = 10; startingPrio <= 10 * tasks.get(i).size(); startingPrio += 10) {
+			for (int startingPrio = 1000 - unassignedTasks.size() * 2; startingPrio < 1000; startingPrio += 2) {
 				boolean isTaskSchedulable = false;
+				int startingIndex = unassignedTasks.size() - 1;
 
-				for (int j = unassignedTasks.size() - 1; j >= 0; j--) {
+				for (int j = startingIndex; j >= 0; j--) {
 					SporadicTask task = unassignedTasks.get(j);
+					int originalP = task.priority;
 					task.priority = startingPrio;
 
 					boolean isSchedulable = isSchedulable(task, tasks, resources);
-					if (!isSchedulable)
-						task.priority = 1000;
+					if (!isSchedulable){
+						task.priority = originalP;
+						if(isprint){
+							System.out.println("Task T" + task.id + "unschedulable");
+						}
+					}
 					else {
 						unassignedTasks.remove(task);
 						isTaskSchedulable = true;
@@ -72,13 +75,10 @@ public class AudsleyOptimalPriorityAssignment {
 				}
 
 				if (!isTaskSchedulable)
-					return null;
-
+					return false;
 			}
-
 		}
-
-		return tasks;
+		return true;
 	}
 
 	private boolean isSchedulable(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
@@ -103,15 +103,13 @@ public class AudsleyOptimalPriorityAssignment {
 			return false;
 	}
 
-
-
 	private long busyWindow(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			double oneMig, long np) {
 
 		SporadicTask task = caltask;
 		long Ri = 0;
 		long newRi = task.WCET + task.pure_resource_execution_time;
-		
+
 		if (newRi > task.deadline) {
 			return newRi;
 		}
@@ -120,7 +118,7 @@ public class AudsleyOptimalPriorityAssignment {
 			if (newRi > task.deadline) {
 				return newRi;
 			}
-			
+
 			Ri = newRi;
 
 			task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
