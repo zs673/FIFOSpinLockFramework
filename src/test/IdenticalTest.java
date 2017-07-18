@@ -57,6 +57,7 @@ public class IdenticalTest {
 		analysisWithRiOnly.IAFIFONP fnp_ri = new analysisWithRiOnly.IAFIFONP();
 		analysisWithRiOnly.IANewMrsPRTAWithMCNP mrsp_ri = new analysisWithRiOnly.IANewMrsPRTAWithMCNP();
 		analysisWithRiOnly.IACombinedProtocol combined_analysis_ri = new analysisWithRiOnly.IACombinedProtocol();
+		
 
 		long[][] r1, r2, r3, r4;
 		int i = 0;

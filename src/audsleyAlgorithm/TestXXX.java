@@ -6,49 +6,20 @@ import entity.Resource;
 import entity.SporadicTask;
 import utils.AnalysisUtils;
 
-public class AudsleyOptimalPriorityAssignment {
+public class TestXXX {
 
-	public ArrayList<ArrayList<SporadicTask>> AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources) {
+	public boolean AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
 
-		// init priorities to the highest priority
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
-				tasks.get(i).get(j).priority = 1000;
-			}
-		}
-
-		// now we check each task. we begin from the task with largest deadline
-		for (int i = 0; i < tasks.size(); i++) {
-
-			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
-			
-			for (int startingPrio = 10; startingPrio <= 10 * tasks.get(i).size(); startingPrio += 10){
-				boolean isTaskSchedulable = false;
-				
-				for (int j = unassignedTasks.size() - 1; j >= 0; j--) {
-					SporadicTask task = unassignedTasks.get(j);
-					task.priority = startingPrio;
-
-					boolean isSchedulable = isSchedulable(task, tasks, resources);
-					if (!isSchedulable)
-						task.priority = 1000;
-					else {
-						unassignedTasks.remove(task);
-						isTaskSchedulable = true;
-						break;
-					}
+				SporadicTask task = tasks.get(i).get(j);
+				boolean isSchedulable = isSchedulable(task, tasks, resources);
+				if (!isSchedulable) {
+					return false;
 				}
-				
-				if(!isTaskSchedulable)
-					return null;
-				
 			}
-
-
 		}
-
-		return tasks;
+		return true;
 	}
 
 	private boolean isSchedulable(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
@@ -78,7 +49,7 @@ public class AudsleyOptimalPriorityAssignment {
 
 		SporadicTask task = caltask;
 		long Ri = 0;
-		long newRi = task.WCET+task.pure_resource_execution_time;
+		long newRi = task.WCET;
 
 		while (Ri != newRi) {
 			Ri = newRi;

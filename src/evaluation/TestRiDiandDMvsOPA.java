@@ -22,7 +22,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 public class TestRiDiandDMvsOPA {
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
+	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
@@ -33,7 +33,7 @@ public class TestRiDiandDMvsOPA {
 	public static void main(String[] args) throws Exception {
 		TestRiDiandDMvsOPA test = new TestRiDiandDMvsOPA();
 
-		final CountDownLatch work = new CountDownLatch(300);
+		final CountDownLatch work = new CountDownLatch(6);
 		for (int i = 1; i < 7; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
@@ -74,7 +74,7 @@ public class TestRiDiandDMvsOPA {
 			cs_range = null;
 			break;
 		}
-		
+
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
 				TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS,
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
@@ -96,19 +96,49 @@ public class TestRiDiandDMvsOPA {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 1;
+			}
+
 			Ris = ri.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
 			Ris = di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-			if (isSystemSchedulable(tasks, Ris))
+			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
+			}
 
 			ArrayList<ArrayList<SporadicTask>> opa_result = opa.AssignedSchedulableTasks(tasks, resources);
-			if (opa_result != null)
+			if (opa_result != null) {
 				OPA++;
+			}
 
-			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+//			if (diS && !opaS) {
+//				System.out.println("-------------------------------------");
+//				for (int j = 0; j < tasks.size(); j++) {
+//					System.out.println();
+//					for (int k = 0; k < tasks.get(j).size(); k++) {
+//						System.out.print(Ris[j][k] + " vs" + tasks.get(j).get(k).Ri + "		");
+//					}
+//				}
+//				System.out.println("\n-------------------------------------");
+//
+//				tasks = generator.assignPrioritiesByDM(tasks, resources);
+//				Ris = di.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+//				opa_result = opa.AssignedSchedulableTasks(tasks, resources);
+//
+//				System.out.println("-------------------------------------");
+//				for (int j = 0; j < tasks.size(); j++) {
+//					System.out.println();
+//					for (int k = 0; k < tasks.get(j).size(); k++) {
+//						System.out.print(Ris[j][k] + " vs" + tasks.get(j).get(k).Ri + "		");
+//					}
+//				}
+//				System.out.println("\n-------------------------------------");
+//			}
+
+			 System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
 		result = (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
