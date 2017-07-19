@@ -2,9 +2,9 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
+import analysis.FIFONPio;
+import analysis.FIFOPio;
+import analysis.MrsPio;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -18,9 +18,9 @@ public class PreGASolver {
 	ArrayList<Resource> resources;
 	SystemGenerator geneator;
 
-	IAFIFONP fifonp = new IAFIFONP();
-	IAFIFOP fifop = new IAFIFOP();
-	IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
+	FIFONPio fifonp = new FIFONPio();
+	FIFOPio fifop = new FIFOPio();
+	MrsPio mrsp = new MrsPio();
 
 	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
 			int ALLOCATION_POLICY_NUMBER, boolean print) {

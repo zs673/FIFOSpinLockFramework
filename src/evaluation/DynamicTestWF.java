@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
+import analysis.FIFONPio;
+import analysis.FIFOPio;
+import analysis.MrsPio;
 import basicAnalysis.FIFONP;
 import basicAnalysis.FIFOP;
-import basicAnalysis.NewMrsPRTAWithMCNP;
+import basicAnalysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -97,12 +97,12 @@ public class DynamicTestWF {
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 					long[][] Ris;
-					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
-					IAFIFOP IOAfp = new IAFIFOP();
-					IAFIFONP IOAfnp = new IAFIFONP();
+					MrsPio IOAmrsp = new MrsPio();
+					FIFOPio IOAfp = new FIFOPio();
+					FIFONPio IOAfnp = new FIFONPio();
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
-					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					MrsP mrsp = new MrsP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
@@ -209,12 +209,12 @@ public class DynamicTestWF {
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 					long[][] Ris;
-					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
-					IAFIFOP IOAfp = new IAFIFOP();
-					IAFIFONP IOAfnp = new IAFIFONP();
+					MrsPio IOAmrsp = new MrsPio();
+					FIFOPio IOAfp = new FIFOPio();
+					FIFONPio IOAfnp = new FIFONPio();
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
-					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					MrsP mrsp = new MrsP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
@@ -296,12 +296,12 @@ public class DynamicTestWF {
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 					long[][] Ris;
-					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
-					IAFIFOP IOAfp = new IAFIFOP();
-					IAFIFONP IOAfnp = new IAFIFONP();
+					MrsPio IOAmrsp = new MrsPio();
+					FIFOPio IOAfp = new FIFOPio();
+					FIFONPio IOAfnp = new FIFONPio();
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
-					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					MrsP mrsp = new MrsP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
@@ -404,12 +404,12 @@ public class DynamicTestWF {
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 					long[][] Ris;
-					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
-					IAFIFOP IOAfp = new IAFIFOP();
-					IAFIFONP IOAfnp = new IAFIFONP();
+					MrsPio IOAmrsp = new MrsPio();
+					FIFOPio IOAfp = new FIFOPio();
+					FIFONPio IOAfnp = new FIFONPio();
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
-					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					MrsP mrsp = new MrsP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
@@ -492,12 +492,12 @@ public class DynamicTestWF {
 					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 					long[][] Ris;
-					IANewMrsPRTAWithMCNP IOAmrsp = new IANewMrsPRTAWithMCNP();
-					IAFIFOP IOAfp = new IAFIFOP();
-					IAFIFONP IOAfnp = new IAFIFONP();
+					MrsPio IOAmrsp = new MrsPio();
+					FIFOPio IOAfp = new FIFOPio();
+					FIFONPio IOAfnp = new FIFONPio();
 					FIFONP fnp = new FIFONP();
 					FIFOP fp = new FIFOP();
-					NewMrsPRTAWithMCNP mrsp = new NewMrsPRTAWithMCNP();
+					MrsP mrsp = new MrsP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);

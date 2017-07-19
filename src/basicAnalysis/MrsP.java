@@ -7,7 +7,7 @@ import entity.SporadicTask;
 import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
-public class NewMrsPRTAWithMCNP {
+public class MrsP {
 
 	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig,
 			boolean printDebug) {

@@ -9,9 +9,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.IAFIFONP;
-import analysis.IAFIFOP;
-import analysis.IANewMrsPRTAWithMCNP;
+import analysis.FIFONPio;
+import analysis.FIFOPio;
+import analysis.MrsPio;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -58,9 +58,9 @@ public class TestCSLEN {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
 
 		long[][] Ris;
-		IAFIFONP fnp = new IAFIFONP();
-		IAFIFOP fp = new IAFIFOP();
-		IANewMrsPRTAWithMCNP mrsp = new IANewMrsPRTAWithMCNP();
+		FIFONPio fnp = new FIFONPio();
+		FIFOPio fp = new FIFOPio();
+		MrsPio mrsp = new MrsPio();
 
 		String result = "";
 		int sfnp = 0;
