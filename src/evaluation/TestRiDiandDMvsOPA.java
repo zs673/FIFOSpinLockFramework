@@ -86,8 +86,8 @@ public class TestRiDiandDMvsOPA {
 
 		long[][] Ris;
 		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
-		analysisWithDiorRi.IACombinedProtocol dm_deadline = new analysisWithDiorRi.IACombinedProtocol();
-		analysisWithRiOnly.IACombinedProtocol dm_rt = new analysisWithRiOnly.IACombinedProtocol();
+		analysisWithDiorRi.IACombinedProtocol dm = new analysisWithDiorRi.IACombinedProtocol();
+		
 
 		String result = "";
 		int RiDM = 0;
@@ -105,12 +105,12 @@ public class TestRiDiandDMvsOPA {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
 
-			Ris = dm_rt.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
 			boolean b1 = false, b2 = false;
-			Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b1 = true;
@@ -123,12 +123,12 @@ public class TestRiDiandDMvsOPA {
 
 			if (b1 && !b2) {
 				generator.assignPrioritiesByDM(tasks, resources);
-				Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 
 				opa.AssignedSchedulableTasks(tasks, resources, true);
 
 				generator.assignPrioritiesByDM(tasks, resources);
-				Ris = dm_deadline.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 
 				opa.AssignedSchedulableTasks(tasks, resources, true);
 			}

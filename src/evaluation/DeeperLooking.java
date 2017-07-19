@@ -9,16 +9,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysisWithRiOnly.IAFIFONP;
-import analysisWithRiOnly.IAFIFOP;
-import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
+import analysisWithDiorRi.IAFIFONP;
+import analysisWithDiorRi.IAFIFOP;
+import analysisWithDiorRi.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.IOAResultReader;
+import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.IOAResultReader;
-import generatorTools.SystemGenerator;
 
 public class DeeperLooking {
 	public static int MAX_PERIOD = 1000;
@@ -32,7 +32,8 @@ public class DeeperLooking {
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static boolean testSchedulability = true;
-
+	public static boolean useRi = true;
+	
 	public static void main(String[] args) throws Exception {
 		DeeperLooking test = new DeeperLooking();
 
@@ -140,15 +141,15 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
@@ -182,15 +183,15 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
@@ -223,15 +224,15 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
@@ -264,15 +265,15 @@ public class DeeperLooking {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);

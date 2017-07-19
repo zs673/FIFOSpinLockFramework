@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import analysisWithRiOnly.IACombinedProtocol;
+import analysisWithDiorRi.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -262,7 +262,7 @@ public class GASolver {
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator
 				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, gene[resources.size()]), resources);
-		long[][] Ris = framework.getResponseTime(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA);
+		long[][] Ris = framework.getResponseTime(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA, true);
 
 		if (Ris == null) {
 			int NoT = 0;

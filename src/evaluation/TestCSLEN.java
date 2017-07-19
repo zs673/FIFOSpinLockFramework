@@ -9,16 +9,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import analysisWithRiOnly.IAFIFONP;
-import analysisWithRiOnly.IAFIFOP;
-import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
+import analysisWithDiorRi.IAFIFONP;
+import analysisWithDiorRi.IAFIFOP;
+import analysisWithDiorRi.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.IOAResultReader;
+import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
-import generatorTools.IOAResultReader;
-import generatorTools.SystemGenerator;
 
 public class TestCSLEN {
 	public static int MAX_PERIOD = 1000;
@@ -30,6 +30,8 @@ public class TestCSLEN {
 	static double RESOURCE_SHARING_FACTOR = 0.2;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
+	
+	public static boolean useRi = true;
 
 	public static void main(String[] args) throws Exception {
 		TestCSLEN test = new TestCSLEN();
@@ -72,15 +74,15 @@ public class TestCSLEN {
 			ArrayList<ArrayList<SporadicTask>> tasks = generator
 					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
 
-			Ris = mrsp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = mrsp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = fnp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic);
+			Ris = fp.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 

@@ -2,9 +2,9 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysisWithRiOnly.IAFIFONP;
-import analysisWithRiOnly.IAFIFOP;
-import analysisWithRiOnly.IANewMrsPRTAWithMCNP;
+import analysisWithDiorRi.IAFIFONP;
+import analysisWithDiorRi.IAFIFOP;
+import analysisWithDiorRi.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -58,11 +58,11 @@ public class PreGASolver {
 			return 0;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
+				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
+				fifop.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic));
+				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {
