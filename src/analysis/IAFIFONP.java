@@ -1,4 +1,4 @@
-package analysisWithDiorRi;
+package analysis;
 
 import java.util.ArrayList;
 

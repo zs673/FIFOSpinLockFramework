@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import analysisWithDiorRi.IACombinedProtocol;
+import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;

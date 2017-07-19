@@ -2,9 +2,9 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
-import analysisWithDiorRi.IAFIFONP;
-import analysisWithDiorRi.IAFIFOP;
-import analysisWithDiorRi.IANewMrsPRTAWithMCNP;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;

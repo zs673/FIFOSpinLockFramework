@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
-import analysisWithDiorRi.IAFIFONP;
-import analysisWithDiorRi.IAFIFOP;
-import analysisWithDiorRi.IANewMrsPRTAWithMCNP;
+import analysis.IAFIFONP;
+import analysis.IAFIFOP;
+import analysis.IANewMrsPRTAWithMCNP;
 import basicAnalysis.FIFONP;
 import basicAnalysis.FIFOP;
 import basicAnalysis.NewMrsPRTAWithMCNP;

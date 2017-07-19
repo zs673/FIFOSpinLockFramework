@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import audsleyAlgorithm.AudsleyOptimalPriorityAssignment;
+import analysis.AudsleyOptimalPriorityAssignment;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -86,7 +86,7 @@ public class TestRiDiandDMvsOPA {
 
 		long[][] Ris;
 		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
-		analysisWithDiorRi.IACombinedProtocol dm = new analysisWithDiorRi.IACombinedProtocol();
+		analysis.IACombinedProtocol dm = new analysis.IACombinedProtocol();
 		
 
 		String result = "";

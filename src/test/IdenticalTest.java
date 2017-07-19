@@ -3,7 +3,7 @@ package test;
 import java.util.ArrayList;
 import java.util.Random;
 
-import audsleyAlgorithm.AudsleyOptimalPriorityAssignment;
+import analysis.AudsleyOptimalPriorityAssignment;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -49,10 +49,10 @@ public class IdenticalTest {
 	}
 
 	public static void main(String[] args) {
-		analysisWithDiorRi.IAFIFOP fp = new analysisWithDiorRi.IAFIFOP();
-		analysisWithDiorRi.IAFIFONP fnp = new analysisWithDiorRi.IAFIFONP();
-		analysisWithDiorRi.IANewMrsPRTAWithMCNP mrsp = new analysisWithDiorRi.IANewMrsPRTAWithMCNP();
-		analysisWithDiorRi.IACombinedProtocol combined_analysis = new analysisWithDiorRi.IACombinedProtocol();
+		analysis.IAFIFOP fp = new analysis.IAFIFOP();
+		analysis.IAFIFONP fnp = new analysis.IAFIFONP();
+		analysis.IANewMrsPRTAWithMCNP mrsp = new analysis.IANewMrsPRTAWithMCNP();
+		analysis.IACombinedProtocol combined_analysis = new analysis.IACombinedProtocol();
 
 		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
 

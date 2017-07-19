@@ -1,4 +1,4 @@
-package audsleyAlgorithm;
+package analysis;
 
 import java.util.ArrayList;
 
@@ -6,15 +6,16 @@ import entity.Resource;
 import entity.SporadicTask;
 import utils.AnalysisUtils;
 
-public class AudsleyOptimalPriorityAssignment {
+public class IACombinedProtocol {
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
+	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
 		if (tasks == null)
 			return null;
-
+		long count = 0; // The number of calculations
 		long np = 0; // The NP section length if MrsP is applied
-		long npsection = 0;
 
+		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
 			if (resource.protocol == 3 && npsection < resource.csl)
@@ -22,140 +23,112 @@ public class AudsleyOptimalPriorityAssignment {
 		}
 		np = npsection;
 
-		long[][] responseTime = new long[tasks.size()][];
-		for (int i = 0; i < tasks.size(); i++) {
-			responseTime[i] = new long[tasks.get(i).size()];
+		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
+		long[][] response_time = new long[tasks.size()][];
+		boolean isEqual = false, missdeadline = false;
+		count = 0;
+
+		for (int i = 0; i < init_Ri.length; i++) {
+			response_time[i] = new long[init_Ri[i].length];
+		}
+
+		AnalysisUtils.cloneList(init_Ri, response_time);
+
+		/* a huge busy window to get a fixed Ri */
+		while (!isEqual) {
+			isEqual = true;
+			boolean should_finish = true;
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
+					AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability, extendCal, useRi);
+
+			for (int i = 0; i < response_time_plus.length; i++) {
+				for (int j = 0; j < response_time_plus[i].length; j++) {
+					if (response_time[i][j] != response_time_plus[i][j])
+						isEqual = false;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+							should_finish = false;
+					}
+				}
+			}
+
+			count++;
+			AnalysisUtils.cloneList(response_time_plus, response_time);
+
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
+		}
+
+		if (printDebug) {
+			System.out.println("FIFO Spin Locks Framework    after " + count + " tims of recursion, we got the response time.");
+			AnalysisUtils.printResponseTime(response_time, tasks);
+		}
+
+		return response_time;
+	}
+
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
+			double oneMig, long np, boolean testSchedulability, int extendCal, boolean useRi) {
+		long[][] response_time_plus = new long[tasks.size()][];
+
+		for (int i = 0; i < response_time.length; i++) {
+			response_time_plus[i] = new long[response_time[i].length];
 		}
 
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
 				SporadicTask task = tasks.get(i).get(j);
-				responseTime[i][j] = busyWindow(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
-			}
-		}
-
-		return responseTime;
-	}
-
-	public boolean AssignedSchedulableTasks(ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, boolean isprint) {
-
-//		// init priorities to the highest priority
-//		for (int i = 0; i < tasks.size(); i++) {
-//			for (int j = 0; j < tasks.get(i).size(); j++) {
-//				tasks.get(i).get(j).priority = 998;
-//			}
-//		}
-
-		// now we check each task. we begin from the task with largest deadline
-		for (int i = 0; i < tasks.size(); i++) {
-			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
-
-			for (int startingPrio = 1000 - unassignedTasks.size() * 2; startingPrio < 1000; startingPrio += 2) {
-				boolean isTaskSchedulable = false;
-				int startingIndex = unassignedTasks.size() - 1;
-
-				for (int j = startingIndex; j >= 0; j--) {
-					SporadicTask task = unassignedTasks.get(j);
-					int originalP = task.priority;
-					task.priority = startingPrio;
-
-					boolean isSchedulable = isSchedulable(task, tasks, resources);
-					if (!isSchedulable){
-						task.priority = originalP;
-						if(isprint){
-							System.out.println("Task T" + task.id + "unschedulable");
-						}
-					}
-					else {
-						unassignedTasks.remove(task);
-						isTaskSchedulable = true;
-						break;
-					}
+				if (response_time[i][j] > task.deadline * extendCal) {
+					response_time_plus[i][j] = response_time[i][j];
+					continue;
 				}
 
-				if (!isTaskSchedulable)
-					return false;
+				task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
+				task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
+
+				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
+				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], oneMig, np, task,
+						useRi);
+				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig,
+						np, useRi);
+				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np, useRi);
+
+				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
+						+ implementation_overheads;
+
+				task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
+						+ (long) Math.ceil(task.blocking_overheads);
+				if (task.total_blocking < 0) {
+					System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
+					System.exit(-1);
+				}
+
+				if (testSchedulability && task.Ri > task.deadline) {
+					return response_time_plus;
+				}
 			}
 		}
-		return true;
-	}
-
-	private boolean isSchedulable(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources) {
-		if (tasks == null)
-			return false;
-
-		long np = 0; // The NP section length if MrsP is applied
-		long npsection = 0;
-
-		for (int i = 0; i < resources.size(); i++) {
-			Resource resource = resources.get(i);
-			if (resource.protocol == 3 && npsection < resource.csl)
-				npsection = resources.get(i).csl;
-		}
-		np = npsection;
-
-		long Ri = busyWindow(caltask, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
-
-		if (Ri <= caltask.deadline)
-			return true;
-		else
-			return false;
-	}
-
-	private long busyWindow(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			double oneMig, long np) {
-
-		SporadicTask task = caltask;
-		long Ri = 0;
-		long newRi = task.WCET + task.pure_resource_execution_time;
-
-		if (newRi > task.deadline) {
-			return newRi;
-		}
-
-		while (Ri != newRi) {
-			if (newRi > task.deadline) {
-				return newRi;
-			}
-
-			Ri = newRi;
-
-			task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
-			task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
-
-			task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
-			task.spin = resourceAccessingTime(task, tasks, resources, newRi, oneMig, np, task);
-			task.interference = highPriorityInterference(task, tasks, newRi, resources, oneMig, np);
-			task.local = localBlocking(task, tasks, resources, newRi, oneMig, np);
-
-			long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
-			newRi = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
-
-			task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
-					+ (long) Math.ceil(task.blocking_overheads);
-			if (task.total_blocking < 0) {
-				System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
-				System.exit(-1);
-			}
-
-			if (newRi > task.deadline) {
-				return newRi;
-			}
-		}
-
-		return newRi;
+		return response_time_plus;
 	}
 
 	/***************************************************
 	 ************* Direct Spin Delay *******************
 	 ***************************************************/
 	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long time, double oneMig, long np, SporadicTask calT) {
+			long[][] Ris, long time, double oneMig, long np, SporadicTask calT, boolean useRi) {
 		long resourceTime = 0;
-		resourceTime += FIFONPResourceTime(task, tasks, resources, time);
-		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time);
-		resourceTime += MrsPresourceAccessingTime(task, tasks, resources, time, 0, oneMig, np, calT);
+		resourceTime += FIFONPResourceTime(task, tasks, resources, Ris, time, useRi);
+		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time, Ris, useRi);
+		resourceTime += MrsPresourceAccessingTime(task, tasks, resources, Ris, time, 0, oneMig, np, calT, useRi);
 		return resourceTime;
 	}
 
@@ -163,12 +136,12 @@ public class AudsleyOptimalPriorityAssignment {
 	 * FIFO-NP resource accessing time.
 	 */
 	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long Ri) {
+			long[][] Ris, long Ri, boolean useRi) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
 			if (resource.protocol != 2 && resource.protocol != 3) {
-				long NoS = getNoSpinDelay(t, resource, tasks, Ri);
+				long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri, useRi);
 				spin_delay += NoS * resource.csl;
 				t.implementation_overheads += (NoS
 						+ t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
@@ -187,7 +160,7 @@ public class AudsleyOptimalPriorityAssignment {
 	 * FIFO-P resource accessing time.
 	 */
 	private long FIFOPResourceAccessTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long time) {
+			ArrayList<Resource> resources, long time, long[][] Ris, boolean useRi) {
 		long spin = 0;
 		ArrayList<ArrayList<Long>> requestsLeftOnRemoteP = new ArrayList<>();
 		ArrayList<Resource> fifo_resources = new ArrayList<>();
@@ -196,8 +169,8 @@ public class AudsleyOptimalPriorityAssignment {
 			if (res.protocol == 2) {
 				requestsLeftOnRemoteP.add(new ArrayList<Long>());
 				fifo_resources.add(res);
-				spin += getSpinDelayForOneResoruce(task, tasks, res, time,
-						requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1));
+				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris,
+						requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1), useRi);
 			}
 		}
 
@@ -212,7 +185,8 @@ public class AudsleyOptimalPriorityAssignment {
 			}
 			task.implementation_overheads += preemptions
 					* (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
-			task.blocking_overheads += preemptions * (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
+			task.blocking_overheads += preemptions
+					* (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
 
 			while (preemptions > 0) {
 
@@ -248,14 +222,15 @@ public class AudsleyOptimalPriorityAssignment {
 	}
 
 	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource,
-			long time, ArrayList<Long> requestsLeftOnRemoteP) {
+			long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP, boolean useRi) {
 		long spin = 0;
 		long ncs = 0;
 
 		for (int i = 0; i < tasks.get(task.partition).size(); i++) {
 			SporadicTask hpTask = tasks.get(task.partition).get(i);
 			if (hpTask.priority > task.priority && hpTask.resource_required_index.contains(resource.id - 1)) {
-				ncs += (int) Math.ceil((double) (time + hpTask.deadline) / (double) hpTask.period)
+				ncs += (int) Math
+						.ceil((double) (time + (useRi ? Ris[task.partition][i] : hpTask.deadline)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(hpTask.resource_required_index.indexOf(resource.id - 1));
 			}
 		}
@@ -272,8 +247,8 @@ public class AudsleyOptimalPriorityAssignment {
 						if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 							SporadicTask remote_task = tasks.get(i).get(j);
 							int indexR = getIndexRInTask(remote_task, resource);
-							int number_of_release = (int) Math
-									.ceil((double) (time + remote_task.deadline) / (double) remote_task.period);
+							int number_of_release = (int) Math.ceil(
+									(double) (time + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
 							number_of_request_by_Remote_P += number_of_release
 									* remote_task.number_of_access_in_one_release.get(indexR);
 						}
@@ -299,7 +274,8 @@ public class AudsleyOptimalPriorityAssignment {
 	 * MrsP resource accessing time.
 	 */
 	private long MrsPresourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long time, long jitter, double oneMig, long np, SporadicTask calT) {
+			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np, SporadicTask calT,
+			boolean useRi) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
@@ -311,10 +287,10 @@ public class AudsleyOptimalPriorityAssignment {
 
 				for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 					long oneAccess = 0;
-					oneAccess += MrsPresourceAccessingTimeInOne(task, resource, tasks, time, jitter, j, calT);
+					oneAccess += MrsPresourceAccessingTimeInOne(task, resource, tasks, Ris, time, jitter, j, calT, useRi);
 
 					if (oneMig != 0) {
-						double mc = migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, calT);
+						double mc = migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, Ris, calT, useRi);
 						long mc_long = (long) Math.floor(mc);
 						calT.migration_overheads_plus += mc - mc_long;
 						if (mc - mc_long < 0) {
@@ -334,7 +310,7 @@ public class AudsleyOptimalPriorityAssignment {
 	}
 
 	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			long time, long jitter, int n, SporadicTask calTask) {
+			long[][] Ris, long time, long jitter, int n, SporadicTask calTask, boolean useRi) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -346,12 +322,12 @@ public class AudsleyOptimalPriorityAssignment {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math
-								.ceil((double) (time + remote_task.deadline) / (double) remote_task.period);
+								.ceil((double) (time + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), time);
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP - n + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
@@ -370,8 +346,8 @@ public class AudsleyOptimalPriorityAssignment {
 	/***************************************************
 	 ************* InDirect Spin Delay *******************
 	 ***************************************************/
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time,
-			ArrayList<Resource> resources, double oneMig, long np) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris,
+			ArrayList<Resource> resources, double oneMig, long np, boolean useRi) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -383,8 +359,9 @@ public class AudsleyOptimalPriorityAssignment {
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
 						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
 
-				long btb_interference = getIndirectSpinDelay(hpTask, time, allTasks, resources, t);
-				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, time, hpTask.deadline, oneMig, np, t);
+				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t, useRi);
+				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time,
+						useRi ? Ris[partition][i] : hpTask.deadline, oneMig, np, t, useRi);
 				t.indirectspin += btb_interference;
 				interference += btb_interference;
 			}
@@ -395,8 +372,8 @@ public class AudsleyOptimalPriorityAssignment {
 	/**
 	 * FIFO-NP indirect spin delay.
 	 */
-	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, ArrayList<ArrayList<SporadicTask>> allTasks,
-			ArrayList<Resource> resources, SporadicTask calTask) {
+	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris,
+			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask, boolean useRi) {
 		long BTBhit = 0;
 
 		for (int i = 0; i < hpTask.resource_required_index.size(); i++) {
@@ -404,8 +381,10 @@ public class AudsleyOptimalPriorityAssignment {
 			Resource resource = resources.get(hpTask.resource_required_index.get(i));
 
 			if (resource.protocol != 2 && resource.protocol != 3) {
-				int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition), Ri);
-				int number_of_request_with_btb = (int) Math.ceil((double) (Ri + hpTask.deadline) / (double) hpTask.period)
+				int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition),
+						Ris[hpTask.partition], Ri, useRi);
+				int number_of_request_with_btb = (int) Math
+						.ceil((double) (Ri + (useRi ? Rihp : hpTask.deadline)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(i);
 
 				BTBhit += number_of_request_with_btb * resource.csl;
@@ -417,7 +396,8 @@ public class AudsleyOptimalPriorityAssignment {
 				for (int j = 0; j < resource.partitions.size(); j++) {
 					if (resource.partitions.get(j) != hpTask.partition) {
 						int remote_partition = resource.partitions.get(j);
-						int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition), Ri);
+						int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition),
+								Ris[remote_partition], Ri, useRi);
 
 						int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
 								: number_of_remote_request - number_of_higher_request;
@@ -440,12 +420,12 @@ public class AudsleyOptimalPriorityAssignment {
 	/***************************************************
 	 ************** Arrival Blocking *******************
 	 ***************************************************/
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long time,
-			double oneMig, long np) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			long[][] Ris, long time, double oneMig, long np, boolean useRi) {
 		long localblocking = 0;
-		long fifonp_localblocking = FIFONPlocalBlocking(t, tasks, resources, time);
-		long fifop_localblocking = FIFOPlocalBlocking(t, tasks, resources, time);
-		long MrsP_localblocking = MrsPlocalBlocking(t, tasks, resources, time, oneMig, np);
+		long fifonp_localblocking = FIFONPlocalBlocking(t, tasks, resources, Ris, time, useRi);
+		long fifop_localblocking = FIFOPlocalBlocking(t, tasks, resources, Ris, time, useRi);
+		long MrsP_localblocking = MrsPlocalBlocking(t, tasks, resources, Ris, time, oneMig, np, useRi);
 		long npsection = (isTaskIncurNPSection(t, tasks.get(t.partition), resources) ? np : 0);
 
 		ArrayList<Double> blocking = new ArrayList<>();
@@ -485,7 +465,7 @@ public class AudsleyOptimalPriorityAssignment {
 	}
 
 	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long Ri) {
+			long[][] Ris, long Ri, boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = FIFONPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -497,10 +477,10 @@ public class AudsleyOptimalPriorityAssignment {
 			if (res.isGlobal) {
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ri);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri, useRi);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ri);
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri, useRi);
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
@@ -556,7 +536,7 @@ public class AudsleyOptimalPriorityAssignment {
 	}
 
 	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long Ri) {
+			long[][] Ris, long Ri, boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = FIFOPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -631,7 +611,7 @@ public class AudsleyOptimalPriorityAssignment {
 	}
 
 	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long time, double oneMig, long np) {
+			long[][] Ris, long time, double oneMig, long np, boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = MrsPgetLocalBlockingResources(t, resources);
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -649,10 +629,10 @@ public class AudsleyOptimalPriorityAssignment {
 				int remoteblocking = 0;
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), time);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], time, useRi);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), time);
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time, useRi);
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
@@ -720,7 +700,7 @@ public class AudsleyOptimalPriorityAssignment {
 	 ************* Migration Cost Calculation **********
 	 ***************************************************/
 	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long time, SporadicTask calT) {
+			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT, boolean useRi) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -729,8 +709,9 @@ public class AudsleyOptimalPriorityAssignment {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (i != task.partition) {
 				int number_requests_left = 0;
-				number_requests_left = getNoRRemote(resource, tasks.get(i), time)
-						- getNoRFromHP(resource, task, tasks.get(task.partition), time) - request_number + 1;
+				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time, useRi)
+						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi)
+						- request_number + 1;
 
 				if (number_requests_left > 0)
 					migration_targets.add(i);
@@ -853,7 +834,8 @@ public class AudsleyOptimalPriorityAssignment {
 	 * gives the number of requests from remote partitions for a resource that
 	 * is required by the given task.
 	 */
-	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long Ri) {
+	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
+			long Ri, boolean useRi) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -865,12 +847,12 @@ public class AudsleyOptimalPriorityAssignment {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math
-								.ceil((double) (Ri + remote_task.deadline) / (double) remote_task.period);
+								.ceil((double) (Ri + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ri);
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri, useRi);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP;
 
@@ -885,7 +867,8 @@ public class AudsleyOptimalPriorityAssignment {
 	 * gives that number of requests from HP local tasks for a resource that is
 	 * required by the given task.
 	 */
-	private int getNoRFromHP(Resource resource, SporadicTask task, ArrayList<SporadicTask> tasks, long Ri) {
+	private int getNoRFromHP(Resource resource, SporadicTask task, ArrayList<SporadicTask> tasks, long[] Ris, long Ri,
+			boolean useRi) {
 		int number_of_request_by_HP = 0;
 		int priority = task.priority;
 
@@ -893,21 +876,22 @@ public class AudsleyOptimalPriorityAssignment {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math.ceil((double) (Ri + hpTask.deadline) / (double) hpTask.period)
+				number_of_request_by_HP += Math.ceil((double) (Ri + (useRi ? Ris[i] : hpTask.deadline)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;
 	}
 
-	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long Ri) {
+	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean useRi) {
 		int number_of_request_by_Remote_P = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask remote_task = tasks.get(i);
 				int indexR = getIndexRInTask(remote_task, resource);
-				number_of_request_by_Remote_P += Math.ceil((double) (Ri + remote_task.deadline) / (double) remote_task.period)
+				number_of_request_by_Remote_P += Math
+						.ceil((double) (Ri + (useRi ? Ris[i] : remote_task.deadline)) / (double) remote_task.period)
 						* remote_task.number_of_access_in_one_release.get(indexR);
 			}
 		}
