@@ -53,7 +53,6 @@ public class PreGASolver {
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator
 				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, allocPolicy), resources);
 
-		;
 		if (tasksWithAlloc == null)
 			return 0;
 
