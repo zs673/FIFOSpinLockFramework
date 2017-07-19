@@ -4,14 +4,60 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
 public class IACombinedProtocol {
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+	public boolean checkSchedulabilityByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean isprint) {
+		if (tasks == null)
+			return false;
+
+		// assign priorities by Deadline Monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+
+		// now we check each task. we begin from the task with largest deadline
+		for (int i = 0; i < tasks.size(); i++) {
+			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
+
+			for (int startingPrio = 1000 - unassignedTasks.size() * 2; startingPrio < 1000; startingPrio += 2) {
+				boolean isTaskSchedulable = false;
+				int startingIndex = unassignedTasks.size() - 1;
+
+				for (int j = startingIndex; j >= 0; j--) {
+					SporadicTask task = unassignedTasks.get(j);
+					int originalP = task.priority;
+					task.priority = startingPrio;
+
+					boolean isSchedulable = isTaskSchedulable(task, tasks, resources);
+					if (!isSchedulable) {
+						task.priority = originalP;
+						if (isprint) {
+							System.out.println("Task T" + task.id + "unschedulable");
+						}
+					} else {
+						unassignedTasks.remove(task);
+						isTaskSchedulable = true;
+						break;
+					}
+				}
+
+				if (!isTaskSchedulable)
+					return false;
+			}
+		}
+		return true;
+	}
+
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
 		if (tasks == null)
 			return null;
+
+		// assign priorities by Deadline Monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+
 		long count = 0; // The number of calculations
 		long np = 0; // The NP section length if MrsP is applied
 
@@ -38,8 +84,8 @@ public class IACombinedProtocol {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability, extendCal, useRi);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION,
+					np, testSchedulability, extendCal, useRi);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -120,6 +166,73 @@ public class IACombinedProtocol {
 		return response_time_plus;
 	}
 
+	private boolean isTaskSchedulable(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks,
+			ArrayList<Resource> resources) {
+		if (tasks == null)
+			return false;
+
+		long np = 0; // The NP section length if MrsP is applied
+		long npsection = 0;
+
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
+		}
+		np = npsection;
+
+		long Ri = getResponseTimeForOneTask(caltask, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
+
+		if (Ri <= caltask.deadline)
+			return true;
+		else
+			return false;
+	}
+
+	private long getResponseTimeForOneTask(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks,
+			ArrayList<Resource> resources, double oneMig, long np) {
+
+		SporadicTask task = caltask;
+		long Ri = 0;
+		long newRi = task.WCET + task.pure_resource_execution_time;
+
+		if (newRi > task.deadline) {
+			return newRi;
+		}
+
+		while (Ri != newRi) {
+			if (newRi > task.deadline) {
+				return newRi;
+			}
+
+			Ri = newRi;
+
+			task.Ri = task.spin = task.interference = task.local = task.indirectspin = task.total_blocking = 0;
+			task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
+
+			task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
+			task.spin = resourceAccessingTime(task, tasks, resources, null, newRi, oneMig, np, task, false);
+			task.interference = highPriorityInterference(task, tasks, newRi, null, resources, oneMig, np, false);
+			task.local = localBlocking(task, tasks, resources, null, newRi, oneMig, np, false);
+
+			long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
+			newRi = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
+
+			task.total_blocking = task.spin + task.indirectspin + task.local - task.pure_resource_execution_time
+					+ (long) Math.ceil(task.blocking_overheads);
+			if (task.total_blocking < 0) {
+				System.err.println("total blocking error: T" + task.id + "   total blocking: " + task.total_blocking);
+				System.exit(-1);
+			}
+
+			if (newRi > task.deadline) {
+				return newRi;
+			}
+		}
+
+		return newRi;
+	}
+
 	/***************************************************
 	 ************* Direct Spin Delay *******************
 	 ***************************************************/
@@ -185,8 +298,7 @@ public class IACombinedProtocol {
 			}
 			task.implementation_overheads += preemptions
 					* (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
-			task.blocking_overheads += preemptions
-					* (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
+			task.blocking_overheads += preemptions * (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
 
 			while (preemptions > 0) {
 

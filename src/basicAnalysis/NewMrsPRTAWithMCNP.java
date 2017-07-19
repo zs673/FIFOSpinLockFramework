@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
 public class NewMrsPRTAWithMCNP {
 
-	public long[][] newRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig,
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig,
 			boolean printDebug) {
 		if (tasks == null)
 			return null;
+
+		// assign priorities by Deadline Monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
 
 		long[][] responsetime = null;
 		// get np section

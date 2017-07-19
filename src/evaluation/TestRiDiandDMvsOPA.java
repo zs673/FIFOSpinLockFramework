@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.AudsleyOptimalPriorityAssignment;
+import analysis.IACombinedProtocol;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -85,8 +85,7 @@ public class TestRiDiandDMvsOPA {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		AudsleyOptimalPriorityAssignment opa = new AudsleyOptimalPriorityAssignment();
-		analysis.IACombinedProtocol dm = new analysis.IACombinedProtocol();
+		IACombinedProtocol dm = new IACombinedProtocol();
 		
 
 		String result = "";
@@ -98,39 +97,34 @@ public class TestRiDiandDMvsOPA {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
 
-			Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
+			Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
 			boolean b1 = false, b2 = false;
-			Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b1 = true;
 			}
 
-			if (opa.AssignedSchedulableTasks(tasks, resources, false)) {
+			if (dm.checkSchedulabilityByOPA(tasks, resources, false)) {
 				OPA++;
 				b2 = true;
 			}
 
 			if (b1 && !b2) {
-				generator.assignPrioritiesByDM(tasks, resources);
-				Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				dm.checkSchedulabilityByOPA(tasks, resources, true);
 
-				opa.AssignedSchedulableTasks(tasks, resources, true);
-
-				generator.assignPrioritiesByDM(tasks, resources);
-				Ris = dm.getResponseTime(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-
-				opa.AssignedSchedulableTasks(tasks, resources, true);
+				Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				dm.checkSchedulabilityByOPA(tasks, resources, true);
 			}
 
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);

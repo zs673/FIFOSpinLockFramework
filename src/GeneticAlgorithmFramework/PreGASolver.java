@@ -50,18 +50,17 @@ public class PreGASolver {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator
-				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, allocPolicy), resources);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
 
 		if (tasksWithAlloc == null)
 			return 0;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				fifonp.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				fifop.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.getResponseTime(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				mrsp.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {

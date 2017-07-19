@@ -1,7 +1,8 @@
-package GeneticAlgorithmFramework;
+package test;
 
 import java.util.ArrayList;
 
+import GeneticAlgorithmFramework.GASolver;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;

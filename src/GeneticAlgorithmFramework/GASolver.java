@@ -260,9 +260,9 @@ public class GASolver {
 			resources.get(i).protocol = gene[i];
 		}
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator
-				.assignPrioritiesByDM(geneator.allocateTasks(tasks, resources, gene[resources.size()]), resources);
-		long[][] Ris = framework.getResponseTime(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA, true);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources, gene[resources.size()]);
+		long[][] Ris = framework.getResponseTimeByDM(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA,
+				true);
 
 		if (Ris == null) {
 			int NoT = 0;

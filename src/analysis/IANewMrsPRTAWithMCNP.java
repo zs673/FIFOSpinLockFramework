@@ -4,14 +4,18 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
-public class IANewMrsPRTAWithMCNP{
+public class IANewMrsPRTAWithMCNP {
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
 		if (tasks == null)
 			return null;
+
+		// assign priorities by Deadline Monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
 
 		long[][] responsetime = null;
 		// get np section
@@ -43,8 +47,8 @@ public class IANewMrsPRTAWithMCNP{
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time,
-					AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np, testSchedulability, extendCal, useRi);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION,
+					np, testSchedulability, extendCal, useRi);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -172,8 +176,8 @@ public class IANewMrsPRTAWithMCNP{
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				long indriectblocking = resourceAccessingTime(hpTask, allTasks, resources, Ris, time, (useRi? Ris[partition][i]: hpTask.deadline), oneMig,
-						np, t, useRi);
+				long indriectblocking = resourceAccessingTime(hpTask, allTasks, resources, Ris, time,
+						(useRi ? Ris[partition][i] : hpTask.deadline), oneMig, np, t, useRi);
 				interference += indriectblocking;
 				t.indirectspin += indriectblocking;
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
@@ -366,7 +370,8 @@ public class IANewMrsPRTAWithMCNP{
 			if (i != task.partition) {
 				int number_requests_left = 0;
 				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time, useRi)
-						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi) - request_number + 1;
+						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi)
+						- request_number + 1;
 
 				if (number_requests_left > 0)
 					migration_targets.add(i);

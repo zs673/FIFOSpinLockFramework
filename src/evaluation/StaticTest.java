@@ -140,69 +140,65 @@ public class StaticTest {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
-			Ris = fnp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources, 0);
+			Ris = fnp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
 
-			Ris = fp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsmrsp++;
 
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 1), resources);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources, 1);
 
-			Ris = fnp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfnp++;
 
-			Ris = fp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsmrsp++;
 
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 2), resources);
-			Ris = fnp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources, 2);
+			Ris = fnp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
 
-			Ris = fp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfp++;
 
-			Ris = mrsp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsmrsp++;
 
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 3), resources);
-			Ris = fnp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources, 3);
+			Ris = fnp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
 
-			Ris = fp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsmrsp++;
 
@@ -210,17 +206,16 @@ public class StaticTest {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 4), resources);
-			Ris = fnp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources, 4);
+			Ris = fnp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsmrsp++;
 
@@ -228,17 +223,16 @@ public class StaticTest {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 5), resources);
-			Ris = fnp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources, 5);
+			Ris = fnp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsmrsp++;
 
@@ -246,34 +240,32 @@ public class StaticTest {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 6), resources);
-			Ris = fnp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources, 6);
+			Ris = fnp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsmrsp++;
 
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 7), resources);
-			Ris = fnp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources, 7);
+			Ris = fnp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
@@ -338,69 +330,65 @@ public class StaticTest {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
-			Ris = fnp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources, 0);
+			Ris = fnp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
 
-			Ris = fp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsmrsp++;
 
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 1), resources);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources, 1);
 
-			Ris = fnp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfnp++;
 
-			Ris = fp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsmrsp++;
 
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 2), resources);
-			Ris = fnp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources, 2);
+			Ris = fnp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
 
-			Ris = fp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfp++;
 
-			Ris = mrsp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsmrsp++;
 
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 3), resources);
-			Ris = fnp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources, 3);
+			Ris = fnp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
 
-			Ris = fp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsmrsp++;
 
@@ -408,17 +396,16 @@ public class StaticTest {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 4), resources);
-			Ris = fnp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources, 4);
+			Ris = fnp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsmrsp++;
 
@@ -426,17 +413,16 @@ public class StaticTest {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 5), resources);
-			Ris = fnp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources, 5);
+			Ris = fnp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsmrsp++;
 
@@ -444,34 +430,32 @@ public class StaticTest {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 6), resources);
-			Ris = fnp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources, 6);
+			Ris = fnp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsmrsp++;
 
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 7), resources);
-			Ris = fnp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources, 7);
+			Ris = fnp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
@@ -536,69 +520,65 @@ public class StaticTest {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
-			Ris = fnp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources, 0);
+			Ris = fnp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
 
-			Ris = fp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsmrsp++;
 
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 1), resources);
+			ArrayList<ArrayList<SporadicTask>> tasksBF =generator.allocateTasks(tasksToAlloc, resources, 1);
 
-			Ris = fnp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfnp++;
 
-			Ris = fp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsmrsp++;
 
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 2), resources);
-			Ris = fnp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksFF = generator.allocateTasks(tasksToAlloc, resources, 2);
+			Ris = fnp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
 
-			Ris = fp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfp++;
 
-			Ris = mrsp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsmrsp++;
 
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 3), resources);
-			Ris = fnp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources, 3);
+			Ris = fnp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
 
-			Ris = fp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsmrsp++;
 
@@ -606,17 +586,16 @@ public class StaticTest {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 4), resources);
-			Ris = fnp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources, 4);
+			Ris = fnp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsmrsp++;
 
@@ -624,17 +603,16 @@ public class StaticTest {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 5), resources);
-			Ris = fnp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources, 5);
+			Ris = fnp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsmrsp++;
 
@@ -642,34 +620,32 @@ public class StaticTest {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 6), resources);
-			Ris = fnp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources, 6);
+			Ris = fnp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsmrsp++;
 
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 7), resources);
-			Ris = fnp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources, 7);
+			Ris = fnp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
@@ -735,69 +711,65 @@ public class StaticTest {
 			/**
 			 * WORST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksWF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 0), resources);
-			Ris = fnp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksWF = generator.allocateTasks(tasksToAlloc, resources, 0);
+			Ris = fnp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfnp++;
 
-			Ris = fp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksWF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksWF, Ris))
 				wfsmrsp++;
 
 			/**
 			 * BEST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksBF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 1), resources);
+			ArrayList<ArrayList<SporadicTask>> tasksBF = generator.allocateTasks(tasksToAlloc, resources, 1);
 
-			Ris = fnp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfnp++;
 
-			Ris = fp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksBF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksBF, Ris))
 				bfsmrsp++;
 
 			/**
 			 * FIRST FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksFF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 2), resources);
-			Ris = fnp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksFF =generator.allocateTasks(tasksToAlloc, resources, 2);
+			Ris = fnp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfnp++;
 
-			Ris = fp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsfp++;
 
-			Ris = mrsp.getResponseTime(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksFF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksFF, Ris))
 				ffsmrsp++;
 
 			/**
 			 * NEXT FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksNF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 3), resources);
-			Ris = fnp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksNF = generator.allocateTasks(tasksToAlloc, resources, 3);
+			Ris = fnp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfnp++;
 
-			Ris = fp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksNF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksNF, Ris))
 				nfsmrsp++;
 
@@ -805,17 +777,16 @@ public class StaticTest {
 			 * RESOURCE REQUEST TASKS FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 4), resources);
-			Ris = fnp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRRF = generator.allocateTasks(tasksToAlloc, resources, 4);
+			Ris = fnp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRRF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRRF, Ris))
 				rrfsmrsp++;
 
@@ -823,17 +794,16 @@ public class StaticTest {
 			 * RESOURCE LOCAL FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 5), resources);
-			Ris = fnp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLF = generator.allocateTasks(tasksToAlloc, resources, 5);
+			Ris = fnp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLF, Ris))
 				rlfsmrsp++;
 
@@ -841,34 +811,32 @@ public class StaticTest {
 			 * RESOURCE LENGTH DECREASE FIT
 			 */
 
-			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 6), resources);
-			Ris = fnp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLDF = generator.allocateTasks(tasksToAlloc, resources, 6);
+			Ris = fnp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLDF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLDF, Ris))
 				rldfsmrsp++;
 
 			/**
 			 * RESOURCE LENGTH INCREASE FIT
 			 */
-			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator
-					.assignPrioritiesByDM(generator.allocateTasks(tasksToAlloc, resources, 7), resources);
-			Ris = fnp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			ArrayList<ArrayList<SporadicTask>> tasksRLIF = generator.allocateTasks(tasksToAlloc, resources, 7);
+			Ris = fnp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfnp++;
 
-			Ris = fp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsfp++;
 
-			Ris = mrsp.getResponseTime(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasksRLIF, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			if (isSystemSchedulable(tasksRLIF, Ris))
 				rlifsmrsp++;
 
