@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.Combinedio;
+import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -85,7 +85,7 @@ public class TestRiDiandDMvsOPA {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		Combinedio dm = new Combinedio();
+		CombinedAnalysis dm = new CombinedAnalysis();
 		
 
 		String result = "";

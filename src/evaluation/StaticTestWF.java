@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
-import analysis.FIFONPio;
-import analysis.FIFOPio;
-import analysis.MrsPio;
+import analysis.FIFONP;
+import analysis.FIFOP;
+import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -126,9 +126,9 @@ public class StaticTestWF {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		String result = "";
 		int sfnp = 0;
@@ -175,9 +175,9 @@ public class StaticTestWF {
 				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		String result = "";
 		int sfnp = 0;
@@ -224,9 +224,9 @@ public class StaticTestWF {
 				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		String result = "";
 		int sfnp = 0;
@@ -274,9 +274,9 @@ public class StaticTestWF {
 				RESOURCE_SHARING_FACTOR, NoA, false);
 
 		long[][] Ris;
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		String result = "";
 		int sfnp = 0;

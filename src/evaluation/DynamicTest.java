@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
-import analysis.FIFONPio;
-import analysis.FIFOPio;
-import analysis.MrsPio;
+import analysis.FIFONP;
+import analysis.FIFOP;
+import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.IOAResultReader;
@@ -125,9 +125,9 @@ public class DynamicTest {
 		int wfsfp = 0, ffsfp = 0, bfsfp = 0, nfsfp = 0, rrfsfp = 0, rlfsfp = 0, rldfsfp = 0, rlifsfp = 0;
 		int wfsmrsp = 0, ffsmrsp = 0, bfsmrsp = 0, nfsmrsp = 0, rrfsmrsp = 0, rlfsmrsp = 0, rldfsmrsp = 0, rlifsmrsp = 0;
 
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		int combine = 0;
 
@@ -330,9 +330,9 @@ public class DynamicTest {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true,
 				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
@@ -527,9 +527,9 @@ public class DynamicTest {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP,
 				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
@@ -724,9 +724,9 @@ public class DynamicTest {
 				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
 				RESOURCE_SHARING_FACTOR, NoA, false);
 
-		FIFONPio fnp = new FIFONPio();
-		FIFOPio fp = new FIFOPio();
-		MrsPio mrsp = new MrsPio();
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();

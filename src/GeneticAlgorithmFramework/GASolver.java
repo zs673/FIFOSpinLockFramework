@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import analysis.Combinedio;
+import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -14,7 +14,7 @@ public class GASolver {
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
-	Combinedio framework = new Combinedio();
+	CombinedAnalysis framework = new CombinedAnalysis();
 
 	Random ran = new Random(System.currentTimeMillis());
 

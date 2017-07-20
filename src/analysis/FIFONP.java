@@ -7,7 +7,7 @@ import entity.SporadicTask;
 import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
-public class FIFONPio {
+public class FIFONP {
 
 	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {

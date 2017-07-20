@@ -7,7 +7,7 @@ import entity.SporadicTask;
 import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
-public class Combinedio {
+public class CombinedAnalysis {
 
 	public boolean checkSchedulabilityByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean isprint) {

@@ -47,10 +47,10 @@ public class IdenticalTest {
 	}
 
 	public static void main(String[] args) {
-		analysis.FIFOPio fp = new analysis.FIFOPio();
-		analysis.FIFONPio fnp = new analysis.FIFONPio();
-		analysis.MrsPio mrsp = new analysis.MrsPio();
-		analysis.Combinedio combined_analysis = new analysis.Combinedio();
+		analysis.FIFOP fp = new analysis.FIFOP();
+		analysis.FIFONP fnp = new analysis.FIFONP();
+		analysis.MrsP mrsp = new analysis.MrsP();
+		analysis.CombinedAnalysis combined_analysis = new analysis.CombinedAnalysis();
 
 		long[][] r1, r2, r3, r4;
 		int i = 0;
