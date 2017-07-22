@@ -27,7 +27,7 @@ public class TestRiDiandDMvsOPA {
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
@@ -91,6 +91,8 @@ public class TestRiDiandDMvsOPA {
 		int RiDM = 0;
 		int DiDM = 0;
 		int OPA = 0;
+		int wecan = 0;
+		int wecannot = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
@@ -102,23 +104,31 @@ public class TestRiDiandDMvsOPA {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
 
+			boolean b1 = false, b2 = false, b3 = false;
 			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
-			if (isSystemSchedulable(tasks, Ris))
+			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
+				b1 = true;
+			}
 
-			boolean b1 = false, b2 = false;
 			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
-				b1 = true;
+				b2 = true;
 			}
 
 			if (combined.checkSchedulabilityByOPA(tasks, resources, false)) {
 				OPA++;
-				b2 = true;
+				b3 = true;
 			}
 
-			if (b1 && !b2) {
+			if (!b1 && b3)
+				wecan++;
+
+			if (b1 && !b3)
+				wecannot++;
+
+			if (b2 && !b3) {
 				System.err.println("found!");
 
 				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
@@ -135,7 +145,7 @@ public class TestRiDiandDMvsOPA {
 		}
 
 		result = (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " we can: " + wecan + " we cannot: " + wecannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}

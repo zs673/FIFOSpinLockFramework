@@ -46,3 +46,35 @@ RSF
 
 
 
+minT: 1  maxT: 1000
+Work Load
+CS Length 
+11 0.9529 0.9214 0.9301 we can: 4
+12 0.9067 0.8277 0.8592 we can: 20
+13 0.8212 0.69 0.744 we can: 59
+14 0.4921 0.3788 0.4249 we can: 53
+15 0.3174 0.2249 0.2585 we can: 56
+16 0.4559 0.3466 0.3884 we can: 52
+Resource Access 
+Parallel 
+RSF 
+
+
+
+
+minT: 1  maxT: 1000
+Work Load
+CS Length 
+11 0.9538 0.9242 0.9324 we can: 3 we cannot: 217
+12 0.901 0.8192 0.8495 we can: 26 we cannot: 541
+13 0.8204 0.6879 0.7391 we can: 47 we cannot: 860
+14 0.4839 0.3719 0.4172 we can: 53 we cannot: 720
+15 0.3086 0.2199 0.254 we can: 46 we cannot: 592
+16 0.4486 0.3458 0.3845 we can: 41 we cannot: 682
+Resource Access 
+Parallel 
+RSF 
+
+
+
+
