@@ -111,13 +111,13 @@ public class MrsPbasic {
 			ArrayList<Resource> resources) {
 		int partition = task.partition;
 		int priority = task.priority;
-		int minCeiling = 1000;
+		int minCeiling = 65535;
 
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
-			if (resource.partitions.contains(partition)
-					&& minCeiling > resource.ceiling.get(resource.partitions.indexOf(partition))) {
-				minCeiling = resource.ceiling.get(resource.partitions.indexOf(partition));
+			int ceiling = resource.getCeilingForProcessor(tasksOnItsParititon);
+			if (resource.partitions.contains(partition) && minCeiling > ceiling) {
+				minCeiling = ceiling;
 			}
 		}
 
@@ -206,7 +206,7 @@ public class MrsPbasic {
 	 */
 	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			long[][] Ris, long time, long oneMig, long np) {
-		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources);
+		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
 		for (int i = 0; i < LocalBlockingResources.size(); i++) {
@@ -249,15 +249,15 @@ public class MrsPbasic {
 	/*
 	 * gives a set of resources that can cause local blocking for a given task
 	 */
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
+			ArrayList<SporadicTask> LocalTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
 
-			if (resource.partitions.contains(partition)
-					&& resource.ceiling.get(resource.partitions.indexOf(partition)) >= task.priority) {
+			if (resource.partitions.contains(partition) && resource.getCeilingForProcessor(LocalTasks) >= task.priority) {
 				for (int j = 0; j < resource.requested_tasks.size(); j++) {
 					SporadicTask LP_task = resource.requested_tasks.get(j);
 					if (LP_task.partition == partition && LP_task.priority < task.priority) {
@@ -309,7 +309,7 @@ public class MrsPbasic {
 		// identify the migration targets with preemptors
 		for (int i = 0; i < migration_targets.size(); i++) {
 			int partition = migration_targets.get(i);
-			if (tasks.get(partition).get(0).priority > resource.ceiling.get(resource.partitions.indexOf(partition)))
+			if (tasks.get(partition).get(0).priority > resource.getCeilingForProcessor(partition, tasks))
 				migration_targets_with_P.add(migration_targets.get(i));
 		}
 
@@ -381,12 +381,11 @@ public class MrsPbasic {
 
 		for (int i = 0; i < migration_targets_with_P.size(); i++) {
 			int partition_with_p = migration_targets_with_P.get(i);
-			int ceiling_index = resource.partitions.indexOf(partition_with_p);
 
 			for (int j = 0; j < tasks.get(partition_with_p).size(); j++) {
 				SporadicTask hpTask = tasks.get(partition_with_p).get(j);
 
-				if (hpTask.priority > resource.ceiling.get(ceiling_index))
+				if (hpTask.priority > resource.getCeilingForProcessor(partition_with_p, tasks))
 					migCost += Math.ceil((double) (duration) / (double) hpTask.period) * oneMig;
 			}
 		}

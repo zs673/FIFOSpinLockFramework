@@ -17,7 +17,7 @@ public class IdenticalTest {
 	public static int NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION = 4;
 	public static double RESOURCE_SHARING_FACTOR = .3;
 	public static boolean testSchedulability = false;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 50000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 5000;
 	public static int TOTAL_PARTITIONS = 8;
 
 	static int extendCal = 1;
@@ -58,42 +58,6 @@ public class IdenticalTest {
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
 				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
 				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
-
-//		i = 0;
-//		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
-//			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-//			ArrayList<Resource> resources = generator.generateResources();
-//			generator.generateResourceUsage(tasksToAlloc, resources);
-//			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
-//
-//			for (int j = 0; j < resources.size(); j++) {
-//				resources.get(j).protocol = new Random().nextInt(65535) % 3 + 1;
-//			}
-//
-//			r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
-//			r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
-//
-//			r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
-//			r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
-//
-//			boolean isEqual1 = isEqual(r1, r2, false);
-//			boolean isEqual2 = isEqual(r3, r4, false);
-//
-//			if (!isEqual1 || !isEqual2) {
-//				System.out.println("not equal");
-//				isEqual(r1, r2, true);
-//				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-//				r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
-//				r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
-//
-//				r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
-//				r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
-//				System.exit(0);
-//			}
-//			i++;
-//			System.out.println(i);
-//		}
-//		System.out.println("Combined Protocols TEST DONE");
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {

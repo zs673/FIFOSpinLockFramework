@@ -332,6 +332,40 @@ public class SystemGenerator {
 					tasks.get(i).get(j).partition = i;
 				}
 			}
+
+			if (resources != null && resources.size() > 0) {
+				for (int i = 0; i < resources.size(); i++) {
+					Resource res = resources.get(i);
+					res.isGlobal = false;
+					res.partitions.clear();
+					res.requested_tasks.clear();
+				}
+
+				/* for each resource */
+				for (int i = 0; i < resources.size(); i++) {
+					Resource resource = resources.get(i);
+
+					/* for each partition */
+					for (int j = 0; j < tasks.size(); j++) {
+
+						/* for each task in the given partition */
+						for (int k = 0; k < tasks.get(j).size(); k++) {
+							SporadicTask task = tasks.get(j).get(k);
+
+							if (task.resource_required_index.contains(resource.id - 1)) {
+								resource.requested_tasks.add(task);
+								if (!resource.partitions.contains(task.partition)) {
+									resource.partitions.add(task.partition);
+								}
+							}
+						}
+					}
+
+					if (resource.partitions.size() > 1)
+						resource.isGlobal = true;
+				}
+			}
+
 		}
 
 		return tasks;

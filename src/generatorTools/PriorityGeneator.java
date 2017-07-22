@@ -7,7 +7,7 @@ import entity.SporadicTask;
 
 public class PriorityGeneator {
 	public static final int MAX_PRIORITY = 1000;
-	
+
 	public ArrayList<ArrayList<SporadicTask>> assignPrioritiesByDM(ArrayList<ArrayList<SporadicTask>> tasksToAssgin,
 			ArrayList<Resource> resources) {
 		if (tasksToAssgin == null) {
@@ -20,48 +20,8 @@ public class PriorityGeneator {
 			new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks.get(i), tasks.get(i).size());
 		}
 
-		if (resources != null && resources.size() > 0) {
-			for (int i = 0; i < resources.size(); i++) {
-				Resource res = resources.get(i);
-				res.ceiling.clear();
-				res.isGlobal = false;
-				res.partitions.clear();
-				res.requested_tasks.clear();
-			}
-
-			/* for each resource */
-			for (int i = 0; i < resources.size(); i++) {
-				Resource resource = resources.get(i);
-
-				/* for each partition */
-				for (int j = 0; j < tasks.size(); j++) {
-					int ceiling = 0;
-
-					/* for each task in the given partition */
-					for (int k = 0; k < tasks.get(j).size(); k++) {
-						SporadicTask task = tasks.get(j).get(k);
-
-						if (task.resource_required_index.contains(resource.id - 1)) {
-							resource.requested_tasks.add(task);
-							ceiling = task.priority > ceiling ? task.priority : ceiling;
-							if (!resource.partitions.contains(task.partition)) {
-								resource.partitions.add(task.partition);
-							}
-						}
-					}
-
-					if (ceiling > 0)
-						resource.ceiling.add(ceiling);
-				}
-
-				if (resource.partitions.size() > 1)
-					resource.isGlobal = true;
-			}
-		}
-
 		return tasks;
 	}
-
 
 	private void deadlineMonotonicPriorityAssignment(ArrayList<SporadicTask> taskset, int number) {
 		ArrayList<Integer> priorities = generatePriorities(number);

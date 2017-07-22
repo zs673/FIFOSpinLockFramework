@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 import analysis.CombinedAnalysis;
 import entity.Resource;
@@ -27,28 +26,28 @@ public class TestRiDiandDMvsOPA {
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
 		TestRiDiandDMvsOPA test = new TestRiDiandDMvsOPA();
-
-		final CountDownLatch work = new CountDownLatch(6);
-		for (int i = 1; i < 7; i++) {
-			final int cslen = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					test.experimentIncreasingCriticalSectionLength(cslen);
-					work.countDown();
-				}
-			}).start();
-		}
-		work.await();
-
+		//
+		// final CountDownLatch work = new CountDownLatch(6);
 		// for (int i = 1; i < 7; i++) {
-		// test.experimentIncreasingCriticalSectionLength(i);
+		// final int cslen = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// test.experimentIncreasingCriticalSectionLength(cslen);
+		// work.countDown();
 		// }
+		// }).start();
+		// }
+		// work.await();
+
+		for (int i = 6; i >0; i--) {
+			test.experimentIncreasingCriticalSectionLength(i);
+		}
 
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
@@ -85,8 +84,7 @@ public class TestRiDiandDMvsOPA {
 				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
-		CombinedAnalysis dm = new CombinedAnalysis();
-		
+		CombinedAnalysis combined = new CombinedAnalysis();
 
 		String result = "";
 		int RiDM = 0;
@@ -103,28 +101,33 @@ public class TestRiDiandDMvsOPA {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
 
-			Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
+			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
-			boolean b1 = false, b2 = false;
-			Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			 boolean b1 = false, b2 = false;
+			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b1 = true;
 			}
 
-			if (dm.checkSchedulabilityByOPA(tasks, resources, false)) {
+			if (combined.checkSchedulabilityByOPA(tasks, resources, false)) {
 				OPA++;
-				b2 = true;
+				 b2 = true;
 			}
 
 			if (b1 && !b2) {
-				Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-				dm.checkSchedulabilityByOPA(tasks, resources, true);
+				System.err.println("found!");
+				
+				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				combined.checkSchedulabilityByOPA(tasks, resources, true);
 
-				Ris = dm.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-				dm.checkSchedulabilityByOPA(tasks, resources, true);
+				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+				combined.checkSchedulabilityByOPA(tasks, resources, true);
+				
+				System.exit(-1);
 			}
 
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
