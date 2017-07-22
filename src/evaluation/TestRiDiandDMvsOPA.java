@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 import analysis.CombinedAnalysis;
 import entity.Resource;
@@ -26,28 +27,28 @@ public class TestRiDiandDMvsOPA {
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
 		TestRiDiandDMvsOPA test = new TestRiDiandDMvsOPA();
-		//
-		// final CountDownLatch work = new CountDownLatch(6);
-		// for (int i = 1; i < 7; i++) {
-		// final int cslen = i;
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// test.experimentIncreasingCriticalSectionLength(cslen);
-		// work.countDown();
-		// }
-		// }).start();
-		// }
-		// work.await();
 
-		for (int i = 6; i >0; i--) {
-			test.experimentIncreasingCriticalSectionLength(i);
+		final CountDownLatch work = new CountDownLatch(6);
+		for (int i = 1; i < 7; i++) {
+			final int cslen = i;
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					test.experimentIncreasingCriticalSectionLength(cslen);
+					work.countDown();
+				}
+			}).start();
 		}
+		work.await();
+
+		// for (int i = 6; i >0; i--) {
+		// test.experimentIncreasingCriticalSectionLength(i);
+		// }
 
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
@@ -105,7 +106,7 @@ public class TestRiDiandDMvsOPA {
 			if (isSystemSchedulable(tasks, Ris))
 				RiDM++;
 
-			 boolean b1 = false, b2 = false;
+			boolean b1 = false, b2 = false;
 			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
@@ -114,19 +115,19 @@ public class TestRiDiandDMvsOPA {
 
 			if (combined.checkSchedulabilityByOPA(tasks, resources, false)) {
 				OPA++;
-				 b2 = true;
+				b2 = true;
 			}
 
 			if (b1 && !b2) {
 				System.err.println("found!");
-				
+
 				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 				combined.checkSchedulabilityByOPA(tasks, resources, true);
 
 				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
 				combined.checkSchedulabilityByOPA(tasks, resources, true);
-				
+
 				System.exit(-1);
 			}
 
