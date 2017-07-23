@@ -27,7 +27,7 @@ public class TestRiDiandDMvsOPA {
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
