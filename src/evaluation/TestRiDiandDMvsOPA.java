@@ -144,8 +144,10 @@ public class TestRiDiandDMvsOPA {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result = (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " we can: " + wecan + " we cannot: " + wecannot + "\n";
+		result = "Ri with DM: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with DM: "
+				+ (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with OPA: "
+				+ (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA can but Ri with DM cannot: " + wecan
+				+ "    Ri with DM can but OPA cannot: " + wecannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}

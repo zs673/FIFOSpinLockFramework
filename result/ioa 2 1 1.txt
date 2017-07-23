@@ -1,2 +1,2 @@
-0.9538 0.9242 0.9324 we can: 3 we cannot: 217
+Ri with DM: 0.9498    Di with DM: 0.9184    Di with OPA: 0.926    OPA can but Ri with DM cannot: 3    Ri with DM can but OPA cannot: 241
 
