@@ -50,36 +50,4 @@ public class GeneatorUtils {
 										 * FF.
 										 */
 	};
-
-	/* define Priority Assignment Schemes */
-	public static enum Priority_ASSIGMENT {
-		DEADLINE_MONOTONIC, /* fit the task in the first available partition. */
-		BEST_FIT, /* fit the task in the partition with largest utilization. */
-		WORST_FIT, /*
-					 * fit the task in the partition with smallest utilization.
-					 */
-		NEXT_FIT, /*
-					 * fit the task in the next (next to last allocated
-					 * partition) available partition.
-					 */
-		RESOURCE_REQUEST_TASKS_FIT, /*
-									 * sort tasks based on resources and number
-									 * of requested tasks (tie break by
-									 * utilization) and then use FF.
-									 */
-		RESOURCE_LOCAL_FIT, /*
-							 * sort tasks based on resources (total requesting
-							 * tasks utilization) and then use FF.
-							 */
-		RESOURCE_LENGTH_DECREASE_FIT, /*
-										 * sort tasks based on resource length
-										 * in a decreasing order and then use
-										 * FF.
-										 */
-		RESOURCE_LENGTH_INCREASE_FIT /*
-										 * sort tasks based on resource length
-										 * in an increasing order and then use
-										 * FF.
-										 */
-	};
 }

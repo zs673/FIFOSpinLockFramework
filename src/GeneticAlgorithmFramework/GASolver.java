@@ -27,6 +27,7 @@ public class GASolver {
 
 	/****************** GA Properties ******************/
 	int ALLOCATION_POLICY_NUMBER;
+	int PRIORITY_SCHEME_NUMBER;
 	int PROTOCOL_SIZE = 3;
 	boolean isPrint;
 	int population;
@@ -43,13 +44,15 @@ public class GASolver {
 	/****************** GA Properties ******************/
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
-			int ALLOCATION_POLICY_NUMBER, int population, int maxGeneration, int elitismSize, double crossoverRate,
-			double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
+			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize,
+			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2,
+			boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
 		this.geneator = geneator;
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
+		this.PRIORITY_SCHEME_NUMBER = PRIORITY_SCHEME_NUMBER;
 
 		this.population = population;
 		this.maxGeneration = maxGeneration;
@@ -68,12 +71,25 @@ public class GASolver {
 		rtFitness = new long[population];
 	}
 
-	public int findSchedulableProtocols(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, ALLOCATION_POLICY_NUMBER, isPrint);
+	/**
+	 * Try to search for a feasible solution
+	 * 
+	 * @param useGA
+	 *            If true, GA is applied to search. Otherwise we randomly search
+	 *            for a solution.
+	 * @return True: the system is feasible. False: the system is not feasible
+	 *         within the given generation and population size.
+	 */
+	public boolean findSchedulableProtocols(boolean useGA) {
+		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER,
+				PRIORITY_SCHEME_NUMBER, isPrint);
 		int initial = preSovler.initialCheck();
 
-		if (initial != 0) {
-			return initial;
+		if (initial > 0) {
+			return true;
+		}
+		if (initial < 0) {
+			return false;
 		}
 
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
@@ -83,20 +99,19 @@ public class GASolver {
 		}
 
 		if (allocations.size() == 0)
-			return -1;
+			return false;
 
-		int result = solve(useGA);
-		return result;
+		return solve(useGA);
 	}
 
-	private int solve(boolean useGA) {
+	private boolean solve(boolean useGA) {
 		getFirstGene();
 		getFitness(nextGenes);
 		if (bestGene != null) {
 			if (isPrint)
 				System.out.println(
 						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
-			return 0;
+			return true;
 		}
 
 		while (currentGeneration <= maxGeneration) {
@@ -192,13 +207,13 @@ public class GASolver {
 				if (isPrint)
 					System.out.println(
 							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
-				return 0;
+				return true;
 			}
 
 		}
 		if (isPrint)
-			System.out.println("not schedulable. GA finish");
-		return -1;
+			System.out.println("not schedulable with in " + maxGeneration + " generations. GA finish");
+		return false;
 	}
 
 	private void getFirstGene() {
@@ -261,8 +276,8 @@ public class GASolver {
 		}
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources, gene[resources.size()]);
-		long[][] Ris = framework.getResponseTimeByDM(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA,
-				true);
+		long[][] Ris = framework.getResponseTimewithPriorityScheme(tasksWithAllocation, resources, 0,
+				AnalysisUtils.extendCalForGA, false, true, false);
 
 		if (Ris == null) {
 			int NoT = 0;

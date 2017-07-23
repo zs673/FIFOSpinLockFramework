@@ -2,6 +2,7 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 
+import analysis.CombinedAnalysis;
 import analysis.FIFONP;
 import analysis.FIFOP;
 import analysis.MrsP;
@@ -12,6 +13,8 @@ import utils.AnalysisUtils;
 
 public class PreGASolver {
 	int ALLOCATION_POLICY_NUMBER;
+	int PRIORITY_SCHEME_NUMBER;
+	int PROTOCOL_NUMBER;
 
 	boolean print;
 	ArrayList<SporadicTask> tasks;
@@ -21,39 +24,60 @@ public class PreGASolver {
 	FIFONP fifonp = new FIFONP();
 	FIFOP fifop = new FIFOP();
 	MrsP mrsp = new MrsP();
+	CombinedAnalysis analysis = new CombinedAnalysis();
+
+	public int allocation = -1;
+	public int protocol = -1;
+	public int priority = -1;
 
 	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
-			int ALLOCATION_POLICY_NUMBER, boolean print) {
+			int PROTOCOL_NUMBER, int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
+		this.PROTOCOL_NUMBER = PROTOCOL_NUMBER;
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
+		this.PRIORITY_SCHEME_NUMBER = PRIORITY_SCHEME_NUMBER;
 		this.geneator = geneator;
 		this.tasks = tasks;
 		this.resources = resources;
 		this.print = print;
 	}
 
+	/**
+	 * Perform an initial check to see whether there is a feasible static
+	 * solution.
+	 * 
+	 * @return 1: is feasible; 0: needs GA; -1: not possible
+	 */
 	public int initialCheck() {
 		int notpossiblecount = 0;
+
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
-			int result = checkwithOneAllocationPolicy(i);
-			if (result > 0)
-				return result;
+			int result = checkwithOneAllocationPolicyDM(i);
 			if (result == -1)
 				notpossiblecount++;
+			if (result > 0)
+				return result; // has a feasible solution
 		}
-		if (notpossiblecount == ALLOCATION_POLICY_NUMBER)
-			return -1;
 
-		return 0;
+		if (notpossiblecount == ALLOCATION_POLICY_NUMBER)
+			return -1; // not possible
+
+		return 0; // need GA
 	}
 
-	private int checkwithOneAllocationPolicy(int allocPolicy) {
+	/**
+	 * 
+	 * @param allocPolicy
+	 *            The allocation policy assumed ( 0 - 7 )
+	 * @return 1: is feasible; 0: needs GA; -1: not possible
+	 */
+	private int checkwithOneAllocationPolicyDM(int allocPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
 
 		if (tasksWithAlloc == null)
-			return 0;
+			return -1;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
 				fifonp.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
@@ -79,29 +103,99 @@ public class PreGASolver {
 			}
 		}
 
+		/*
+		 * If the system is OK with DM.
+		 */
+		if (fifonp_sched == 0) {
+			if (print)
+				System.out.println("fifonp schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy;
+			this.protocol = 1;
+			this.priority = 0;
+			return 1;
+		}
+		if (fifop_sched == 0) {
+			if (print)
+				System.out.println("fifop schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy;
+			this.protocol = 2;
+			this.priority = 0;
+			return 1;
+		}
+		if (mrsp_sched == 0) {
+			if (print)
+				System.out.println("mrsp schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy;
+			this.protocol = 3;
+			this.priority = 0;
+			return 1;
+		}
+
+		/*
+		 * if not possible with DM, we try it again with OPA
+		 **/
+		if (!isPossible) {
+
+			for (int i = 0; i < resources.size(); i++) {
+				resources.get(i).protocol = 1;
+			}
+			long[][] rt_fifonp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+			if (isSystemSchedulable(tasksWithAlloc, rt_fifonp)) {
+				if (print)
+					System.out.println("fifonp schedulable with allocation: " + allocPolicy + " and OPA");
+				this.allocation = allocPolicy;
+				this.protocol = 1;
+				this.priority = 1;
+				return 1;
+			}
+
+			for (int i = 0; i < resources.size(); i++) {
+				resources.get(i).protocol = 2;
+			}
+			long[][] rt_fifop = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+			if (isSystemSchedulable(tasksWithAlloc, rt_fifop)) {
+				if (print)
+					System.out.println("fifop schedulable with allocation: " + allocPolicy + " and OPA");
+				this.allocation = allocPolicy;
+				this.protocol = 2;
+				this.priority = 1;
+				return 1;
+			}
+
+			for (int i = 0; i < resources.size(); i++) {
+				resources.get(i).protocol = 3;
+			}
+			long[][] rt_fifomrsp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+			if (isSystemSchedulable(tasksWithAlloc, rt_fifomrsp)) {
+				if (print)
+					System.out.println("fifomrsp schedulable with allocation: " + allocPolicy + " and OPA");
+				this.allocation = allocPolicy;
+				this.protocol = 3;
+				this.priority = 1;
+				return 1;
+			}
+		}
+
+		/*
+		 * If not possible in all cases, we suggest the GA to finish.
+		 */
 		if (!isPossible) {
 			if (print)
 				System.out.println("not schedulable");
 			return -1;
 		}
 
-		if (fifonp_sched == 0) {
-			if (print)
-				System.out.println("fifonp schedulable with allocation: " + allocPolicy);
-			return 1;
-		}
-		if (fifop_sched == 0) {
-			if (print)
-				System.out.println("fifop schedulable with allocation: " + allocPolicy);
-			return 2;
-		}
-		if (mrsp_sched == 0) {
-			if (print)
-				System.out.println("mrsp schedulable with allocation: " + allocPolicy);
-			return 3;
-		}
-
 		return 0;
+	}
+
+	boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < Ris[i][j])
+					return false;
+			}
+		}
+		return true;
 	}
 
 	int[][] getTaskSchedulability(ArrayList<ArrayList<SporadicTask>> tasks, long[][] rt) {

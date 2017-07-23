@@ -9,10 +9,36 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 
-	public boolean checkSchedulabilityByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+	public long[][] getResponseTimewithPriorityScheme(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			int priorityScheme, int extendCal, boolean testSchedulability,  boolean useRi, boolean isprint) {
+
+		switch (priorityScheme) {
+		case 0:
+			return getResponseTimeByDM(tasks, resources, testSchedulability, isprint, extendCal, useRi);
+		case 1:
+			return getResponseTimeByOPA(tasks, resources, isprint);
+		default:
+			return null;
+		}
+
+	}
+
+	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean isprint) {
 		if (tasks == null)
-			return false;
+			return null;
+
+		long[][] response_time = new long[tasks.size()][];
+		for (int i = 0; i < response_time.length; i++) {
+			response_time[i] = new long[tasks.get(i).size()];
+		}
+
+		long npsection = 0;
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
+		}
 
 		// Default as deadline monotonic
 		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
@@ -33,7 +59,10 @@ public class CombinedAnalysis {
 					int originalP = task.priority;
 					task.priority = sratingP;
 
-					boolean isSchedulable = isTaskSchedulable(task, tasks, resources);
+					long time = response_time[task.partition][tasks.get(task.partition).indexOf(task)] = getResponseTimeForOneTask(task,
+							tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection);
+					boolean isSchedulable = time <= task.deadline;
+
 					if (!isSchedulable) {
 						task.priority = originalP;
 						if (isprint) {
@@ -47,12 +76,12 @@ public class CombinedAnalysis {
 				}
 
 				if (!isTaskSchedulable)
-					return false;
+					return response_time;
 
 				sratingP += 2;
 			}
 		}
-		return true;
+		return response_time;
 	}
 
 	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
@@ -171,34 +200,10 @@ public class CombinedAnalysis {
 		return response_time_plus;
 	}
 
-	private boolean isTaskSchedulable(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources) {
-		if (tasks == null)
-			return false;
-
-		long np = 0; // The NP section length if MrsP is applied
-		long npsection = 0;
-
-		for (int i = 0; i < resources.size(); i++) {
-			Resource resource = resources.get(i);
-			if (resource.protocol == 3 && npsection < resource.csl)
-				npsection = resources.get(i).csl;
-		}
-		np = npsection;
-
-		long Ri = getResponseTimeForOneTask(caltask, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, np);
-
-		if (Ri <= caltask.deadline)
-			return true;
-		else
-			return false;
-	}
-
 	private long getResponseTimeForOneTask(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks,
 			ArrayList<Resource> resources, double oneMig, long np) {
 
 		long[][] dummy_response_time = new long[tasks.size()][];
-
 		for (int i = 0; i < dummy_response_time.length; i++) {
 			dummy_response_time[i] = new long[tasks.get(i).size()];
 		}

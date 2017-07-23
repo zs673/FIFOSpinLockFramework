@@ -15,7 +15,6 @@ public class PriorityGeneator {
 		}
 
 		ArrayList<ArrayList<SporadicTask>> tasks = new ArrayList<>(tasksToAssgin);
-		// ASSIGN PRIORITIES
 		for (int i = 0; i < tasks.size(); i++) {
 			new PriorityGeneator().deadlineMonotonicPriorityAssignment(tasks.get(i), tasks.get(i).size());
 		}

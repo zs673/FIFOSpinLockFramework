@@ -103,7 +103,8 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 					if (isSystemSchedulable(tasks, Ris))
@@ -129,7 +130,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0) {
+					if (solver.findSchedulableProtocols(true)) {
 						inciaDcombine();
 					}
 
@@ -215,7 +216,8 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 					if (isSystemSchedulable(tasks, Ris))
@@ -241,7 +243,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0) {
+					if (solver.findSchedulableProtocols(true)) {
 						inciaDcombine();
 					}
 
@@ -302,7 +304,8 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 					if (isSystemSchedulable(tasks, Ris))
@@ -328,7 +331,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0) {
+					if (solver.findSchedulableProtocols(true)) {
 						inciaDcombine();
 					}
 
@@ -410,7 +413,8 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 					if (isSystemSchedulable(tasks, Ris))
@@ -436,7 +440,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0) {
+					if (solver.findSchedulableProtocols(true)) {
 						inciaDcombine();
 					}
 
@@ -498,7 +502,8 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
+							true);
 
 					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
 					if (isSystemSchedulable(tasks, Ris))
@@ -524,7 +529,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true) >= 0) {
+					if (solver.findSchedulableProtocols(true)) {
 						inciaDcombine();
 					}
 					System.out.println(Thread.currentThread().getName() + " F");

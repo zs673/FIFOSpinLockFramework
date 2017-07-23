@@ -19,6 +19,14 @@ public class SortTest {
 
 		array.sort((p1, p2) -> Double.compare(p2, p1));
 		System.out.println(Arrays.toString(array.toArray()));
+		
+		
+		long[][] response_time = new long[10][];
+		for (int i = 0; i < response_time.length; i++) {
+			response_time[i] = new long[10];
+		}
+		
+		System.out.println(Arrays.deepToString(response_time));
 
 	}
 

@@ -27,7 +27,7 @@ public class TestRiDiandDMvsOPA {
 
 	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.SHORT_CS_LEN;
 	static double RESOURCE_SHARING_FACTOR = 0.2;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static void main(String[] args) throws Exception {
@@ -105,19 +105,23 @@ public class TestRiDiandDMvsOPA {
 			}
 
 			boolean b1 = false, b2 = false, b3 = false;
-			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true);
+			Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 0, AnalysisUtils.extendCalForStatic, true, true,
+					false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
 				b1 = true;
 			}
 
-			Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
+			Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 0, AnalysisUtils.extendCalForStatic, true, false,
+					false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b2 = true;
 			}
 
-			if (combined.checkSchedulabilityByOPA(tasks, resources, false)) {
+			Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 1, AnalysisUtils.extendCalForStatic, true, false,
+					false);
+			if (isSystemSchedulable(tasks, Ris)) {
 				OPA++;
 				b3 = true;
 			}
@@ -131,12 +135,18 @@ public class TestRiDiandDMvsOPA {
 			if (b2 && !b3) {
 				System.err.println("found!");
 
-				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-				combined.checkSchedulabilityByOPA(tasks, resources, true);
+				Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 0, AnalysisUtils.extendCalForStatic, true, false,
+						true);
+				Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 1, AnalysisUtils.extendCalForStatic, true, false,
+						true);
 
-				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-				Ris = combined.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false);
-				combined.checkSchedulabilityByOPA(tasks, resources, true);
+				Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 0, AnalysisUtils.extendCalForStatic, true, false,
+						true);
+				Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 0, AnalysisUtils.extendCalForStatic, true, false,
+						true);
+				
+				Ris = combined.getResponseTimewithPriorityScheme(tasks, resources, 1, AnalysisUtils.extendCalForStatic, true, false,
+						true);
 
 				System.exit(-1);
 			}

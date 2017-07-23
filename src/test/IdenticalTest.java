@@ -71,10 +71,10 @@ public class IdenticalTest {
 			}
 
 			r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
-			r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
+			r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, false);
 
 			r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
-			r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
+			r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, false);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -84,10 +84,10 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
-				r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, true);
 
 				r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
-				r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, true);
 				System.exit(0);
 			}
 			i++;
@@ -107,10 +107,10 @@ public class IdenticalTest {
 			}
 
 			r1 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
-			r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
+			r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, false);
 
 			r3 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
-			r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
+			r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, false);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -120,10 +120,10 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
-				r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, true);
 
 				r3 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
-				r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, true);
 
 				System.exit(0);
 			}
@@ -144,10 +144,10 @@ public class IdenticalTest {
 			}
 
 			r1 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
-			r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, true);
+			r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, false);
 
 			r3 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
-			r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, false, extendCal, false);
+			r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, false);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -157,10 +157,10 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				generator.testifyAllocatedTasksetAndResource(tasks, resources);
 				r1 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
-				r2 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				r2 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, true, true);
 
 				r3 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
-				r4 = combined_analysis.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r4 = combined_analysis.getResponseTimewithPriorityScheme(tasks, resources, 0, extendCal, false, false, true);
 
 				System.exit(0);
 			}
