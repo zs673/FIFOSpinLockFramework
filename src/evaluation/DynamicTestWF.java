@@ -130,7 +130,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true)) {
+					if (solver.checkSchedulability(true)) {
 						inciaDcombine();
 					}
 
@@ -243,7 +243,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true)) {
+					if (solver.checkSchedulability(true)) {
 						inciaDcombine();
 					}
 
@@ -331,7 +331,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true)) {
+					if (solver.checkSchedulability(true)) {
 						inciaDcombine();
 					}
 
@@ -440,7 +440,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true)) {
+					if (solver.checkSchedulability(true)) {
 						inciaDcombine();
 					}
 
@@ -529,7 +529,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.findSchedulableProtocols(true)) {
+					if (solver.checkSchedulability(true)) {
 						inciaDcombine();
 					}
 					System.out.println(Thread.currentThread().getName() + " F");

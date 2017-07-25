@@ -19,6 +19,7 @@ public class GASolver {
 	Random ran = new Random(System.currentTimeMillis());
 
 	public int[] bestGene = null;
+	public int bestPriority = -1;
 	int[][] nextGenes;
 	int[][] parentGenes;
 	int[][] elitismGene;
@@ -80,10 +81,10 @@ public class GASolver {
 	 * @return True: the system is feasible. False: the system is not feasible
 	 *         within the given generation and population size.
 	 */
-	public boolean findSchedulableProtocols(boolean useGA) {
+	public boolean checkSchedulability(boolean useGA) {
 		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER,
 				PRIORITY_SCHEME_NUMBER, isPrint);
-		int initial = preSovler.initialCheck();
+		int initial = preSovler.initialCheck(true);
 
 		if (initial > 0) {
 			return true;
@@ -109,8 +110,8 @@ public class GASolver {
 		getFitness(nextGenes);
 		if (bestGene != null) {
 			if (isPrint)
-				System.out.println(
-						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
+				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: "
+						+ Arrays.toString(bestGene) + " priority: " + bestPriority);
 			return true;
 		}
 
@@ -205,8 +206,8 @@ public class GASolver {
 			getFitness(nextGenes);
 			if (bestGene != null) {
 				if (isPrint)
-					System.out.println(
-							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene));
+					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: "
+							+ Arrays.toString(bestGene) + " priority: " + bestPriority);
 				return true;
 			}
 
@@ -276,8 +277,8 @@ public class GASolver {
 		}
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources, gene[resources.size()]);
-		long[][] Ris = framework.getResponseTimewithPriorityScheme(tasksWithAllocation, resources, 0,
-				AnalysisUtils.extendCalForGA, false, true, false);
+		long[][] Ris = framework.getResponseTimeByDM(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA,
+				true);
 
 		if (Ris == null) {
 			int NoT = 0;
@@ -285,7 +286,7 @@ public class GASolver {
 				NoT++;
 			}
 			fitness[0] = NoT;
-			fitness[1] = 0;
+			fitness[1] = Long.MAX_VALUE;
 		} else {
 			int sched_fitness = 0;
 			long rt_fitness = 0;
@@ -299,6 +300,17 @@ public class GASolver {
 			}
 			fitness[0] = sched_fitness;
 			fitness[1] = rt_fitness;
+		}
+
+		if (fitness[0] == 0) {
+			bestPriority = 0;
+		} else {
+			long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, false);
+			if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
+				fitness[0] = 0;
+				fitness[1] = 0;
+				bestPriority = 1;
+			}
 		}
 
 		return fitness;
@@ -336,6 +348,19 @@ public class GASolver {
 
 		System.exit(-1);
 		return 100;
+	}
+
+	boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+		if (tasks == null || tasks.size() == 0 || Ris == null || Ris.length == 0)
+			return false;
+
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < Ris[i][j])
+					return false;
+			}
+		}
+		return true;
 	}
 
 }
