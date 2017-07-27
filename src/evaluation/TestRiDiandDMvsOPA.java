@@ -45,11 +45,6 @@ public class TestRiDiandDMvsOPA {
 			}).start();
 		}
 		work.await();
-
-		// for (int i = 6; i >0; i--) {
-		// test.experimentIncreasingCriticalSectionLength(i);
-		// }
-
 		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}

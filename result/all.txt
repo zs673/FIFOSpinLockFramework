@@ -1,12 +1,12 @@
 minT: 1  maxT: 1000
 Work Load
 CS Length 
-11 0.9829 0.9687 0.972
-12 0.9326 0.8632 0.892
-13 0.8481 0.7091 0.7608
-14 0.7286 0.5207 0.5813
-15 0.6078 0.3682 0.4229
-16 0.7153 0.5029 0.5551
+11 Ri with DM: 0.9501    Di with DM: 0.9164    Di with OPA: 0.9245    OPA can but Ri with DM cannot: 5    Ri with DM can but OPA cannot: 261
+12 Ri with DM: 0.9065    Di with DM: 0.8215    Di with OPA: 0.8548    OPA can but Ri with DM cannot: 20    Ri with DM can but OPA cannot: 537
+13 Ri with DM: 0.8211    Di with DM: 0.6916    Di with OPA: 0.7445    OPA can but Ri with DM cannot: 49    Ri with DM can but OPA cannot: 815
+14 Ri with DM: 0.4982    Di with DM: 0.3834    Di with OPA: 0.4282    OPA can but Ri with DM cannot: 61    Ri with DM can but OPA cannot: 761
+15 Ri with DM: 0.3064    Di with DM: 0.2168    Di with OPA: 0.2499    OPA can but Ri with DM cannot: 41    Ri with DM can but OPA cannot: 606
+16 Ri with DM: 0.4565    Di with DM: 0.3469    Di with OPA: 0.3885    OPA can but Ri with DM cannot: 43    Ri with DM can but OPA cannot: 723
 Resource Access 
 Parallel 
 RSF 
@@ -17,124 +17,12 @@ RSF
 minT: 1  maxT: 1000
 Work Load
 CS Length 
-11 0.9552 0.9258 0.9324
-12 0.9018 0.8229 0.8522
-13 0.8236 0.6901 0.7421
-14 0.4983 0.382 0.4256
-15 0.3092 0.2178 0.2543
-16 0.4523 0.3511 0.3919
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 0.953 0.924 0.93
-12 0.908 0.821 0.854
-13 0.812 0.69 0.738
-14 0.511 0.38 0.433
-15 0.279 0.196 0.226
-16 0.459 0.341 0.386
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 0.9529 0.9214 0.9301 we can: 4
-12 0.9067 0.8277 0.8592 we can: 20
-13 0.8212 0.69 0.744 we can: 59
-14 0.4921 0.3788 0.4249 we can: 53
-15 0.3174 0.2249 0.2585 we can: 56
-16 0.4559 0.3466 0.3884 we can: 52
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 0.9538 0.9242 0.9324 we can: 3 we cannot: 217
-12 0.901 0.8192 0.8495 we can: 26 we cannot: 541
-13 0.8204 0.6879 0.7391 we can: 47 we cannot: 860
-14 0.4839 0.3719 0.4172 we can: 53 we cannot: 720
-15 0.3086 0.2199 0.254 we can: 46 we cannot: 592
-16 0.4486 0.3458 0.3845 we can: 41 we cannot: 682
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 Ri with DM: 0.9498    Di with DM: 0.9184    Di with OPA: 0.926    OPA can but Ri with DM cannot: 3    Ri with DM can but OPA cannot: 241
-12 Ri with DM: 0.903    Di with DM: 0.8201    Di with OPA: 0.8528    OPA can but Ri with DM cannot: 26    Ri with DM can but OPA cannot: 528
-13 Ri with DM: 0.8167    Di with DM: 0.6845    Di with OPA: 0.739    OPA can but Ri with DM cannot: 63    Ri with DM can but OPA cannot: 840
-14 Ri with DM: 0.4981    Di with DM: 0.3798    Di with OPA: 0.4273    OPA can but Ri with DM cannot: 41    Ri with DM can but OPA cannot: 749
-15 Ri with DM: 0.316    Di with DM: 0.222    Di with OPA: 0.2575    OPA can but Ri with DM cannot: 45    Ri with DM can but OPA cannot: 630
-16 Ri with DM: 0.4422    Di with DM: 0.3406    Di with OPA: 0.381    OPA can but Ri with DM cannot: 50    Ri with DM can but OPA cannot: 662
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 Ri with DM: 0.958    Di with DM: 0.935    Di with OPA: 0.937    OPA can but Ri with DM cannot: 0    Ri with DM can but OPA cannot: 21
-12 Ri with DM: 0.912    Di with DM: 0.835    Di with OPA: 0.866    OPA can but Ri with DM cannot: 1    Ri with DM can but OPA cannot: 47
-13 Ri with DM: 0.821    Di with DM: 0.692    Di with OPA: 0.748    OPA can but Ri with DM cannot: 7    Ri with DM can but OPA cannot: 80
-14 Ri with DM: 0.481    Di with DM: 0.358    Di with OPA: 0.409    OPA can but Ri with DM cannot: 5    Ri with DM can but OPA cannot: 77
-15 Ri with DM: 0.307    Di with DM: 0.213    Di with OPA: 0.255    OPA can but Ri with DM cannot: 5    Ri with DM can but OPA cannot: 57
-16 Ri with DM: 0.436    Di with DM: 0.335    Di with OPA: 0.369    OPA can but Ri with DM cannot: 6    Ri with DM can but OPA cannot: 73
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 Ri with DM: 0.947    Di with DM: 0.92    Di with OPA: 0.924    OPA can but Ri with DM cannot: 0    Ri with DM can but OPA cannot: 23
-12 Ri with DM: 0.909    Di with DM: 0.828    Di with OPA: 0.855    OPA can but Ri with DM cannot: 3    Ri with DM can but OPA cannot: 57
-13 Ri with DM: 0.807    Di with DM: 0.671    Di with OPA: 0.72    OPA can but Ri with DM cannot: 6    Ri with DM can but OPA cannot: 93
-14 Ri with DM: 0.494    Di with DM: 0.376    Di with OPA: 0.419    OPA can but Ri with DM cannot: 4    Ri with DM can but OPA cannot: 79
-15 Ri with DM: 0.311    Di with DM: 0.213    Di with OPA: 0.254    OPA can but Ri with DM cannot: 7    Ri with DM can but OPA cannot: 64
-16 Ri with DM: 0.427    Di with DM: 0.324    Di with OPA: 0.366    OPA can but Ri with DM cannot: 2    Ri with DM can but OPA cannot: 63
-Resource Access 
-Parallel 
-RSF 
-
-
-
-
-minT: 1  maxT: 1000
-Work Load
-CS Length 
-11 Ri with DM: 0.9514    Di with DM: 0.9192    Di with OPA: 0.9264    OPA can but Ri with DM cannot: 1    Ri with DM can but OPA cannot: 251
-12 Ri with DM: 0.8992    Di with DM: 0.8163    Di with OPA: 0.8486    OPA can but Ri with DM cannot: 29    Ri with DM can but OPA cannot: 535
-13 Ri with DM: 0.8285    Di with DM: 0.6925    Di with OPA: 0.7451    OPA can but Ri with DM cannot: 50    Ri with DM can but OPA cannot: 884
-14 Ri with DM: 0.4973    Di with DM: 0.3807    Di with OPA: 0.4259    OPA can but Ri with DM cannot: 62    Ri with DM can but OPA cannot: 776
-15 Ri with DM: 0.3127    Di with DM: 0.2175    Di with OPA: 0.2532    OPA can but Ri with DM cannot: 40    Ri with DM can but OPA cannot: 635
-16 Ri with DM: 0.4598    Di with DM: 0.3479    Di with OPA: 0.3939    OPA can but Ri with DM cannot: 51    Ri with DM can but OPA cannot: 710
+11 Ri with DM: 0.9477    Di with DM: 0.9172    Di with OPA: 0.9242    OPA can but Ri with DM cannot: 2    Ri with DM can but OPA cannot: 237
+12 Ri with DM: 0.9042    Di with DM: 0.8216    Di with OPA: 0.853    OPA can but Ri with DM cannot: 19    Ri with DM can but OPA cannot: 531
+13 Ri with DM: 0.8254    Di with DM: 0.6941    Di with OPA: 0.7463    OPA can but Ri with DM cannot: 48    Ri with DM can but OPA cannot: 839
+14 Ri with DM: 0.4948    Di with DM: 0.3835    Di with OPA: 0.4272    OPA can but Ri with DM cannot: 56    Ri with DM can but OPA cannot: 732
+15 Ri with DM: 0.3122    Di with DM: 0.2178    Di with OPA: 0.2544    OPA can but Ri with DM cannot: 39    Ri with DM can but OPA cannot: 617
+16 Ri with DM: 0.4542    Di with DM: 0.3487    Di with OPA: 0.3856    OPA can but Ri with DM cannot: 36    Ri with DM can but OPA cannot: 722
 Resource Access 
 Parallel 
 RSF 

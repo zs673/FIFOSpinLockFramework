@@ -10,17 +10,22 @@ import utils.AnalysisUtils;
 public class CombinedAnalysis {
 
 	public long[][] getResponseTimewithPriorityScheme(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			int priorityScheme, int extendCal, boolean testSchedulability,  boolean useRi, boolean isprint) {
+			int priorityScheme, int extendCal, boolean testSchedulability, boolean useRi, boolean isprint) {
 
 		switch (priorityScheme) {
 		case 0:
-			return getResponseTimeByDM(tasks, resources, testSchedulability, isprint, extendCal, useRi);
+			return getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isprint, extendCal, useRi, true);
 		case 1:
 			return getResponseTimeByOPA(tasks, resources, isprint);
 		default:
 			return null;
 		}
 
+	}
+
+	public long[][] getResponseTimeNoPriority(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			int extendCal, boolean testSchedulability, boolean useRi, boolean isprint) {
+		return getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isprint, extendCal, useRi, false);
 	}
 
 	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
@@ -59,8 +64,9 @@ public class CombinedAnalysis {
 					int originalP = task.priority;
 					task.priority = sratingP;
 
-					long time = response_time[task.partition][tasks.get(task.partition).indexOf(task)] = getResponseTimeForOneTask(task,
-							tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection);
+					long time = response_time[task.partition][tasks.get(task.partition)
+							.indexOf(task)] = getResponseTimeForOneTask(task, tasks, resources,
+									AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection);
 					boolean isSchedulable = time <= task.deadline;
 
 					if (!isSchedulable) {
@@ -84,13 +90,15 @@ public class CombinedAnalysis {
 		return response_time;
 	}
 
-	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
+	public long[][] getResponseTimeByStaticPriority(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi, boolean useDM) {
 		if (tasks == null)
 			return null;
 
-		// assign priorities by Deadline Monotonic
-		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+		if (useDM) {
+			// assign priorities by Deadline Monotonic
+			tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+		}
 
 		long count = 0; // The number of calculations
 		long np = 0; // The NP section length if MrsP is applied
