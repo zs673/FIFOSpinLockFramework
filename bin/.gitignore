@@ -1,4 +1,7 @@
 /native/
-/evaluation/
-/analysis/
+/basicAnalysis/
 /GeneticAlgorithmFramework/
+/analysis/
+/entity/
+/evaluation/
+/test/

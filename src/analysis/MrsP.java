@@ -334,15 +334,15 @@ public class MrsP {
 	/*
 	 * gives a set of resources that can cause local blocking for a given task
 	 */
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
+			ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
 
-			if (resource.partitions.contains(partition)
-					&& resource.getCeilingForProcessor(localTasks) >= task.priority) {
+			if (resource.partitions.contains(partition) && resource.getCeilingForProcessor(localTasks) >= task.priority) {
 				for (int j = 0; j < resource.requested_tasks.size(); j++) {
 					SporadicTask LP_task = resource.requested_tasks.get(j);
 					if (LP_task.partition == partition && LP_task.priority < task.priority) {

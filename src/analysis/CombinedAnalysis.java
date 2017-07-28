@@ -9,25 +9,6 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 
-	public long[][] getResponseTimewithPriorityScheme(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			int priorityScheme, int extendCal, boolean testSchedulability, boolean useRi, boolean isprint) {
-
-		switch (priorityScheme) {
-		case 0:
-			return getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isprint, extendCal, useRi, true);
-		case 1:
-			return getResponseTimeByOPA(tasks, resources, isprint);
-		default:
-			return null;
-		}
-
-	}
-
-	public long[][] getResponseTimeNoPriority(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			int extendCal, boolean testSchedulability, boolean useRi, boolean isprint) {
-		return getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isprint, extendCal, useRi, false);
-	}
-
 	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			boolean isprint) {
 		if (tasks == null)

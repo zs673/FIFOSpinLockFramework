@@ -141,7 +141,7 @@ public class StaticTestWF {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks =generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
 			Ris = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
 			getUnschedulableTasks(tasks, Ris, results[0]);

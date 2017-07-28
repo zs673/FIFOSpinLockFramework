@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import utils.AnalysisUtils;
 
 public class NewPriorityAssignment {
 
@@ -13,9 +14,12 @@ public class NewPriorityAssignment {
 		if (tasks == null)
 			return null;
 
-		long[][] response_time = new long[tasks.size()][];
-		for (int i = 0; i < response_time.length; i++) {
-			response_time[i] = new long[tasks.get(i).size()];
+		long[][] deadline = new long[tasks.size()][];
+		for (int i = 0; i < tasks.size(); i++) {
+			deadline[i] = new long[tasks.get(i).size()];
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				deadline[i][j] = tasks.get(i).get(j).deadline;
+			}
 		}
 
 		long npsection = 0;
@@ -24,8 +28,9 @@ public class NewPriorityAssignment {
 			if (resource.protocol == 3 && npsection < resource.csl)
 				npsection = resources.get(i).csl;
 		}
-		
-		analysis.getResponseTimeByStaticPriority(tasks, resources, false, false, utils.AnalysisUtils.extendCalForStatic, true, true);
+
+		analysis.getResponseTimeByStaticPriority(tasks, resources, false, false, AnalysisUtils.extendCalForStatic,
+				true, true);
 		return null;
 
 	}

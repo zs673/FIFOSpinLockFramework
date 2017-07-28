@@ -147,6 +147,9 @@ public class MrsPbasic {
 		return interference;
 	}
 
+	/*
+	 * Including the resource usage of the task itself.
+	 */
 	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			long[][] Ris, long time, long jitter, long oneMig, long np) {
 		long resource_accessing_time = 0;

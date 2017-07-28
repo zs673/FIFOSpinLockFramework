@@ -9,7 +9,8 @@ import utils.AnalysisUtils;
 
 public class FIFOPbasic {
 
-	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -84,6 +85,9 @@ public class FIFOPbasic {
 		return response_time_plus;
 	}
 
+	/*
+	 * Including the resource usage of the task itself.
+	 */
 	private long getSpinDelay(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			long time, long[][] Ris) {
 		long spin = 0;
@@ -213,7 +217,8 @@ public class FIFOPbasic {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
+			ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 

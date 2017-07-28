@@ -274,7 +274,8 @@ public class FIFONP {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
+			ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 

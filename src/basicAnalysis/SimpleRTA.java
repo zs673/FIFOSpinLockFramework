@@ -9,7 +9,8 @@ import utils.AnalysisUtils;
 
 public class SimpleRTA {
 
-	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean printBebug) {
 		if (tasks == null)
 			return null;
 

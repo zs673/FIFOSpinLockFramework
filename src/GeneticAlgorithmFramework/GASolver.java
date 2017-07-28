@@ -277,8 +277,8 @@ public class GASolver {
 		}
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources, gene[resources.size()]);
-		long[][] Ris = framework.getResponseTimeByStaticPriority(tasksWithAllocation, resources, false, false, AnalysisUtils.extendCalForGA,
-				true,true);
+		long[][] Ris = framework.getResponseTimeByStaticPriority(tasksWithAllocation, resources, false, false,
+				AnalysisUtils.extendCalForGA, true, true);
 
 		if (Ris == null) {
 			int NoT = 0;

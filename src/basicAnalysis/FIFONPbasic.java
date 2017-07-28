@@ -9,7 +9,8 @@ import utils.AnalysisUtils;
 
 public class FIFONPbasic {
 
-	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printDebug) {
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
+			boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -89,7 +90,8 @@ public class FIFONPbasic {
 	}
 
 	/*
-	 * Calculate the spin delay for a given task t.
+	 * Calculate the spin delay for a given task t. Does not account for the
+	 * resource usage of the task itself.
 	 */
 	private long directRemoteDelay(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
 			long[][] Ris, long Ri) {
@@ -223,7 +225,8 @@ public class FIFONPbasic {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
+			ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 

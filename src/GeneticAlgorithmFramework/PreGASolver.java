@@ -30,7 +30,7 @@ public class PreGASolver {
 	public int priority = -1;
 
 	boolean lazyMode; // If on, tell GA to finish if the system is unlike
-								// to schedule.
+						// to schedule.
 
 	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
 			int PROTOCOL_NUMBER, int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
@@ -60,8 +60,12 @@ public class PreGASolver {
 				return result; // has a feasible solution
 		}
 
-		if (notpossiblecount == ALLOCATION_POLICY_NUMBER)
+		if (notpossiblecount == ALLOCATION_POLICY_NUMBER){
+			if(print){
+				System.out.println("inital check say: NO POSSIBLE");
+			}
 			return -1; // not possible
+		}
 
 		return 0; // need GA
 	}
