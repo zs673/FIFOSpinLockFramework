@@ -86,11 +86,11 @@ public class PreGASolver {
 			return -1;
 
 		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				fifonp.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
 		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				fifop.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
 		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.getResponseTimeByDM(tasksWithAlloc, resources, false, false, AnalysisUtils.extendCalForStatic, true));
+				mrsp.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {

@@ -29,11 +29,11 @@ public class SporadicTask {
 	public double[] fifonp = null;
 	public double[] fifop = null;
 
-	public SporadicTask(int priority, long t, long c, int partition, int id, double util) {
+	public SporadicTask(int priority, long period, long WCET, int partition, int id, double util) {
 		this.priority = priority;
-		this.period = t;
-		this.WCET = c;
-		this.deadline = t;
+		this.period = period;
+		this.WCET = WCET;
+		this.deadline = period;
 		this.partition = partition;
 		this.id = id;
 		this.util = util;
@@ -47,11 +47,11 @@ public class SporadicTask {
 		local = 0;
 	}
 
-	public SporadicTask(int priority, long t, long c, int id, double util) {
+	public SporadicTask(int priority, long period, long WCET, int id, double util) {
 		this.priority = priority;
-		this.period = t;
-		this.WCET = c;
-		this.deadline = t;
+		this.period = period;
+		this.WCET = WCET;
+		this.deadline = period;
 		this.id = id;
 		this.partition = -1;
 		this.util = util;

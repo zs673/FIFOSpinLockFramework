@@ -22,8 +22,8 @@ public class PriorityGeneator {
 		return tasks;
 	}
 
-	private void deadlineMonotonicPriorityAssignment(ArrayList<SporadicTask> taskset, int number) {
-		ArrayList<Integer> priorities = generatePriorities(number);
+	private void deadlineMonotonicPriorityAssignment(ArrayList<SporadicTask> taskset, int NoT) {
+		ArrayList<Integer> priorities = generatePriorities(NoT);
 		/* deadline monotonic assignment */
 		taskset.sort((t1, t2) -> Double.compare(t1.deadline, t2.deadline));
 		priorities.sort((p1, p2) -> -Integer.compare(p1, p2));

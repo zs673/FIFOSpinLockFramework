@@ -58,9 +58,9 @@ public class IdenticalTest {
 		long[][] r1, r2, r3, r4;
 		int i = 0;
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, true, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
-				RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+				TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR,
+				CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
@@ -73,11 +73,11 @@ public class IdenticalTest {
 				resources.get(j).protocol = 3;
 			}
 
-			r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, true);
+			r1 = mrsp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, isPrint);
 			r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal, true,
 					useDM);
 
-			r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, false);
+			r3 = mrsp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, isPrint);
 			r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal,
 					false, useDM);
 
@@ -87,12 +87,12 @@ public class IdenticalTest {
 			if (!isEqual1 || !isEqual2) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				generator.PrintAllocatedSystem(tasks, resources);
+				r1 = mrsp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, true);
 				r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						true, useDM);
 
-				r3 = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r3 = mrsp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, true);
 				r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						false, useDM);
 				System.exit(0);
@@ -113,11 +113,11 @@ public class IdenticalTest {
 				resources.get(j).protocol = 1;
 			}
 
-			r1 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, true);
+			r1 = fnp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, isPrint);
 			r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal, true,
 					useDM);
 
-			r3 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, false);
+			r3 = fnp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, isPrint);
 			r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal,
 					false, useDM);
 
@@ -127,12 +127,12 @@ public class IdenticalTest {
 			if (!isEqual1 || !isEqual2) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				generator.PrintAllocatedSystem(tasks, resources);
+				r1 = fnp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, true);
 				r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						true, useDM);
 
-				r3 = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r3 = fnp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, true);
 				r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						false, useDM);
 
@@ -154,11 +154,11 @@ public class IdenticalTest {
 				resources.get(j).protocol = 2;
 			}
 
-			r1 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, true);
+			r1 = fp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, isPrint);
 			r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal, true,
 					useDM);
 
-			r3 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, isPrint, extendCal, false);
+			r3 = fp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, isPrint);
 			r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, isPrint, extendCal,
 					false, useDM);
 
@@ -168,12 +168,12 @@ public class IdenticalTest {
 			if (!isEqual1 || !isEqual2) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
-				generator.testifyAllocatedTasksetAndResource(tasks, resources);
-				r1 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, true);
+				generator.PrintAllocatedSystem(tasks, resources);
+				r1 = fp.getResponseTimeByDM(tasks, resources, true, testSchedulability, extendCal, true);
 				r2 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						true, useDM);
 
-				r3 = fp.getResponseTimeByDM(tasks, resources, testSchedulability, true, extendCal, false);
+				r3 = fp.getResponseTimeByDM(tasks, resources, false, testSchedulability, extendCal, true);
 				r4 = combined_analysis.getResponseTimeByStaticPriority(tasks, resources, testSchedulability, true, extendCal,
 						false, useDM);
 

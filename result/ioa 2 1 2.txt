@@ -1,2 +1,2 @@
-Ri with DM: 0.9016    Di with DM: 0.8242    Di with OPA: 0.8549    OPA can but Ri with DM cannot: 25    Ri with DM can but OPA cannot: 492
+Ri with DM: 0.9056    Di with DM: 0.8254    Di with OPA: 0.8576    OPA can but Ri with DM cannot: 21    Ri with DM can but OPA cannot: 501
 

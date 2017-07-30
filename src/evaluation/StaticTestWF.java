@@ -15,7 +15,7 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.IOAResultReader;
+import generatorTools.ResultFileReader;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -92,7 +92,7 @@ public class StaticTestWF {
 		accesscountdown.await();
 		processorscountdown.await();
 
-		IOAResultReader.schedreader(null, false);
+		ResultFileReader.schedreader(null, false);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
@@ -121,9 +121,9 @@ public class StaticTestWF {
 			break;
 		}
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, cs_range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, RESOURCE_SHARING_FACTOR, cs_range,
+				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -143,17 +143,17 @@ public class StaticTestWF {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -171,8 +171,8 @@ public class StaticTestWF {
 	}
 
 	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS, true,
-				range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, NoT * TOTAL_PARTITIONS,
+				RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -192,17 +192,17 @@ public class StaticTestWF {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -220,8 +220,8 @@ public class StaticTestWF {
 	}
 
 	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP,
-				true, range, RESOURCES_RANGE.PARTITIONS, RESOURCE_SHARING_FACTOR, NoA, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP,
+				NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NoA, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -241,17 +241,17 @@ public class StaticTestWF {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
@@ -269,9 +269,9 @@ public class StaticTestWF {
 	}
 
 	public void experimentIncreasingContention(int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NoA, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, RESOURCE_SHARING_FACTOR, range,
+				RESOURCES_RANGE.PARTITIONS, NoA, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -291,17 +291,17 @@ public class StaticTestWF {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[1]);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, testSchedulability, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, useRi, testSchedulability, AnalysisUtils.extendCalForStatic, false);
 			getUnschedulableTasks(tasks, Ris, results[2]);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;

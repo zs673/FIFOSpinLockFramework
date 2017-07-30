@@ -18,7 +18,7 @@ import basicAnalysis.FIFOPbasic;
 import basicAnalysis.MrsPbasic;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.IOAResultReader;
+import generatorTools.ResultFileReader;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -67,7 +67,7 @@ public class DynamicTestWF {
 			test.initResults();
 			test.parallelExperimentIncreasingrsf(i);
 		}
-		IOAResultReader.schedreader(null, false);
+		ResultFileReader.schedreader(null, false);
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA) {
@@ -88,8 +88,8 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+							TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS,
 							NoA, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -106,15 +106,15 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -201,8 +201,8 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, cs_range, RESOURCES_RANGE.PARTITIONS, RSF,
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+							TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, cs_range, RESOURCES_RANGE.PARTITIONS,
 							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -219,15 +219,15 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -289,8 +289,8 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, NoP,
-							NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, RSF,
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+							NoP, NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS,
 							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -307,15 +307,15 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -398,8 +398,8 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+							TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, rsf, range, RESOURCES_RANGE.PARTITIONS,
 							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -416,15 +416,15 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 
@@ -487,8 +487,8 @@ public class DynamicTestWF {
 
 				@Override
 				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NoT, true, range, RESOURCES_RANGE.PARTITIONS, rsf,
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+							TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, rsf, range, RESOURCES_RANGE.PARTITIONS,
 							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
@@ -505,15 +505,15 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+					Ris = IOAfp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
 

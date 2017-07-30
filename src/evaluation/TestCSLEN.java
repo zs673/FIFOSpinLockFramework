@@ -14,7 +14,7 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.IOAResultReader;
+import generatorTools.ResultFileReader;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -48,14 +48,14 @@ public class TestCSLEN {
 			}).start();
 		}
 		workloadcd.await();
-		IOAResultReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		ResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, true, null, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+				TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, null,
+				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -73,15 +73,15 @@ public class TestCSLEN {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, useRi);
+			Ris = fp.getResponseTimeByDM(tasks, resources, useRi, true, AnalysisUtils.extendCalForStatic, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 

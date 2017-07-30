@@ -21,9 +21,9 @@ public class TestGeneatorTasks {
 		double RESOURCE_SHARING_FACTOR = 0.2;
 		int TOTAL_PARTITIONS = 16;
 
-		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, TOTAL_PARTITIONS,
-				NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, true, range, RESOURCES_RANGE.PARTITIONS,
-				RESOURCE_SHARING_FACTOR, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
+		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
+				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, RESOURCE_SHARING_FACTOR, range,
+				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
 		for (int j = 0; j < NUMBER_OF_SYSTEMS; j++) {
 			ArrayList<SporadicTask> tasks = geneator.generateTasks();
@@ -32,42 +32,42 @@ public class TestGeneatorTasks {
 
 			System.out.println(" WORST FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksWF = geneator.allocateTasks(tasks, resources, 0);
-			geneator.testifyAllocatedTasksetAndResource(tasksWF, resources);
+			geneator.PrintAllocatedSystem(tasksWF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" BEST FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksBF = geneator.allocateTasks(tasks, resources, 1);
-			geneator.testifyAllocatedTasksetAndResource(tasksBF, resources);
+			geneator.PrintAllocatedSystem(tasksBF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" FIRST FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksFF = geneator.allocateTasks(tasks, resources, 2);
-			geneator.testifyAllocatedTasksetAndResource(tasksFF, resources);
+			geneator.PrintAllocatedSystem(tasksFF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" NEXT FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksNF = geneator.allocateTasks(tasks, resources, 3);
-			geneator.testifyAllocatedTasksetAndResource(tasksNF, resources);
+			geneator.PrintAllocatedSystem(tasksNF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" RESOURCE REQUEST FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksRRF = geneator.allocateTasks(tasks, resources, 4);
-			geneator.testifyAllocatedTasksetAndResource(tasksRRF, resources);
+			geneator.PrintAllocatedSystem(tasksRRF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" RESOURCE LOCAL FIT");
 			ArrayList<ArrayList<SporadicTask>> tasksRLF = geneator.allocateTasks(tasks, resources, 5);
-			geneator.testifyAllocatedTasksetAndResource(tasksRLF, resources);
+			geneator.PrintAllocatedSystem(tasksRLF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" RESOURCE Length FIT");
 			ArrayList<ArrayList<SporadicTask>> taskscslendF = geneator.allocateTasks(tasks, resources, 6);
-			geneator.testifyAllocatedTasksetAndResource(taskscslendF, resources);
+			geneator.PrintAllocatedSystem(taskscslendF, resources);
 
 			System.out.println("\n\n");
 			System.out.println(" RESOURCE Length FIT");
 			ArrayList<ArrayList<SporadicTask>> taskscsleniF = geneator.allocateTasks(tasks, resources, 7);
-			geneator.testifyAllocatedTasksetAndResource(taskscsleniF, resources);
+			geneator.PrintAllocatedSystem(taskscsleniF, resources);
 
 			System.err.println("\n\n " + j + " \n\n");
 

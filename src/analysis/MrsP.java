@@ -10,7 +10,7 @@ import utils.AnalysisUtils;
 public class MrsP {
 
 	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
+			boolean useRi, boolean testSchedulability, int extendCal, boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -399,7 +399,7 @@ public class MrsP {
 		// identify the migration targets with preemptors
 		for (int i = 0; i < migration_targets.size(); i++) {
 			int partition = migration_targets.get(i);
-			if (tasks.get(partition).get(0).priority > resource.getCeilingForProcessor(partition, tasks))
+			if (tasks.get(partition).get(0).priority > resource.getCeilingForProcessor(tasks, partition))
 				migration_targets_with_P.add(migration_targets.get(i));
 		}
 
@@ -481,7 +481,7 @@ public class MrsP {
 			for (int j = 0; j < tasks.get(partition_with_p).size(); j++) {
 				SporadicTask hpTask = tasks.get(partition_with_p).get(j);
 
-				if (hpTask.priority > resource.getCeilingForProcessor(partition_with_p, tasks))
+				if (hpTask.priority > resource.getCeilingForProcessor(tasks, partition_with_p))
 					migCost += Math.ceil((duration) / hpTask.period) * oneMig;
 			}
 		}

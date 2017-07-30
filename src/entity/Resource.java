@@ -26,14 +26,8 @@ public class Resource {
 				+ requested_tasks.size() + ", isGlobal: " + isGlobal;
 	}
 
-	public int getCeilingForProcessor(int partition, ArrayList<ArrayList<SporadicTask>> tasks) {
+	public int getCeilingForProcessor(ArrayList<ArrayList<SporadicTask>> tasks, int partition) {
 		int ceiling = -1;
-
-		// if (!this.partitions.contains(partition)) {
-		// System.err.println("This resource does not contain the partiton: R" +
-		// this.id + " partition: " + partition);
-		// System.exit(-1);
-		// }
 
 		for (int k = 0; k < tasks.get(partition).size(); k++) {
 			SporadicTask task = tasks.get(partition).get(k);
@@ -42,12 +36,6 @@ public class Resource {
 				ceiling = task.priority > ceiling ? task.priority : ceiling;
 			}
 		}
-
-		// if (ceiling <= 0) {
-		// System.err.println("the ceiling is <= 0. there must be something
-		// wrong. Check it!");
-		// System.exit(-1);
-		// }
 
 		return ceiling;
 	}

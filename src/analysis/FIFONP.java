@@ -10,7 +10,7 @@ import utils.AnalysisUtils;
 public class FIFONP {
 
 	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi) {
+			boolean useRi, boolean testSchedulability, int extendCal, boolean printDebug) {
 		if (tasks == null)
 			return null;
 
