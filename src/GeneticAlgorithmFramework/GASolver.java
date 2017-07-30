@@ -305,7 +305,7 @@ public class GASolver {
 		if (fitness[0] == 0) {
 			bestPriority = 0;
 		} else {
-			long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, false);
+			long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
 			if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
 				fitness[0] = 0;
 				fitness[1] = 0;

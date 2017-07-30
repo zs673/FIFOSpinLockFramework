@@ -60,8 +60,8 @@ public class PreGASolver {
 				return result; // has a feasible solution
 		}
 
-		if (notpossiblecount == ALLOCATION_POLICY_NUMBER){
-			if(print){
+		if (notpossiblecount == ALLOCATION_POLICY_NUMBER) {
+			if (print) {
 				System.out.println("inital check say: NO POSSIBLE");
 			}
 			return -1; // not possible
@@ -144,7 +144,7 @@ public class PreGASolver {
 		for (int i = 0; i < resources.size(); i++) {
 			resources.get(i).protocol = 1;
 		}
-		long[][] rt_fifonp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+		long[][] rt_fifonp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, true, false);
 		if (isSystemSchedulable(tasksWithAlloc, rt_fifonp)) {
 			if (print)
 				System.out.println("fifonp schedulable with allocation: " + allocPolicy + " and OPA");
@@ -157,7 +157,7 @@ public class PreGASolver {
 		for (int i = 0; i < resources.size(); i++) {
 			resources.get(i).protocol = 2;
 		}
-		long[][] rt_fifop = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+		long[][] rt_fifop = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, true, false);
 		if (isSystemSchedulable(tasksWithAlloc, rt_fifop)) {
 			if (print)
 				System.out.println("fifop schedulable with allocation: " + allocPolicy + " and OPA");
@@ -170,7 +170,7 @@ public class PreGASolver {
 		for (int i = 0; i < resources.size(); i++) {
 			resources.get(i).protocol = 3;
 		}
-		long[][] rt_fifomrsp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, false);
+		long[][] rt_fifomrsp = analysis.getResponseTimeByOPA(tasksWithAlloc, resources, true, false);
 		if (isSystemSchedulable(tasksWithAlloc, rt_fifomrsp)) {
 			if (print)
 				System.out.println("fifomrsp schedulable with allocation: " + allocPolicy + " and OPA");

@@ -114,7 +114,7 @@ public class TestRiDiandDMvsOPA {
 				b2 = true;
 			}
 
-			Ris = combined.getResponseTimeByOPA(tasks, resources, false);
+			Ris = combined.getResponseTimeByOPA(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				OPA++;
 				b3 = true;
@@ -131,14 +131,14 @@ public class TestRiDiandDMvsOPA {
 
 				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
 						false, true);
-				Ris = combined.getResponseTimeByOPA(tasks, resources, true);
+				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
 				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
 						false, true);
 				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
 						false, true);
 
-				Ris = combined.getResponseTimeByOPA(tasks, resources, true);
+				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
 				System.exit(-1);
 			}

@@ -10,7 +10,7 @@ import utils.AnalysisUtils;
 public class CombinedAnalysis {
 
 	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean isprint) {
+			boolean backToBack, boolean isprint) {
 		if (tasks == null)
 			return null;
 
