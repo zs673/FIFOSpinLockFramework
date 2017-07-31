@@ -14,7 +14,8 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.ResultFileReader;
+import generatorTools.TestResultFileReader;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -49,7 +50,7 @@ public class TestCSLEN {
 			}).start();
 		}
 		workloadcd.await();
-		ResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
 
@@ -72,7 +73,7 @@ public class TestCSLEN {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,generator.total_partitions,  0);
 
 			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))

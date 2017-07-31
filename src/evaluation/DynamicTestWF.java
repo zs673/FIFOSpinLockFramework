@@ -18,7 +18,8 @@ import basicAnalysis.FIFOPbasic;
 import basicAnalysis.MrsPbasic;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.ResultFileReader;
+import generatorTools.TestResultFileReader;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -68,7 +69,7 @@ public class DynamicTestWF {
 			test.initResults();
 			test.parallelExperimentIncreasingrsf(i);
 		}
-		ResultFileReader.schedreader(null, false);
+		TestResultFileReader.schedreader(null, false);
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA) {
@@ -95,7 +96,7 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 					long[][] Ris;
 					MrsP IOAmrsp = new MrsP();
@@ -211,7 +212,7 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 					long[][] Ris;
 					MrsP IOAmrsp = new MrsP();
@@ -302,7 +303,7 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
 
 					long[][] Ris;
 					MrsP IOAmrsp = new MrsP();
@@ -414,7 +415,7 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 					long[][] Ris;
 					MrsP IOAmrsp = new MrsP();
@@ -506,7 +507,7 @@ public class DynamicTestWF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 					long[][] Ris;
 					MrsP IOAmrsp = new MrsP();

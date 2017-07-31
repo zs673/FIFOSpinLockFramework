@@ -15,7 +15,8 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.ResultFileReader;
+import generatorTools.TestResultFileReader;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -93,7 +94,7 @@ public class StaticTestWF {
 		accesscountdown.await();
 		processorscountdown.await();
 
-		ResultFileReader.schedreader(null, false);
+		TestResultFileReader.schedreader(null, false);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
@@ -142,7 +143,7 @@ public class StaticTestWF {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -191,7 +192,7 @@ public class StaticTestWF {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -240,7 +241,7 @@ public class StaticTestWF {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);
@@ -290,7 +291,7 @@ public class StaticTestWF {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			getUnschedulableTasks(tasks, Ris, results[0]);

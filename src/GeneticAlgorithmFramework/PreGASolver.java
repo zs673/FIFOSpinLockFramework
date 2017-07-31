@@ -8,6 +8,7 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
@@ -20,6 +21,8 @@ public class PreGASolver {
 	ArrayList<Resource> resources;
 	SystemGenerator geneator;
 
+	AllocationGeneator allocGeneator = new AllocationGeneator();
+	
 	FIFONP fifonp = new FIFONP();
 	FIFOP fifop = new FIFOP();
 	MrsP mrsp = new MrsP();
@@ -84,7 +87,7 @@ public class PreGASolver {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = geneator.allocateTasks(tasks, resources, allocPolicy);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, allocPolicy);
 
 		if (tasksWithAlloc == null)
 			return -1;

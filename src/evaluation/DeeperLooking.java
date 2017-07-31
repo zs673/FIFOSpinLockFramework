@@ -14,7 +14,8 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.ResultFileReader;
+import generatorTools.TestResultFileReader;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -92,7 +93,7 @@ public class DeeperLooking {
 		// accesscountdown.await();
 		// processorscountdown.await();
 
-		ResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
@@ -121,8 +122,127 @@ public class DeeperLooking {
 			break;
 		}
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
-				TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, cs_range,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				RESOURCE_SHARING_FACTOR, cs_range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+
+		long[][] Ris;
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
+
+		String result = "";
+		int sfnp = 0;
+		int sfp = 0;
+		int smrsp = 0;
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
+
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				smrsp++;
+
+			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfnp++;
+
+			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfp++;
+			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+		}
+
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
+	}
+
+	public void experimentIncreasingContention(int NoA) {
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NoA, false);
+
+		long[][] Ris;
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
+
+		String result = "";
+		int sfnp = 0;
+		int sfp = 0;
+		int smrsp = 0;
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
+
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				smrsp++;
+
+			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfnp++;
+
+			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfp++;
+			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
+		}
+
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
+	}
+
+	public void experimentIncreasingParallel(int NoP, int NoA) {
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP, NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR,
+				range, RESOURCES_RANGE.PARTITIONS, NoA, false);
+
+		long[][] Ris;
+		FIFONP fnp = new FIFONP();
+		FIFOP fp = new FIFOP();
+		MrsP mrsp = new MrsP();
+
+		String result = "";
+		int sfnp = 0;
+		int sfp = 0;
+		int smrsp = 0;
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
+
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				smrsp++;
+
+			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfnp++;
+
+			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
+			if (isSystemSchedulable(tasks, Ris))
+				sfp++;
+			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
+		}
+
+		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
+	}
+
+	public void experimentIncreasingWorkLoad(int NoT) {
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, RESOURCE_SHARING_FACTOR, range,
 				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
@@ -139,138 +259,17 @@ public class DeeperLooking {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
+			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
+			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfp++;
-			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
-		}
-
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
-	}
-
-	public void experimentIncreasingContention(int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
-				TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, range,
-				RESOURCES_RANGE.PARTITIONS, NoA, false);
-
-		long[][] Ris;
-		FIFONP fnp = new FIFONP();
-		FIFOP fp = new FIFOP();
-		MrsP mrsp = new MrsP();
-
-		String result = "";
-		int sfnp = 0;
-		int sfp = 0;
-		int smrsp = 0;
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
-
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				smrsp++;
-
-			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfnp++;
-
-			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfp++;
-			System.out.println(3 + " " + 1 + " " + NoA + " times: " + i);
-		}
-
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem(("ioa " + 3 + " " + 1 + " " + NoA), result);
-	}
-
-	public void experimentIncreasingParallel(int NoP, int NoA) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP,
-				NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NoA, false);
-
-		long[][] Ris;
-		FIFONP fnp = new FIFONP();
-		FIFOP fp = new FIFOP();
-		MrsP mrsp = new MrsP();
-
-		String result = "";
-		int sfnp = 0;
-		int sfp = 0;
-		int smrsp = 0;
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
-
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				smrsp++;
-
-			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfnp++;
-
-			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit,useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfp++;
-			System.out.println(4 + " " + NoA + " " + NoP + " times: " + i);
-		}
-
-		result += (double) sfnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) sfp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) smrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem(("ioa " + 4 + " " + NoA + " " + NoP), result);
-	}
-
-	public void experimentIncreasingWorkLoad(int NoT) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT,
-				RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
-
-		long[][] Ris;
-		FIFONP fnp = new FIFONP();
-		FIFOP fp = new FIFOP();
-		MrsP mrsp = new MrsP();
-
-		String result = "";
-		int sfnp = 0;
-		int sfp = 0;
-		int smrsp = 0;
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
-
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				smrsp++;
-
-			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
-			if (isSystemSchedulable(tasks, Ris))
-				sfnp++;
-
-			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability,btbHit, useRi, false);
+			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 			System.out.println(1 + " " + 1 + " " + NoT + " times: " + i);

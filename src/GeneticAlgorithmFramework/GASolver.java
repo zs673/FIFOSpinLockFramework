@@ -7,6 +7,7 @@ import java.util.Random;
 import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
@@ -15,6 +16,7 @@ public class GASolver {
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
 	CombinedAnalysis framework = new CombinedAnalysis();
+	AllocationGeneator allocGeneator = new AllocationGeneator();
 
 	Random ran = new Random(System.currentTimeMillis());
 
@@ -44,10 +46,9 @@ public class GASolver {
 
 	/****************** GA Properties ******************/
 
-	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
-			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize,
-			double crossoverRate, double mutationRate, int mutationBound, int toumamentSize1, int toumamentSize2,
-			boolean isPrint) {
+	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
+			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, double crossoverRate, double mutationRate, int mutationBound,
+			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -82,8 +83,7 @@ public class GASolver {
 	 *         within the given generation and population size.
 	 */
 	public boolean checkSchedulability(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER,
-				PRIORITY_SCHEME_NUMBER, isPrint);
+		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
 		int initial = preSovler.initialCheck(true);
 
 		if (initial > 0) {
@@ -94,7 +94,7 @@ public class GASolver {
 		}
 
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
-			if (geneator.allocateTasks(tasks, resources, i) != null) {
+			if (allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, i) != null) {
 				allocations.add(i);
 			}
 		}
@@ -110,8 +110,8 @@ public class GASolver {
 		getFitness(nextGenes);
 		if (bestGene != null) {
 			if (isPrint)
-				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: "
-						+ Arrays.toString(bestGene) + " priority: " + bestPriority);
+				System.out.println(
+						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
 			return true;
 		}
 
@@ -206,8 +206,8 @@ public class GASolver {
 			getFitness(nextGenes);
 			if (bestGene != null) {
 				if (isPrint)
-					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: "
-							+ Arrays.toString(bestGene) + " priority: " + bestPriority);
+					System.out.println(
+							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
 				return true;
 			}
 
@@ -262,8 +262,8 @@ public class GASolver {
 
 		long maxindex = fitness.get(0).get(2);
 		if (isPrint)
-			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: "
-					+ fitness.get(0).get(1) + "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
+					+ Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
 	private long[] computeFitness(int[] gene) {
@@ -276,9 +276,8 @@ public class GASolver {
 			resources.get(i).protocol = gene[i];
 		}
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = geneator.allocateTasks(tasks, resources, gene[resources.size()]);
-		long[][] Ris = framework.getResponseTimeByStaticPriority(tasksWithAllocation, resources, AnalysisUtils.extendCalForGA, false,
-				true, true, true, false);
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, gene[resources.size()]);
+		long[][] Ris = framework.getResponseTimeByStaticPriority(tasksWithAllocation, resources, AnalysisUtils.extendCalForGA, false, true, true, true, false);
 
 		if (Ris == null) {
 			int NoT = 0;
@@ -340,8 +339,8 @@ public class GASolver {
 			}
 		}
 
-		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  "
-				+ b.get(0) + " b1:  " + b.get(1) + " b2:  " + b.get(2));
+		System.err.println("comparator error!" + " a0:  " + a.get(0) + " a1:  " + a.get(1) + " a2:  " + a.get(2) + " b0:  " + b.get(0) + " b1:  " + b.get(1)
+				+ " b2:  " + b.get(2));
 		System.err.println(a0 == b0);
 		System.err.println(a1 == b1);
 		System.err.println(a2 == b2);

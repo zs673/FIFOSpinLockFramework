@@ -13,7 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.ResultFileReader;
+import generatorTools.TestResultFileReader;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
@@ -45,7 +46,7 @@ public class TestRiDiandDMvsOPA {
 			}).start();
 		}
 		work.await();
-		ResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
 
@@ -75,9 +76,8 @@ public class TestRiDiandDMvsOPA {
 			break;
 		}
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
-				TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, cs_range,
-				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				RESOURCE_SHARING_FACTOR, cs_range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		long[][] Ris;
 		CombinedAnalysis combined = new CombinedAnalysis();
@@ -93,22 +93,20 @@ public class TestRiDiandDMvsOPA {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
 
 			boolean b1 = false, b2 = false, b3 = false;
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true,
-					true, false);
+			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
 				b1 = true;
 			}
 
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false,
-					true, false);
+			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b2 = true;
@@ -129,14 +127,11 @@ public class TestRiDiandDMvsOPA {
 			if (b2 && !b3) {
 				System.err.println("found!");
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
-						false, true, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
-						false, true, true);
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
-						false, true, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
 
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
@@ -146,9 +141,8 @@ public class TestRiDiandDMvsOPA {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result = "Ri with DM: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with DM: "
-				+ (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with OPA: "
-				+ (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA can but Ri with DM cannot: " + wecan
+		result = "Ri with DM: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with DM: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "    Di with OPA: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA can but Ri with DM cannot: " + wecan
 				+ "    Ri with DM can but OPA cannot: " + wecannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);

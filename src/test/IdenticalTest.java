@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import entity.Resource;
 import entity.SporadicTask;
+import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
 public class IdenticalTest {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 100000;
 	
 	public static int MAX_PERIOD = 1000;
 	static long maxC = 0;
@@ -68,7 +69,7 @@ public class IdenticalTest {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 3;
@@ -117,7 +118,8 @@ public class IdenticalTest {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
+			
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 1;
@@ -166,7 +168,7 @@ public class IdenticalTest {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = generator.allocateTasks(tasksToAlloc, resources, 0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 2;
