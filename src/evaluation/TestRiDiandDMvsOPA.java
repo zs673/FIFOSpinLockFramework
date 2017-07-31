@@ -100,15 +100,15 @@ public class TestRiDiandDMvsOPA {
 			}
 
 			boolean b1 = false, b2 = false, b3 = false;
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, true,
-					true);
+			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true,
+					true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
 				b1 = true;
 			}
 
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, false, AnalysisUtils.extendCalForStatic, false,
-					true);
+			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false,
+					true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				b2 = true;
@@ -129,14 +129,14 @@ public class TestRiDiandDMvsOPA {
 			if (b2 && !b3) {
 				System.err.println("found!");
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
-						false, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
+						false, true, true);
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
-						false, true);
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, true, true, AnalysisUtils.extendCalForStatic,
-						false, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
+						false, true, true);
+				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true,
+						false, true, true);
 
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 

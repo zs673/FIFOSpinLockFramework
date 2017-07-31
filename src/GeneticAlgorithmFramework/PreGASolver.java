@@ -32,6 +32,10 @@ public class PreGASolver {
 	boolean lazyMode; // If on, tell GA to finish if the system is unlike
 						// to schedule.
 
+	public static boolean useRi = true;
+	public static boolean btbHit = true;
+	public static boolean testSchedulability = false;
+
 	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator,
 			int PROTOCOL_NUMBER, int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
 		this.PROTOCOL_NUMBER = PROTOCOL_NUMBER;
@@ -85,12 +89,12 @@ public class PreGASolver {
 		if (tasksWithAlloc == null)
 			return -1;
 
-		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-				fifonp.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
-		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-				fifop.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
-		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-				mrsp.getResponseTimeByDM(tasksWithAlloc, resources, true, false, AnalysisUtils.extendCalForStatic, false));
+		int[][] taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, fifonp.getResponseTimeByDM(tasksWithAlloc, resources,
+				AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
+		int[][] taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, fifop.getResponseTimeByDM(tasksWithAlloc, resources,
+				AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
+		int[][] taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, mrsp.getResponseTimeByDM(tasksWithAlloc, resources,
+				AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
 
 		for (int i = 0; i < tasksWithAlloc.size(); i++) {
 			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {

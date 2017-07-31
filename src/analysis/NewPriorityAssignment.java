@@ -29,8 +29,8 @@ public class NewPriorityAssignment {
 				npsection = resources.get(i).csl;
 		}
 
-		analysis.getResponseTimeByStaticPriority(tasks, resources, false, false, AnalysisUtils.extendCalForStatic,
-				true, true);
+		analysis.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, false, true,
+				true, true, false);
 		return null;
 
 	}

@@ -9,8 +9,8 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 
-	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean btbHit, boolean isprint) {
+	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean btbHit,
+			boolean isprint) {
 		if (tasks == null)
 			return null;
 
@@ -47,7 +47,7 @@ public class CombinedAnalysis {
 
 					long time = response_time[task.partition][tasks.get(task.partition)
 							.indexOf(task)] = getResponseTimeForOneTask(task, tasks, resources,
-									AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection);
+									AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, btbHit);
 					boolean isSchedulable = time <= task.deadline;
 
 					if (!isSchedulable) {
@@ -72,7 +72,7 @@ public class CombinedAnalysis {
 	}
 
 	public long[][] getResponseTimeByStaticPriority(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean testSchedulability, boolean printDebug, int extendCal, boolean useRi, boolean useDM) {
+			int extendCal, boolean testSchedulability, boolean btbHit, boolean useRi, boolean useDM, boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -108,7 +108,7 @@ public class CombinedAnalysis {
 			isEqual = true;
 			boolean should_finish = true;
 			long[][] response_time_plus = busyWindow(tasks, resources, response_time, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION,
-					np, testSchedulability, extendCal, useRi);
+					np, testSchedulability, extendCal, useRi, btbHit);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -145,7 +145,7 @@ public class CombinedAnalysis {
 	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
-			double oneMig, long np, boolean testSchedulability, int extendCal, boolean useRi) {
+			double oneMig, long np, boolean testSchedulability, int extendCal, boolean useRi, boolean btbHit) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -165,10 +165,10 @@ public class CombinedAnalysis {
 
 				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
 				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], oneMig, np, task,
-						useRi);
+						useRi, btbHit);
 				task.interference = highPriorityInterference(task, tasks, response_time[i][j], response_time, resources, oneMig,
-						np, useRi);
-				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np, useRi);
+						np, useRi, btbHit);
+				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np, useRi, btbHit);
 
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
 				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
@@ -190,7 +190,7 @@ public class CombinedAnalysis {
 	}
 
 	private long getResponseTimeForOneTask(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, double oneMig, long np) {
+			ArrayList<Resource> resources, double oneMig, long np, boolean btbHit) {
 
 		long[][] dummy_response_time = new long[tasks.size()][];
 		for (int i = 0; i < dummy_response_time.length; i++) {
@@ -216,9 +216,11 @@ public class CombinedAnalysis {
 			task.blocking_overheads = task.np_section = task.implementation_overheads = task.migration_overheads_plus = task.mrsp_arrivalblocking_overheads = task.fifonp_arrivalblocking_overheads = task.fifop_arrivalblocking_overheads = 0;
 
 			task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
-			task.spin = resourceAccessingTime(task, tasks, resources, dummy_response_time, newRi, oneMig, np, task, false);
-			task.interference = highPriorityInterference(task, tasks, newRi, dummy_response_time, resources, oneMig, np, false);
-			task.local = localBlocking(task, tasks, resources, dummy_response_time, newRi, oneMig, np, false);
+			task.spin = resourceAccessingTime(task, tasks, resources, dummy_response_time, newRi, oneMig, np, task, false,
+					btbHit);
+			task.interference = highPriorityInterference(task, tasks, newRi, dummy_response_time, resources, oneMig, np, false,
+					btbHit);
+			task.local = localBlocking(task, tasks, resources, dummy_response_time, newRi, oneMig, np, false, btbHit);
 
 			long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
 			newRi = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
@@ -242,11 +244,11 @@ public class CombinedAnalysis {
 	 ************* Direct Spin Delay *******************
 	 ***************************************************/
 	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, double oneMig, long np, SporadicTask calT, boolean useRi) {
+			long[][] Ris, long time, double oneMig, long np, SporadicTask calT, boolean useRi, boolean btbHit) {
 		long resourceTime = 0;
-		resourceTime += FIFONPResourceTime(task, tasks, resources, Ris, time, useRi);
-		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time, Ris, useRi);
-		resourceTime += MrsPresourceAccessingTime(task, tasks, resources, Ris, time, 0, oneMig, np, calT, useRi);
+		resourceTime += FIFONPResourceTime(task, tasks, resources, Ris, time, useRi, btbHit);
+		resourceTime += FIFOPResourceAccessTime(task, tasks, resources, time, Ris, useRi, btbHit);
+		resourceTime += MrsPresourceAccessingTime(task, tasks, resources, Ris, time, 0, oneMig, np, calT, useRi, btbHit);
 		return resourceTime;
 	}
 
@@ -254,12 +256,12 @@ public class CombinedAnalysis {
 	 * FIFO-NP resource accessing time.
 	 */
 	private long FIFONPResourceTime(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri, boolean useRi) {
+			long[][] Ris, long Ri, boolean useRi, boolean btbHit) {
 		long spin_delay = 0;
 		for (int k = 0; k < t.resource_required_index.size(); k++) {
 			Resource resource = resources.get(t.resource_required_index.get(k));
 			if (resource.protocol == 1) {
-				long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri, useRi);
+				long NoS = getNoSpinDelay(t, resource, tasks, Ris, Ri, useRi, btbHit);
 				spin_delay += NoS * resource.csl;
 				t.implementation_overheads += (NoS
 						+ t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(resource.id - 1)))
@@ -279,7 +281,7 @@ public class CombinedAnalysis {
 	 * is required by the given task.
 	 */
 	private int getNoSpinDelay(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris,
-			long Ri, boolean useRi) {
+			long Ri, boolean useRi, boolean btbHit) {
 		int number_of_spin_dealy = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -291,12 +293,14 @@ public class CombinedAnalysis {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math
-								.ceil((double) (Ri + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
+								.ceil((double) (Ri + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0))
+										/ (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri, useRi);
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], Ri, useRi,
+						btbHit);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP;
 
@@ -311,7 +315,7 @@ public class CombinedAnalysis {
 	 * FIFO-P resource accessing time.
 	 */
 	private long FIFOPResourceAccessTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
-			ArrayList<Resource> resources, long time, long[][] Ris, boolean useRi) {
+			ArrayList<Resource> resources, long time, long[][] Ris, boolean useRi, boolean btbHit) {
 		long spin = 0;
 		ArrayList<ArrayList<Long>> requestsLeftOnRemoteP = new ArrayList<>();
 		ArrayList<Resource> fifo_resources = new ArrayList<>();
@@ -321,7 +325,7 @@ public class CombinedAnalysis {
 				requestsLeftOnRemoteP.add(new ArrayList<Long>());
 				fifo_resources.add(res);
 				spin += getSpinDelayForOneResoruce(task, tasks, res, time, Ris,
-						requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1), useRi);
+						requestsLeftOnRemoteP.get(requestsLeftOnRemoteP.size() - 1), useRi, btbHit);
 			}
 		}
 
@@ -372,15 +376,15 @@ public class CombinedAnalysis {
 	}
 
 	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource,
-			long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP, boolean useRi) {
+			long time, long[][] Ris, ArrayList<Long> requestsLeftOnRemoteP, boolean useRi, boolean btbHit) {
 		long spin = 0;
 		long ncs = 0;
 
 		for (int i = 0; i < tasks.get(task.partition).size(); i++) {
 			SporadicTask hpTask = tasks.get(task.partition).get(i);
 			if (hpTask.priority > task.priority && hpTask.resource_required_index.contains(resource.id - 1)) {
-				ncs += (int) Math
-						.ceil((double) (time + (useRi ? Ris[task.partition][i] : hpTask.deadline)) / (double) hpTask.period)
+				ncs += (int) Math.ceil((double) (time + (btbHit ? (useRi ? Ris[task.partition][i] : hpTask.deadline) : 0))
+						/ (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(hpTask.resource_required_index.indexOf(resource.id - 1));
 			}
 		}
@@ -397,8 +401,9 @@ public class CombinedAnalysis {
 						if (tasks.get(i).get(j).resource_required_index.contains(resource.id - 1)) {
 							SporadicTask remote_task = tasks.get(i).get(j);
 							int indexR = getIndexRInTask(remote_task, resource);
-							int number_of_release = (int) Math.ceil(
-									(double) (time + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
+							int number_of_release = (int) Math
+									.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0))
+											/ (double) remote_task.period);
 							number_of_request_by_Remote_P += number_of_release
 									* remote_task.number_of_access_in_one_release.get(indexR);
 						}
@@ -425,7 +430,7 @@ public class CombinedAnalysis {
 	 */
 	private long MrsPresourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks,
 			ArrayList<Resource> resources, long[][] Ris, long time, long jitter, double oneMig, long np, SporadicTask calT,
-			boolean useRi) {
+			boolean useRi, boolean btbHit) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
@@ -437,10 +442,10 @@ public class CombinedAnalysis {
 
 				for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 					long oneAccess = 0;
-					oneAccess += MrsPresourceAccessingTimeInOne(task, resource, tasks, Ris, time, jitter, j, calT, useRi);
+					oneAccess += MrsPresourceAccessingTimeInOne(task, resource, tasks, Ris, time, jitter, j, calT, useRi, btbHit);
 
 					if (oneMig != 0) {
-						double mc = migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, Ris, calT, useRi);
+						double mc = migrationCostForSpin(oneMig, np, task, j, resource, tasks, time, Ris, calT, useRi, btbHit);
 						long mc_long = (long) Math.floor(mc);
 						calT.migration_overheads_plus += mc - mc_long;
 						if (mc - mc_long < 0) {
@@ -460,7 +465,7 @@ public class CombinedAnalysis {
 	}
 
 	private long MrsPresourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			long[][] Ris, long time, long jitter, int n, SporadicTask calTask, boolean useRi) {
+			long[][] Ris, long time, long jitter, int n, SporadicTask calTask, boolean useRi, boolean btbHit) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -472,12 +477,14 @@ public class CombinedAnalysis {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math
-								.ceil((double) (time + (useRi ? Ris[i][j] : remote_task.deadline)) / (double) remote_task.period);
+								.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0))
+										/ (double) remote_task.period);
 						number_of_request_by_Remote_P += number_of_release
 								* remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi);
+				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi,
+						btbHit);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - n + 1 < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP - n + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
@@ -497,7 +504,7 @@ public class CombinedAnalysis {
 	 ************* InDirect Spin Delay *******************
 	 ***************************************************/
 	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, long time, long[][] Ris,
-			ArrayList<Resource> resources, double oneMig, long np, boolean useRi) {
+			ArrayList<Resource> resources, double oneMig, long np, boolean useRi, boolean btbHit) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -509,9 +516,10 @@ public class CombinedAnalysis {
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
 						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
 
-				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t, useRi);
+				long btb_interference = getIndirectSpinDelay(hpTask, time, Ris[partition][i], Ris, allTasks, resources, t, useRi,
+						btbHit);
 				interference += MrsPresourceAccessingTime(hpTask, allTasks, resources, Ris, time,
-						useRi ? Ris[partition][i] : hpTask.deadline, oneMig, np, t, useRi);
+						btbHit ? (useRi ? Ris[partition][i] : hpTask.deadline) : 0, oneMig, np, t, useRi, btbHit);
 				t.indirectspin += btb_interference;
 				interference += btb_interference;
 			}
@@ -523,7 +531,8 @@ public class CombinedAnalysis {
 	 * FIFO-NP indirect spin delay.
 	 */
 	private long getIndirectSpinDelay(SporadicTask hpTask, long Ri, long Rihp, long[][] Ris,
-			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask, boolean useRi) {
+			ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, SporadicTask calTask, boolean useRi,
+			boolean btbHit) {
 		long BTBhit = 0;
 
 		for (int i = 0; i < hpTask.resource_required_index.size(); i++) {
@@ -532,9 +541,9 @@ public class CombinedAnalysis {
 
 			if (resource.protocol != 2 && resource.protocol != 3) {
 				int number_of_higher_request = getNoRFromHP(resource, hpTask, allTasks.get(hpTask.partition),
-						Ris[hpTask.partition], Ri, useRi);
+						Ris[hpTask.partition], Ri, useRi, btbHit);
 				int number_of_request_with_btb = (int) Math
-						.ceil((double) (Ri + (useRi ? Rihp : hpTask.deadline)) / (double) hpTask.period)
+						.ceil((double) (Ri + (btbHit ? (useRi ? Rihp : hpTask.deadline) : 0)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(i);
 
 				BTBhit += number_of_request_with_btb * resource.csl;
@@ -547,7 +556,7 @@ public class CombinedAnalysis {
 					if (resource.partitions.get(j) != hpTask.partition) {
 						int remote_partition = resource.partitions.get(j);
 						int number_of_remote_request = getNoRRemote(resource, allTasks.get(remote_partition),
-								Ris[remote_partition], Ri, useRi);
+								Ris[remote_partition], Ri, useRi, btbHit);
 
 						int possible_spin_delay = number_of_remote_request - number_of_higher_request < 0 ? 0
 								: number_of_remote_request - number_of_higher_request;
@@ -571,11 +580,11 @@ public class CombinedAnalysis {
 	 ************** Arrival Blocking *******************
 	 ***************************************************/
 	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, double oneMig, long np, boolean useRi) {
+			long[][] Ris, long time, double oneMig, long np, boolean useRi, boolean btbHit) {
 		long localblocking = 0;
-		long fifonp_localblocking = FIFONPlocalBlocking(t, tasks, resources, Ris, time, useRi);
-		long fifop_localblocking = FIFOPlocalBlocking(t, tasks, resources, Ris, time, useRi);
-		long MrsP_localblocking = MrsPlocalBlocking(t, tasks, resources, Ris, time, oneMig, np, useRi);
+		long fifonp_localblocking = FIFONPlocalBlocking(t, tasks, resources, Ris, time, useRi, btbHit);
+		long fifop_localblocking = FIFOPlocalBlocking(t, tasks, resources, Ris, time, useRi, btbHit);
+		long MrsP_localblocking = MrsPlocalBlocking(t, tasks, resources, Ris, time, oneMig, np, useRi, btbHit);
 		long npsection = (isTaskIncurNPSection(t, tasks.get(t.partition), resources) ? np : 0);
 
 		ArrayList<Double> blocking = new ArrayList<>();
@@ -615,7 +624,7 @@ public class CombinedAnalysis {
 	}
 
 	private long FIFONPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri, boolean useRi) {
+			long[][] Ris, long Ri, boolean useRi, boolean btbHit) {
 		ArrayList<Resource> LocalBlockingResources = FIFONPgetLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -627,10 +636,10 @@ public class CombinedAnalysis {
 			if (res.isGlobal) {
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri, useRi);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], Ri, useRi, btbHit);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri, useRi);
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], Ri, useRi, btbHit);
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
@@ -687,7 +696,7 @@ public class CombinedAnalysis {
 	}
 
 	private long FIFOPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri, boolean useRi) {
+			long[][] Ris, long Ri, boolean useRi, boolean btbHit) {
 		ArrayList<Resource> LocalBlockingResources = FIFOPgetLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -764,7 +773,7 @@ public class CombinedAnalysis {
 	}
 
 	private long MrsPlocalBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, double oneMig, long np, boolean useRi) {
+			long[][] Ris, long time, double oneMig, long np, boolean useRi, boolean btbHit) {
 		ArrayList<Resource> LocalBlockingResources = MrsPgetLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -782,10 +791,10 @@ public class CombinedAnalysis {
 				int remoteblocking = 0;
 				for (int parition_index = 0; parition_index < res.partitions.size(); parition_index++) {
 					int partition = res.partitions.get(parition_index);
-					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], time, useRi);
+					int norHP = getNoRFromHP(res, t, tasks.get(t.partition), Ris[t.partition], time, useRi, btbHit);
 					int norT = t.resource_required_index.contains(res.id - 1)
 							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
-					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time, useRi);
+					int norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time, useRi, btbHit);
 
 					if (partition != t.partition && (norHP + norT) < norR) {
 						local_blocking += res.csl;
@@ -854,7 +863,7 @@ public class CombinedAnalysis {
 	 ************* Migration Cost Calculation **********
 	 ***************************************************/
 	private double migrationCostForSpin(double oneMig, long np, SporadicTask task, int request_number, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT, boolean useRi) {
+			ArrayList<ArrayList<SporadicTask>> tasks, long time, long[][] Ris, SporadicTask calT, boolean useRi, boolean btbHit) {
 
 		ArrayList<Integer> migration_targets = new ArrayList<>();
 
@@ -863,8 +872,8 @@ public class CombinedAnalysis {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (i != task.partition) {
 				int number_requests_left = 0;
-				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time, useRi)
-						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi)
+				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time, useRi, btbHit)
+						- getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, useRi, btbHit)
 						- request_number + 1;
 
 				if (number_requests_left > 0)
@@ -988,7 +997,7 @@ public class CombinedAnalysis {
 	 * required by the given task.
 	 */
 	private int getNoRFromHP(Resource resource, SporadicTask task, ArrayList<SporadicTask> tasks, long[] Ris, long Ri,
-			boolean useRi) {
+			boolean useRi, boolean btbHit) {
 		int number_of_request_by_HP = 0;
 		int priority = task.priority;
 
@@ -996,22 +1005,24 @@ public class CombinedAnalysis {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math.ceil((double) (Ri + (useRi ? Ris[i] : hpTask.deadline)) / (double) hpTask.period)
+				number_of_request_by_HP += Math
+						.ceil((double) (Ri + (btbHit ? (useRi ? Ris[i] : hpTask.deadline) : 0)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;
 	}
 
-	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean useRi) {
+	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean useRi,
+			boolean btbHit) {
 		int number_of_request_by_Remote_P = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask remote_task = tasks.get(i);
 				int indexR = getIndexRInTask(remote_task, resource);
-				number_of_request_by_Remote_P += Math
-						.ceil((double) (Ri + (useRi ? Ris[i] : remote_task.deadline)) / (double) remote_task.period)
+				number_of_request_by_Remote_P += Math.ceil(
+						(double) (Ri + (btbHit ? (useRi ? Ris[i] : remote_task.deadline) : 0)) / (double) remote_task.period)
 						* remote_task.number_of_access_in_one_release.get(indexR);
 			}
 		}

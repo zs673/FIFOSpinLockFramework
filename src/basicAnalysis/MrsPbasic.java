@@ -17,37 +17,20 @@ public class MrsPbasic {
 		// assign priorities by Deadline Monotonic
 		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
 
-		long[][] responsetime = null;
-		// get np section
+		long count = 0;
+		boolean isEqual = false, missDeadline = false;
+		long[][] response_time = AnalysisUtils.initResponseTime(tasks);
+		
 		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
 			if (npsection < resources.get(i).csl)
 				npsection = resources.get(i).csl;
 		}
-		long np = npsection;
-
-		responsetime = NewMrsPRTATest(tasks, resources, mig, np, printDebug);
-		return responsetime;
-	}
-
-	private long[][] NewMrsPRTATest(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long mig, long np,
-			boolean printDebug) {
-
-		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
-		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missDeadline = false;
-		long count = 0;
-
-		for (int i = 0; i < init_Ri.length; i++) {
-			response_time[i] = new long[init_Ri[i].length];
-		}
-
-		AnalysisUtils.cloneList(init_Ri, response_time);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
 			isEqual = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, mig, np);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, mig, npsection);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -74,14 +57,15 @@ public class MrsPbasic {
 				System.out.println("NewMrsPRTAWithMigration    after " + count + " tims of recursion, we got the response time.");
 			AnalysisUtils.printResponseTime(response_time, tasks);
 		}
-
+		
+		
 		return response_time;
 	}
 
 	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
 			long oneMig, long np) {
+		
 		long[][] response_time_plus = new long[tasks.size()][];
-
 		for (int i = 0; i < response_time.length; i++) {
 			response_time_plus[i] = new long[response_time[i].length];
 		}

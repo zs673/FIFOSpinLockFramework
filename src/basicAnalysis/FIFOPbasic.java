@@ -17,17 +17,9 @@ public class FIFOPbasic {
 		// assign priorities by Deadline Monotonic
 		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
 
-		long[][] init_Ri = AnalysisUtils.initResponseTime(tasks);
-
-		long[][] response_time = new long[tasks.size()][];
-		boolean isEqual = false, missDeadline = false;
 		long count = 0;
-
-		for (int i = 0; i < init_Ri.length; i++) {
-			response_time[i] = new long[init_Ri[i].length];
-		}
-
-		AnalysisUtils.cloneList(init_Ri, response_time);
+		boolean isEqual = false, missDeadline = false;
+		long[][] response_time = AnalysisUtils.initResponseTime(tasks);
 
 		/* a huge busy window to get a fixed Ri */
 		while (!isEqual) {
