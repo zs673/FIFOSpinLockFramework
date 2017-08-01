@@ -11,7 +11,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 
 public class IdenticalTest {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 100000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	
 	public static int MAX_PERIOD = 1000;
 	static long maxC = 0;
