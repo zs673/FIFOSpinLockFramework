@@ -10,7 +10,7 @@ public class NewPriorityAssignment {
 
 	CombinedAnalysis analysis = new CombinedAnalysis();
 
-	public long[][] getResponseTime(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+	public long[][] getResponseTimeNewOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 

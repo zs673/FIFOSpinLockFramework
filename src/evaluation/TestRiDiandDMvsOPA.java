@@ -46,6 +46,7 @@ public class TestRiDiandDMvsOPA {
 			}).start();
 		}
 		work.await();
+
 		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
@@ -86,8 +87,13 @@ public class TestRiDiandDMvsOPA {
 		int RiDM = 0;
 		int DiDM = 0;
 		int OPA = 0;
-		int wecan = 0;
-		int wecannot = 0;
+		int newOPA = 0;
+		int RiDMcannotOPAcan = 0;
+		int RiDMcanOPAcannot = 0;
+		int OPAcannotNEWOPAcan = 0;
+		int OPAcanNEWOPAcannot = 0;
+		int RiDMcannotNEWOPAcan = 0;
+		int RiDMcanNEWOPAcannot = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
@@ -97,34 +103,87 @@ public class TestRiDiandDMvsOPA {
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
+				// resources.get(k).protocol = 3;
 			}
 
-			boolean b1 = false, b2 = false, b3 = false;
+			boolean RiDMok = false, DiDMok = false, OPAok = false, NEWOPAok = false;
 			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
-				b1 = true;
+				RiDMok = true;
 			}
 
 			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
-				b2 = true;
+				DiDMok = true;
+			}
+
+			Ris = combined.getResponseTimeByNewOPA(tasks, resources, false);
+			if (isSystemSchedulable(tasks, Ris)) {
+				newOPA++;
+				NEWOPAok = true;
 			}
 
 			Ris = combined.getResponseTimeByOPA(tasks, resources, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				OPA++;
-				b3 = true;
+				OPAok = true;
 			}
 
-			if (!b1 && b3)
-				wecan++;
+			if (!RiDMok && OPAok)
+				RiDMcannotOPAcan++;
 
-			if (b1 && !b3)
-				wecannot++;
+			if (RiDMok && !OPAok)
+				RiDMcanOPAcannot++;
 
-			if (b2 && !b3) {
+			if (OPAok && !NEWOPAok) {
+				OPAcanNEWOPAcannot++;
+
+				// Ris = combined.getResponseTimeByOPA(tasks, resources, true,
+				// true);
+				// for (int j = 0; j < tasks.size(); j++) {
+				// for (int k = 0; k < tasks.get(j).size(); k++) {
+				// System.out.print("T" + tasks.get(j).get(k).id + ": " +
+				// tasks.get(j).get(k).priority + " ");
+				// }
+				// System.out.println();
+				//
+				// }
+				//
+				//
+				// Ris = combined.getResponseTimeByNewOPA(tasks, resources,
+				// true);
+				// for (int j = 0; j < tasks.size(); j++) {
+				// for (int k = 0; k < tasks.get(j).size(); k++) {
+				// System.out.print("T" + tasks.get(j).get(k).id + ": " +
+				// tasks.get(j).get(k).priority + " ");
+				// }
+				// System.out.println();
+				//
+				// }
+				//
+				//
+				// Ris = combined.getResponseTimeByOPA(tasks, resources, true,
+				// true);
+				//
+				//
+				//
+				// generator.PrintAllocatedSystem(tasks, resources);
+				// Ris = combined.getResponseTimeByNewOPA(tasks, resources,
+				// true);
+			}
+
+			if (!OPAok && NEWOPAok)
+				OPAcannotNEWOPAcan++;
+
+			if (!RiDMok && NEWOPAok)
+				RiDMcannotNEWOPAcan++;
+
+			if (RiDMok && !NEWOPAok)
+				RiDMcanNEWOPAcannot++;
+
+			if (DiDMok && !OPAok) {
 				System.err.println("found!");
 
 				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
@@ -141,9 +200,11 @@ public class TestRiDiandDMvsOPA {
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 
-		result = "Ri with DM: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    Di with DM: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ "    Di with OPA: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA can but Ri with DM cannot: " + wecan
-				+ "    Ri with DM can but OPA cannot: " + wecannot + "\n";
+		result = "DM+Ri: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    DM+Di: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "    OPA+Di: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    newOPA+Ri: " + (double) newOPA / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "    OPA+Di ok & DM+Ri fail: " + RiDMcannotOPAcan + "    OPA+Di fail & DM+Ri ok: " + RiDMcanOPAcannot + "    OPA+Di ok & newOPA+Ri fail: "
+				+ OPAcanNEWOPAcannot + "    OPA+Di fail & newOPA+Ri ok: " + OPAcannotNEWOPAcan + "   newOPA+Di ok & DM+Ri fail: " + RiDMcannotNEWOPAcan
+				+ "   newOPA+Di fail & DM+Ri ok: " + RiDMcanNEWOPAcannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}

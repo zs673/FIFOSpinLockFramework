@@ -24,6 +24,8 @@ public class SporadicTask {
 	public double implementation_overheads = 0, blocking_overheads = 0;
 	public double mrsp_arrivalblocking_overheads = 0, fifonp_arrivalblocking_overheads = 0, fifop_arrivalblocking_overheads = 0;
 	public double migration_overheads_plus = 0;
+	
+	public long addition_slack_by_newOPA = 0;
 
 	public double[] mrsp = null;
 	public double[] fifonp = null;

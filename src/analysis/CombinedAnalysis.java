@@ -9,14 +9,129 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 
-	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean btbHit, boolean isprint) {
+	public long[][] getResponseTimeByNewOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 
-		long[][] response_time = new long[tasks.size()][];
-		for (int i = 0; i < response_time.length; i++) {
-			response_time[i] = new long[tasks.get(i).size()];
+		// Default as deadline monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+
+		long npsection = 0;
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
 		}
+
+		// now we check each task. we begin from the task with largest deadline
+		for (int i = 0; i < tasks.size(); i++) {
+			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
+			int sratingP = 500 - unassignedTasks.size() * 2;
+			int prioLevels = tasks.get(i).size();
+
+			for (int currentLevel = 0; currentLevel < prioLevels; currentLevel++) {
+
+				int startingIndex = unassignedTasks.size() - 1;
+				for (int j = startingIndex; j >= 0; j--) {
+					SporadicTask task = unassignedTasks.get(j);
+					int originalP = task.priority;
+					task.priority = sratingP;
+
+					tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+					long time = getResponseTimeForOneTask(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, true);
+					task.priority = originalP;
+					tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+
+					task.addition_slack_by_newOPA = task.deadline - time;
+				}
+
+				unassignedTasks.sort((t1, t2) -> -compareSlack(t1, t2));
+
+				if (isprint) {
+					for (int k = 0; k < unassignedTasks.size(); k++) {
+						SporadicTask task = unassignedTasks.get(k);
+						System.out.print("T" + task.id + ":  " + task.addition_slack_by_newOPA + " | " + task.deadline + " 	  ");
+					}
+					System.out.println();
+				}
+
+				for (int k = 0; k < unassignedTasks.size() - 1; k++) {
+					SporadicTask task1 = unassignedTasks.get(k);
+					SporadicTask task2 = unassignedTasks.get(k + 1);
+
+					if (task1.addition_slack_by_newOPA < task2.addition_slack_by_newOPA) {
+						System.err.println("newOPA reuslt error! in Task " + task1.id + " and task " + task2.id);
+						System.exit(-1);
+					}
+
+					if (task1.addition_slack_by_newOPA == task2.addition_slack_by_newOPA && task1.deadline < task2.deadline) {
+						System.err.println("newOPA reuslt error! in Task " + task1.id + " and task " + task2.id);
+						System.exit(-1);
+					}
+
+				}
+
+				unassignedTasks.get(0).priority = sratingP;
+				tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+				unassignedTasks.remove(0);
+
+				sratingP += 2;
+			}
+		}
+
+		if (isprint) {
+			long[][] Ris = new long[tasks.size()][];
+			for (int i = 0; i < tasks.size(); i++) {
+				Ris[i] = new long[tasks.get(i).size()];
+			}
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					System.out.print(tasks.get(i).get(j).priority + "    ");
+					Ris[i][j] = tasks.get(i).get(j).Ri;
+				}
+				System.out.println();
+
+			}
+
+			AnalysisUtils.printResponseTime(Ris, tasks);
+		}
+
+		return getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
+	}
+
+	private int compareSlack(SporadicTask t1, SporadicTask t2) {
+		long slack1 = t1.addition_slack_by_newOPA;
+		long deadline1 = t1.deadline;
+
+		long slack2 = t2.addition_slack_by_newOPA;
+		long deadline2 = t2.deadline;
+
+		if (slack1 < slack2) {
+			return -1;
+		}
+
+		if (slack1 > slack2) {
+			return 1;
+		}
+
+		if (slack1 == slack2) {
+			if (deadline1 < deadline2)
+				return -1;
+			if (deadline1 > deadline2)
+				return 1;
+			if (deadline1 == deadline2)
+				return 0;
+		}
+
+		System.err.println(
+				"New OPA comparator error!" + " slack1:  " + slack1 + " deadline1:  " + deadline1 + " slack2:  " + slack2 + " deadline2:  " + deadline2);
+		System.exit(-1);
+		return 0;
+	}
+
+	public long[][] getResponseTimeByOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean btbHit, boolean isprint) {
+		if (tasks == null)
+			return null;
 
 		long npsection = 0;
 		for (int i = 0; i < resources.size(); i++) {
@@ -44,12 +159,13 @@ public class CombinedAnalysis {
 					int originalP = task.priority;
 					task.priority = sratingP;
 
-					long time = response_time[task.partition][tasks.get(task.partition).indexOf(task)] = getResponseTimeForOneTask(task, tasks, resources,
-							AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, btbHit);
+					tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+					long time = getResponseTimeForOneTask(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, btbHit);
 					boolean isSchedulable = time <= task.deadline;
 
 					if (!isSchedulable) {
 						task.priority = originalP;
+						tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
 						if (isprint) {
 							System.out.println("Task T" + task.id + " unschedulable");
 						}
@@ -60,12 +176,34 @@ public class CombinedAnalysis {
 					}
 				}
 
-				if (!isTaskSchedulable)
+				if (!isTaskSchedulable) {
+					long[][] response_time = new long[tasks.size()][];
+					for (int j = 0; j < tasks.size(); j++) {
+						response_time[j] = new long[tasks.get(j).size()];
+						for (int k = 0; k < tasks.get(j).size(); k++) {
+							response_time[j][k] = tasks.get(j).get(k).Ri;
+						}
+					}
 					return response_time;
+				}
 
 				sratingP += 2;
 			}
 		}
+
+		long[][] response_time = new long[tasks.size()][];
+		for (int j = 0; j < tasks.size(); j++) {
+			response_time[j] = new long[tasks.get(j).size()];
+			for (int k = 0; k < tasks.get(j).size(); k++) {
+				response_time[j][k] = tasks.get(j).get(k).Ri;
+			}
+		}
+
+		if (isprint) {
+			System.out.println("OPA, we got the response time.");
+			AnalysisUtils.printResponseTime(response_time, tasks);
+		}
+
 		return response_time;
 	}
 
@@ -77,6 +215,10 @@ public class CombinedAnalysis {
 		if (useDM) {
 			// assign priorities by Deadline Monotonic
 			tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+		} else {
+			for (int i = 0; i < tasks.size(); i++) {
+				tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+			}
 		}
 
 		long count = 0; // The number of calculations
@@ -350,8 +492,8 @@ public class CombinedAnalysis {
 		return spin;
 	}
 
-	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource, ArrayList<Long> requestsLeftOnRemoteP, long[][] Ris,
-			long time, boolean btbHit, boolean useRi) {
+	private long getSpinDelayForOneResoruce(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, Resource resource,
+			ArrayList<Long> requestsLeftOnRemoteP, long[][] Ris, long time, boolean btbHit, boolean useRi) {
 		long spin = 0;
 		long ncs = 0;
 
@@ -452,7 +594,8 @@ public class CombinedAnalysis {
 					}
 				}
 				int getNoRFromHP = getNoRFromHP(resource, task, tasks.get(task.partition), Ris[task.partition], time, btbHit, useRi);
-				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - request_index + 1 < 0 ? 0 : number_of_request_by_Remote_P - getNoRFromHP - request_index + 1;
+				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - request_index + 1 < 0 ? 0
+						: number_of_request_by_Remote_P - getNoRFromHP - request_index + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
 			}
 		}
@@ -840,8 +983,8 @@ public class CombinedAnalysis {
 		return migrationCost(calT, resource, tasks, migration_targets, oneMig, np);
 	}
 
-	private double migrationCost(SporadicTask calT, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Integer> migration_targets, double oneMig,
-			long np) {
+	private double migrationCost(SporadicTask calT, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Integer> migration_targets,
+			double oneMig, long np) {
 		double migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 

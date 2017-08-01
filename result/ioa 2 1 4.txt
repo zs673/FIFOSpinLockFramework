@@ -1,2 +1,2 @@
-Ri with DM: 0.4962    Di with DM: 0.3772    Di with OPA: 0.4249    OPA can but Ri with DM cannot: 44    Ri with DM can but OPA cannot: 757
+DM+Ri: 0.4902    DM+Di: 0.369    OPA+Di: 0.4184    newOPA+Ri: 0.501    OPA+Di ok & DM+Ri fail: 54    OPA+Di fail & DM+Ri ok: 772    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 826   newOPA+Di ok & DM+Ri fail: 169   newOPA+Di fail & DM+Ri ok: 61
 

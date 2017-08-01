@@ -47,20 +47,20 @@ public class AnalysisUtils {
 	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
 	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
 
-	// public static double FIFONP_LOCK = 0;
-	// public static double FIFONP_UNLOCK = 0;
-	// public static double FIFOP_LOCK = 0;
-	// public static double FIFOP_UNLOCK = 0;
-	// public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
-	// public static double FIFOP_RE_REQUEST = 0;
-	// public static double MrsP_LOCK = 0;
-	// public static double MrsP_UNLOCK = 0;
-	// public static double MrsP_HELP_IN_LOCK = 0;
-	// public static double MrsP_INSERT = 0;
-	// public static double MrsP_HELP_IN_SCHEDULE = 0;
-	// public static double FULL_CONTEXT_SWTICH1 = 0;
-	// public static double FULL_CONTEXT_SWTICH2 = 0;
-	// public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
+//	 public static double FIFONP_LOCK = 0;
+//	 public static double FIFONP_UNLOCK = 0;
+//	 public static double FIFOP_LOCK = 0;
+//	 public static double FIFOP_UNLOCK = 0;
+//	 public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
+//	 public static double FIFOP_RE_REQUEST = 0;
+//	 public static double MrsP_LOCK = 0;
+//	 public static double MrsP_UNLOCK = 0;
+//	 public static double MrsP_HELP_IN_LOCK = 0;
+//	 public static double MrsP_INSERT = 0;
+//	 public static double MrsP_HELP_IN_SCHEDULE = 0;
+//	 public static double FULL_CONTEXT_SWTICH1 = 0;
+//	 public static double FULL_CONTEXT_SWTICH2 = 0;
+//	 public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
 
 	public static void cloneList(long[][] oldList, long[][] newList) {
 		for (int i = 0; i < oldList.length; i++) {
@@ -110,15 +110,15 @@ public class AnalysisUtils {
 	}
 
 	public static void printResponseTime(long[][] Ris, ArrayList<ArrayList<SporadicTask>> tasks) {
-		int task_id = 1;
+		
 		for (int i = 0; i < Ris.length; i++) {
 			for (int j = 0; j < Ris[i].length; j++) {
-				System.out.println("T" + task_id + " RT: " + Ris[i][j] + ", D: " + tasks.get(i).get(j).deadline + ", S = "
+				System.out.println("T" + tasks.get(i).get(j).id + " RT: " + Ris[i][j] + ", P: " + tasks.get(i).get(j).priority + ", D: " + tasks.get(i).get(j).deadline + ", S = "
 						+ tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = "
 						+ tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
 						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin
 						+ ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
-				task_id++;
+				
 			}
 			System.out.println();
 		}
