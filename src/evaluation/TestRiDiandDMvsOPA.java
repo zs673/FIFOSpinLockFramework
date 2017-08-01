@@ -47,7 +47,7 @@ public class TestRiDiandDMvsOPA {
 		}
 		work.await();
 
-		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		TestResultFileReader.schedreader("Test Priority Schemes", "minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
 
 	}
 

@@ -18,7 +18,15 @@ public class TestResultFileReader {
 		schedreader(null, false);
 	}
 
+	public static void schedreader(String filename, String title, boolean append) {
+		read(filename, title, append);
+	}
+
 	public static void schedreader(String title, boolean append) {
+		read("all", title, append);
+	}
+
+	private static void read(String filename, String title, boolean append) {
 		String result = "";
 
 		if (title != null)
@@ -106,7 +114,7 @@ public class TestResultFileReader {
 
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File("result/all.txt"), append));
+			writer = new PrintWriter(new FileWriter(new File("result/" + filename + ".txt"), append));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

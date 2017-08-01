@@ -1,2 +1,2 @@
-DM+Ri: 0.9023    DM+Di: 0.8286    OPA+Di: 0.855    newOPA+Ri: 0.9042    OPA+Di ok & DM+Ri fail: 21    OPA+Di fail & DM+Ri ok: 494    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 492   newOPA+Di ok & DM+Ri fail: 59   newOPA+Di fail & DM+Ri ok: 40
+DM+Ri: 0.905    DM+Di: 0.8189    OPA+Di: 0.8548    newOPA+Ri: 0.9077    OPA+Di ok & DM+Ri fail: 30    OPA+Di fail & DM+Ri ok: 532    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 529   newOPA+Di ok & DM+Ri fail: 66   newOPA+Di fail & DM+Ri ok: 39
 

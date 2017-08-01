@@ -1,0 +1,24 @@
+minT: 1  maxT: 1000
+Work Load
+CS Length 
+11 DM+Ri: 0.9522    DM+Di: 0.9236    OPA+Di: 0.9301    newOPA+Ri: 0.9512    
+12 DM+Ri: 0.905    DM+Di: 0.8189    OPA+Di: 0.8548    newOPA+Ri: 0.9077    
+13 DM+Ri: 0.822    DM+Di: 0.6889    OPA+Di: 0.7413    newOPA+Ri: 0.8306    
+14 DM+Ri: 0.4958    DM+Di: 0.3826    OPA+Di: 0.4262    newOPA+Ri: 0.5054    
+15 DM+Ri: 0.3113    DM+Di: 0.2223    OPA+Di: 0.2544    newOPA+Ri: 0.3196    
+16 DM+Ri: 0.4481    DM+Di: 0.3401    OPA+Di: 0.3774    newOPA+Ri: 0.4555    
+
+OPA+Di ok & DM+Ri fail: 0    OPA+Di fail & DM+Ri ok: 221    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 211   newOPA+Di ok & DM+Ri fail: 3   newOPA+Di fail & DM+Ri ok: 13
+OPA+Di ok & DM+Ri fail: 30    OPA+Di fail & DM+Ri ok: 532    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 529   newOPA+Di ok & DM+Ri fail: 66   newOPA+Di fail & DM+Ri ok: 39
+OPA+Di ok & DM+Ri fail: 44    OPA+Di fail & DM+Ri ok: 851    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 893   newOPA+Di ok & DM+Ri fail: 149   newOPA+Di fail & DM+Ri ok: 63
+OPA+Di ok & DM+Ri fail: 50    OPA+Di fail & DM+Ri ok: 746    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 792   newOPA+Di ok & DM+Ri fail: 153   newOPA+Di fail & DM+Ri ok: 57
+OPA+Di ok & DM+Ri fail: 40    OPA+Di fail & DM+Ri ok: 609    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 652   newOPA+Di ok & DM+Ri fail: 130   newOPA+Di fail & DM+Ri ok: 47
+OPA+Di ok & DM+Ri fail: 44    OPA+Di fail & DM+Ri ok: 751    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 781   newOPA+Di ok & DM+Ri fail: 148   newOPA+Di fail & DM+Ri ok: 74
+
+Resource Access 
+Parallel 
+RSF 
+
+
+
+
