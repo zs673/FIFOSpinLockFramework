@@ -1,20 +1,12 @@
 minT: 1  maxT: 1000
 Work Load
 CS Length 
-11 DM+Ri: 0.9522    DM+Di: 0.9236    OPA+Di: 0.9301    newOPA+Ri: 0.9512    
-12 DM+Ri: 0.905    DM+Di: 0.8189    OPA+Di: 0.8548    newOPA+Ri: 0.9077    
-13 DM+Ri: 0.822    DM+Di: 0.6889    OPA+Di: 0.7413    newOPA+Ri: 0.8306    
-14 DM+Ri: 0.4958    DM+Di: 0.3826    OPA+Di: 0.4262    newOPA+Ri: 0.5054    
-15 DM+Ri: 0.3113    DM+Di: 0.2223    OPA+Di: 0.2544    newOPA+Ri: 0.3196    
-16 DM+Ri: 0.4481    DM+Di: 0.3401    OPA+Di: 0.3774    newOPA+Ri: 0.4555    
-
-OPA+Di ok & DM+Ri fail: 0    OPA+Di fail & DM+Ri ok: 221    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 211   newOPA+Di ok & DM+Ri fail: 3   newOPA+Di fail & DM+Ri ok: 13
-OPA+Di ok & DM+Ri fail: 30    OPA+Di fail & DM+Ri ok: 532    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 529   newOPA+Di ok & DM+Ri fail: 66   newOPA+Di fail & DM+Ri ok: 39
-OPA+Di ok & DM+Ri fail: 44    OPA+Di fail & DM+Ri ok: 851    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 893   newOPA+Di ok & DM+Ri fail: 149   newOPA+Di fail & DM+Ri ok: 63
-OPA+Di ok & DM+Ri fail: 50    OPA+Di fail & DM+Ri ok: 746    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 792   newOPA+Di ok & DM+Ri fail: 153   newOPA+Di fail & DM+Ri ok: 57
-OPA+Di ok & DM+Ri fail: 40    OPA+Di fail & DM+Ri ok: 609    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 652   newOPA+Di ok & DM+Ri fail: 130   newOPA+Di fail & DM+Ri ok: 47
-OPA+Di ok & DM+Ri fail: 44    OPA+Di fail & DM+Ri ok: 751    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 781   newOPA+Di ok & DM+Ri fail: 148   newOPA+Di fail & DM+Ri ok: 74
-
+11 DM+Ri: 0.9535    DM+Di: 0.9207    OPA+Di: 0.9273    newOPA+Ri: 0.9526    new priorityFramework: 0.9541    OPA+Di ok & DM+Ri fail: 2    OPA+Di fail & DM+Ri ok: 264    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 253   newOPA+Di ok & DM+Ri fail: 6   newOPA+Di fail & DM+Ri ok: 15
+12 DM+Ri: 0.9041    DM+Di: 0.8251    OPA+Di: 0.8534    newOPA+Ri: 0.9045    new priorityFramework: 0.9091    OPA+Di ok & DM+Ri fail: 15    OPA+Di fail & DM+Ri ok: 522    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 511   newOPA+Di ok & DM+Ri fail: 50   newOPA+Di fail & DM+Ri ok: 46
+13 DM+Ri: 0.8205    DM+Di: 0.6861    OPA+Di: 0.7377    newOPA+Ri: 0.829    new priorityFramework: 0.8347    OPA+Di ok & DM+Ri fail: 51    OPA+Di fail & DM+Ri ok: 879    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 913   newOPA+Di ok & DM+Ri fail: 142   newOPA+Di fail & DM+Ri ok: 57
+14 DM+Ri: 0.4967    DM+Di: 0.3811    OPA+Di: 0.4264    newOPA+Ri: 0.5064    new priorityFramework: 0.513    OPA+Di ok & DM+Ri fail: 61    OPA+Di fail & DM+Ri ok: 764    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 800   newOPA+Di ok & DM+Ri fail: 163   newOPA+Di fail & DM+Ri ok: 66
+15 DM+Ri: 0.3124    DM+Di: 0.2133    OPA+Di: 0.248    newOPA+Ri: 0.3209    new priorityFramework: 0.328    OPA+Di ok & DM+Ri fail: 57    OPA+Di fail & DM+Ri ok: 701    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 729   newOPA+Di ok & DM+Ri fail: 156   newOPA+Di fail & DM+Ri ok: 71
+16 DM+Ri: 0.4484    DM+Di: 0.3453    OPA+Di: 0.3826    newOPA+Ri: 0.454    new priorityFramework: 0.4611    OPA+Di ok & DM+Ri fail: 43    OPA+Di fail & DM+Ri ok: 701    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 714   newOPA+Di ok & DM+Ri fail: 127   newOPA+Di fail & DM+Ri ok: 71
 Resource Access 
 Parallel 
 RSF 

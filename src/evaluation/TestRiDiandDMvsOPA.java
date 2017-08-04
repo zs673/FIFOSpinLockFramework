@@ -13,9 +13,9 @@ import java.util.concurrent.CountDownLatch;
 import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.TestResultFileReader;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
+import generatorTools.TestResultFileReader;
 import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
@@ -47,7 +47,7 @@ public class TestRiDiandDMvsOPA {
 		}
 		work.await();
 
-		TestResultFileReader.schedreader("Test Priority Schemes", "minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		TestResultFileReader.schedreader("Test Priority Schemes", "minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, false);
 
 	}
 
@@ -87,7 +87,8 @@ public class TestRiDiandDMvsOPA {
 		int RiDM = 0;
 		int DiDM = 0;
 		int OPA = 0;
-		int newOPA = 0;
+		int slackOPA = 0;
+		int newPrioAssign = 0;
 		int RiDMcannotOPAcan = 0;
 		int RiDMcanOPAcannot = 0;
 		int OPAcannotNEWOPAcan = 0;
@@ -119,9 +120,9 @@ public class TestRiDiandDMvsOPA {
 				DiDMok = true;
 			}
 
-			Ris = combined.getResponseTimeByNewOPA(tasks, resources, false);
+			Ris = combined.getResponseTimeBySlackBasedOPA(tasks, resources, false);
 			if (isSystemSchedulable(tasks, Ris)) {
-				newOPA++;
+				slackOPA++;
 				NEWOPAok = true;
 			}
 
@@ -130,6 +131,9 @@ public class TestRiDiandDMvsOPA {
 				OPA++;
 				OPAok = true;
 			}
+
+			if (combined.getResponseTimeByPriorityFramework(tasks, resources, false))
+				newPrioAssign++;
 
 			if (!RiDMok && OPAok)
 				RiDMcannotOPAcan++;
@@ -201,9 +205,10 @@ public class TestRiDiandDMvsOPA {
 		}
 
 		result = "DM+Ri: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    DM+Di: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ "    OPA+Di: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    newOPA+Ri: " + (double) newOPA / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ "    OPA+Di ok & DM+Ri fail: " + RiDMcannotOPAcan + "    OPA+Di fail & DM+Ri ok: " + RiDMcanOPAcannot + "    OPA+Di ok & newOPA+Ri fail: "
-				+ OPAcanNEWOPAcannot + "    OPA+Di fail & newOPA+Ri ok: " + OPAcannotNEWOPAcan + "   newOPA+Di ok & DM+Ri fail: " + RiDMcannotNEWOPAcan
+				+ "    OPA+Di: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    newOPA+Ri: " + (double) slackOPA / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "    new priorityFramework: " + (double) newPrioAssign / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA+Di ok & DM+Ri fail: " + RiDMcannotOPAcan
+				+ "    OPA+Di fail & DM+Ri ok: " + RiDMcanOPAcannot + "    OPA+Di ok & newOPA+Ri fail: " + OPAcanNEWOPAcannot
+				+ "    OPA+Di fail & newOPA+Ri ok: " + OPAcannotNEWOPAcan + "   newOPA+Di ok & DM+Ri fail: " + RiDMcannotNEWOPAcan
 				+ "   newOPA+Di fail & DM+Ri ok: " + RiDMcanNEWOPAcannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);

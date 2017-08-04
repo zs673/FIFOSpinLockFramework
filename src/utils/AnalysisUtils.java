@@ -99,14 +99,15 @@ public class AnalysisUtils {
 		}
 		return false;
 	}
-
-	public static void main(String args[]) {
-		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   "
-				+ (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST));
-		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK);
-		System.out.println(
-				" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
-		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);
+	
+	public static boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+		for (int i = 0; i < tasks.size(); i++) {
+			for (int j = 0; j < tasks.get(i).size(); j++) {
+				if (tasks.get(i).get(j).deadline < Ris[i][j])
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public static void printResponseTime(long[][] Ris, ArrayList<ArrayList<SporadicTask>> tasks) {
@@ -122,6 +123,15 @@ public class AnalysisUtils {
 			}
 			System.out.println();
 		}
+	}
+	
+	public static void main(String args[]) {
+		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   "
+				+ (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST));
+		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK);
+		System.out.println(
+				" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
+		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);
 	}
 
 }

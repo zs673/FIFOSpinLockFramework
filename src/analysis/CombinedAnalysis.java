@@ -8,8 +8,81 @@ import generatorTools.PriorityGeneator;
 import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
+	
+	public boolean getResponseTimeByPriorityFramework(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+		if (tasks == null)
+			return false;
 
-	public long[][] getResponseTimeByNewOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+		long[][] time = null;
+
+		if (isprint)
+			System.out.println("Checking with DM...");
+		time = getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, isprint);
+		boolean isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
+
+		if (isSchedulable){
+			if (isprint)
+				System.out.println("The system is schedulable with DM.");
+			return true;
+		}
+		else{
+			if (isprint)
+				System.out.println("The system is NOT schedulable with DM.");
+		}
+
+		if (isprint)
+			System.out.println("Checking with OPA+Null...");
+		time = getResponseTimeByOPA(tasks, resources, false, isprint);
+		boolean isPossible = AnalysisUtils.isSystemSchedulable(tasks, time);
+
+		if (!isPossible){
+			if (isprint)
+				System.out.println("The system is NOT schedulable at all!");
+			return false;
+		}
+		else{
+			if (isprint)
+				System.out.println("The system is POSSIBLE to be schedulable.");
+		}
+
+		if (isprint)
+			System.out.println("Checking with OPA+Di...");
+		time = getResponseTimeByOPA(tasks, resources, true, isprint);
+		isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
+
+		if (isSchedulable){
+			if (isprint)
+				System.out.println("The system is schedulable with OPA+Di.");
+			return true;
+		}
+		else{
+			if (isprint)
+				System.out.println("The system is NOT schedulable with OPA+Di.");
+		}
+
+		if (isprint)
+			System.out.println("Checking with Slack Based OPA...");
+		time = getResponseTimeBySlackBasedOPA(tasks, resources, isprint);
+		isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
+
+		if (isSchedulable){
+			if (isprint)
+				System.out.println("The system is schedulable with Slack Based OPA.");
+			return true;
+		}
+		else{
+			if (isprint)
+				System.out.println("The system is NOT schedulable with Slack Based OPA.");
+		}
+		
+		if (isprint)
+			System.out.println("New Priority Assignment Checking Finished. NO schedulable solution founded.");
+
+		return false;
+
+	}
+
+	public long[][] getResponseTimeBySlackBasedOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 
