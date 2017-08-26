@@ -1,1 +1,7 @@
 /native/
+/.DS_Store
+/analysis/
+/basicAnalysis/
+/entity/
+/generatorTools/
+/test/
