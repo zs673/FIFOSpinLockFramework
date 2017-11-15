@@ -158,7 +158,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName(NoA + " " + i);
+			worker.setName("3 "+NoA + " " + i);
 			worker.start();
 		}
 
@@ -256,7 +256,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName(cslen + " " + i);
+			worker.setName("2 " + cslen + " " + i);
 			worker.start();
 		}
 
@@ -328,7 +328,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName(NoP + " " + i);
+			worker.setName("4 "+NoP + " " + i);
 			worker.start();
 		}
 
@@ -422,7 +422,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName(resourceSharingFactor + " " + i);
+			worker.setName("5 "+resourceSharingFactor + " " + i);
 			worker.start();
 		}
 
@@ -495,7 +495,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName(NoT + " " + i);
+			worker.setName("1 "+NoT + " " + i);
 			worker.start();
 		}
 
