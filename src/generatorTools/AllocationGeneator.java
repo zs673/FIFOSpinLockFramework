@@ -340,7 +340,105 @@ public class AllocationGeneator {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+		return NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+	}
+
+	private ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocationAdvanced(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
+			int partitions, double maxUtilPerCore) {
+		for (int i = 0; i < tasksToAllocate.size(); i++) {
+			tasksToAllocate.get(i).partition = -1;
+		}
+
+		int number_of_resources = resources.size();
+
+		ArrayList<ArrayList<Integer>> NoQT = new ArrayList<>();
+		for (int i = 0; i < number_of_resources; i++) {
+			ArrayList<Integer> noq = new ArrayList<>();
+			noq.add(i);
+			noq.add(0);
+			NoQT.add(noq);
+		}
+
+		for (int j = 0; j < tasksToAllocate.size(); j++) {
+			SporadicTask task = tasksToAllocate.get(j);
+			for (int k = 0; k < task.resource_required_index.size(); k++) {
+				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + task.number_of_access_in_one_release.get(k));
+			}
+		}
+
+		NoQT.sort((p1, p2) -> -Double.compare(p1.get(1), p2.get(1)));
+
+		ArrayList<SporadicTask> sortedTasks = new ArrayList<>();
+		ArrayList<SporadicTask> cleanTasks = new ArrayList<>();
+		for (int i = 0; i < NoQT.size(); i++) {
+			for (int j = 0; j < tasksToAllocate.size(); j++) {
+				SporadicTask task = tasksToAllocate.get(j);
+				if (task.resource_required_index.contains(NoQT.get(i).get(0)) && !sortedTasks.contains(task)) {
+					sortedTasks.add(task);
+				}
+				if (!cleanTasks.contains(task) && task.resource_required_index.size() == 0) {
+					cleanTasks.add(task);
+				}
+			}
+		}
+
+		cleanTasks.sort((p1, p2) -> -Double.compare(p1.util, p2.util));
+		
+		if (sortedTasks.size() + cleanTasks.size() != tasksToAllocate.size()) {
+			System.out.println("RESOURCE REQUEST FIT sorted tasks size error!");
+			System.exit(-1);
+		}
+
+		ArrayList<ArrayList<SporadicTask>> alloc = NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+		
+		if(alloc != null){
+			ArrayList<Double> utilPerPartition = new ArrayList<>();
+			
+			for(int i=0;i<alloc.size();i++){
+				double totalUtil = 0;
+				for(int j=0; j<alloc.get(i).size();j++){
+					
+					totalUtil+= alloc.get(i).get(j).util;
+				}
+				utilPerPartition.add(totalUtil);
+			}
+			
+			
+			for (int i = 0; i < cleanTasks.size(); i++) {
+				SporadicTask task = cleanTasks.get(i);
+				int target = -1;
+				double minUtil = 2;
+				for (int j = 0; j < partitions; j++) {
+					if (minUtil > utilPerPartition.get(j)) {
+						minUtil = utilPerPartition.get(j);
+						target = j;
+					}
+				}
+
+				if (target == -1) {
+					System.err.println("WF error!");
+					return null;
+				}
+
+				if ((double) 1 - minUtil >= task.util) {
+					task.partition = target;
+					alloc.get(target).add(task);
+					utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
+				} else
+					return null;
+			}
+
+			for (int i = 0; i < tasksToAllocate.size(); i++) {
+				int partition = tasksToAllocate.get(i).partition;
+				alloc.get(partition).add(tasksToAllocate.get(i));
+			}
+
+			for (int i = 0; i < alloc.size(); i++) {
+				alloc.get(i).sort((p1, p2) -> Double.compare(p1.period, p2.period));
+			}
+		}
+
+		return alloc;
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources, int partitions,
