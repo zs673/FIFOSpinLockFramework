@@ -101,26 +101,31 @@ public class TestRiDiandDMvsOPA {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-
+			
+			if(tasks == null){
+				System.err.println("tasks is NULL");
+				System.exit(-1);
+			}
+			
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 				// resources.get(k).protocol = 3;
 			}
 
 			boolean RiDMok = false, DiDMok = false, OPAok = false, NEWOPAok = false;
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, false);
+			Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
 				RiDMok = true;
 			}
 
-			Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, false);
+			Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				DiDM++;
 				DiDMok = true;
 			}
 
-			Ris = combined.getResponseTimeBySlackBasedOPA(tasks, resources, false);
+			Ris = combined.getResponseTimeBySBPO(tasks, resources, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				slackOPA++;
 				NEWOPAok = true;
@@ -132,7 +137,7 @@ public class TestRiDiandDMvsOPA {
 				OPAok = true;
 			}
 
-			if (combined.getResponseTimeByPriorityFramework(tasks, resources, false))
+			if (combined.getResponseTimeByNewPriorityFramework(tasks, resources, false))
 				newPrioAssign++;
 
 			if (!RiDMok && OPAok)
@@ -190,18 +195,24 @@ public class TestRiDiandDMvsOPA {
 			if (DiDMok && !OPAok) {
 				System.err.println("found!");
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
+				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
-				Ris = combined.getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
+				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
+				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
 
 				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
 
 				System.exit(-1);
 			}
 
-			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+//			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+			
+
+			if(tasks == null){
+				System.err.println("NULL" + 2 + " " + 1 + " " + cs_len + " times: " + i);
+				System.exit(-1);
+			}
 		}
 
 		result = "DM+Ri: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    DM+Di: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS

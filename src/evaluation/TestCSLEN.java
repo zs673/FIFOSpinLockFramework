@@ -75,15 +75,15 @@ public class TestCSLEN {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,generator.total_partitions,  0);
 
-			Ris = mrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+			Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				smrsp++;
 
-			Ris = fnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+			Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfnp++;
 
-			Ris = fp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+			Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))
 				sfp++;
 

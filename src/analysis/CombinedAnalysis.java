@@ -9,7 +9,7 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 	
-	public boolean getResponseTimeByPriorityFramework(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+	public boolean getResponseTimeByNewPriorityFramework(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return false;
 
@@ -17,7 +17,7 @@ public class CombinedAnalysis {
 
 		if (isprint)
 			System.out.println("Checking with DM...");
-		time = getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, isprint);
+		time = getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, isprint);
 		boolean isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
 
 		if (isSchedulable){
@@ -62,7 +62,7 @@ public class CombinedAnalysis {
 
 		if (isprint)
 			System.out.println("Checking with Slack Based OPA...");
-		time = getResponseTimeBySlackBasedOPA(tasks, resources, isprint);
+		time = getResponseTimeBySBPO(tasks, resources, isprint);
 		isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
 
 		if (isSchedulable){
@@ -82,7 +82,7 @@ public class CombinedAnalysis {
 
 	}
 
-	public long[][] getResponseTimeBySlackBasedOPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+	public long[][] getResponseTimeBySBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 
@@ -169,7 +169,7 @@ public class CombinedAnalysis {
 			AnalysisUtils.printResponseTime(Ris, tasks);
 		}
 
-		return getResponseTimeByStaticPriority(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
+		return getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
 	}
 
 	private int compareSlack(SporadicTask t1, SporadicTask t2) {
@@ -280,7 +280,7 @@ public class CombinedAnalysis {
 		return response_time;
 	}
 
-	public long[][] getResponseTimeByStaticPriority(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal,
+	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal,
 			boolean testSchedulability, boolean btbHit, boolean useRi, boolean useDM, boolean printDebug) {
 		if (tasks == null)
 			return null;

@@ -1,2 +1,1 @@
-DM+Ri: 0.4484    DM+Di: 0.3453    OPA+Di: 0.3826    newOPA+Ri: 0.454    new priorityFramework: 0.4611    OPA+Di ok & DM+Ri fail: 43    OPA+Di fail & DM+Ri ok: 701    OPA+Di ok & newOPA+Ri fail: 0    OPA+Di fail & newOPA+Ri ok: 714   newOPA+Di ok & DM+Ri fail: 127   newOPA+Di fail & DM+Ri ok: 71
-
+0.411 0.072 0.412 0.0 0.0

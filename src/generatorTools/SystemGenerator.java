@@ -231,6 +231,9 @@ public class SystemGenerator {
 	}
 
 	public void generateResourceUsage(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources) {
+		while (tasks == null)
+			tasks = generateTasks();
+		
 		int fails = 0;
 		Random ran = new Random();
 		long number_of_resource_requested_tasks = Math.round(rsf * tasks.size());

@@ -65,10 +65,10 @@ public class DynamicTestWF {
 			test.initResults();
 			test.parallelExperimentIncreasingPartitions(i);
 		}
-		for (int i = 1; i < 6; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingrsf(i);
-		}
+//		for (int i = 1; i < 6; i++) {
+//			test.initResults();
+//			test.parallelExperimentIncreasingrsf(i);
+//		}
 		TestResultFileReader.schedreader(null, false);
 	}
 
@@ -108,17 +108,17 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
@@ -135,7 +135,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.checkSchedulability(true)) {
+					if (solver.checkSchedulability(true)[0] == 1) {
 						inciaDcombine();
 					}
 
@@ -224,17 +224,17 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
@@ -251,7 +251,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.checkSchedulability(true)) {
+					if (solver.checkSchedulability(true)[0] == 1) {
 						inciaDcombine();
 					}
 
@@ -315,17 +315,17 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
@@ -342,7 +342,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.checkSchedulability(true)) {
+					if (solver.checkSchedulability(true)[0] == 1) {
 						inciaDcombine();
 					}
 
@@ -427,17 +427,17 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
@@ -454,7 +454,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.checkSchedulability(true)) {
+					if (solver.checkSchedulability(true)[0] == 1) {
 						inciaDcombine();
 					}
 
@@ -519,17 +519,17 @@ public class DynamicTestWF {
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 0.5, 0.1, 5, 5, 5,
 							true);
 
-					Ris = IOAmrsp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciamrsp();
 
-					Ris = IOAfnp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafnp();
 
-					Ris = IOAfp.getResponseTimeByDM(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
+					Ris = IOAfp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi,
 							false);
 					if (isSystemSchedulable(tasks, Ris))
 						inciafp();
@@ -546,7 +546,7 @@ public class DynamicTestWF {
 					if (isSystemSchedulable(tasks, Ris))
 						incmrsp();
 
-					if (solver.checkSchedulability(true)) {
+					if (solver.checkSchedulability(true)[0] == 1) {
 						inciaDcombine();
 					}
 					System.out.println(Thread.currentThread().getName() + " F");

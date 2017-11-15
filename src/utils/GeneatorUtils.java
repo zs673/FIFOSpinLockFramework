@@ -50,4 +50,11 @@ public class GeneatorUtils {
 										 * FF.
 										 */
 	};
+	
+	/* define how many resources in the system */
+	public static enum PRIORITY_ASSIGNMENT {
+		DMPO, /* partitions us */
+		OPADI, /* partitions * 2 us */
+		SBPO, /* partitions / 2 us */
+	};
 }

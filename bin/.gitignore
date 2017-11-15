@@ -1,10 +1,6 @@
 /native/
-/.DS_Store
-/analysis/
-/basicAnalysis/
-/entity/
+/evaluation/
+/evaluationForThesis/
 /generatorTools/
 /test/
-/GeneticAlgorithmFramework/
-/evaluation/
 /utils/

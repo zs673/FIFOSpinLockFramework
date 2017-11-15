@@ -82,15 +82,12 @@ public class GASolver {
 	 * @return True: the system is feasible. False: the system is not feasible
 	 *         within the given generation and population size.
 	 */
-	public boolean checkSchedulability(boolean useGA) {
+	public int[] checkSchedulability(boolean useGA) {
 		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
-		int initial = preSovler.initialCheck(true);
+		int initial[] = preSovler.initialCheck(true);
 
-		if (initial > 0) {
-			return true;
-		}
-		if (initial < 0) {
-			return false;
+		if (initial[0] != 0) {
+			return initial;
 		}
 
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
@@ -100,19 +97,19 @@ public class GASolver {
 		}
 
 		if (allocations.size() == 0)
-			return false;
+			return new int[] {-1};
 
 		return solve(useGA);
 	}
 
-	private boolean solve(boolean useGA) {
+	private int[] solve(boolean useGA) {
 		getFirstGene();
 		getFitness(nextGenes);
 		if (bestGene != null) {
 			if (isPrint)
 				System.out.println(
 						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
-			return true;
+			return new int[] {1, 0, bestGene[resources.size()], 0};
 		}
 
 		while (currentGeneration <= maxGeneration) {
@@ -208,13 +205,13 @@ public class GASolver {
 				if (isPrint)
 					System.out.println(
 							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
-				return true;
+				return new int[] {1, 0, bestGene[resources.size()], 0};
 			}
 
 		}
 		if (isPrint)
 			System.out.println("not schedulable with in " + maxGeneration + " generations. GA finish");
-		return false;
+		return new int[] {-1};
 	}
 
 	private void getFirstGene() {
@@ -231,6 +228,8 @@ public class GASolver {
 			}
 			nextGenes[i][resources.size()] = allocations.get(ran.nextInt(randomBound) % allocations.size());
 		}
+		
+		System.out.println();
 	}
 
 	void getFitness(int[][] gene) {
@@ -277,7 +276,7 @@ public class GASolver {
 		}
 
 		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, gene[resources.size()]);
-		long[][] Ris = framework.getResponseTimeByStaticPriority(tasksWithAllocation, resources, AnalysisUtils.extendCalForGA, false, true, true, true, false);
+		long[][] Ris = framework.getResponseTimeByDMPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForGA, false, true, true, true, false);
 
 		if (Ris == null) {
 			int NoT = 0;
@@ -304,12 +303,12 @@ public class GASolver {
 		if (fitness[0] == 0) {
 			bestPriority = 0;
 		} else {
-			long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
-			if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
-				fitness[0] = 0;
-				fitness[1] = 0;
-				bestPriority = 1;
-			}
+//			long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
+//			if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
+//				fitness[0] = 0;
+//				fitness[1] = 0;
+//				bestPriority = 1;
+//			}
 		}
 
 		return fitness;
