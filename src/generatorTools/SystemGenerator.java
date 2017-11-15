@@ -85,9 +85,14 @@ public class SystemGenerator {
 		ArrayList<SporadicTask> tasks = null;
 		while (tasks == null) {
 			tasks = generateT();
-			if (tasks != null && (allocation.allocateTasks(tasks, null, total_partitions, 0) == null
-					&& allocation.allocateTasks(tasks, null, total_partitions, 1) == null && allocation.allocateTasks(tasks, null, total_partitions, 2) == null
-					&& allocation.allocateTasks(tasks, null, total_partitions, 3) == null))
+			// if (tasks != null && (allocation.allocateTasks(tasks, null,
+			// total_partitions, 0) == null
+			// && allocation.allocateTasks(tasks, null, total_partitions, 1) ==
+			// null && allocation.allocateTasks(tasks, null, total_partitions,
+			// 2) == null
+			// && allocation.allocateTasks(tasks, null, total_partitions, 3) ==
+			// null))
+			if (tasks != null && allocation.allocateTasks(tasks, null, total_partitions, 0) == null)
 				tasks = null;
 		}
 		return tasks;
@@ -233,7 +238,7 @@ public class SystemGenerator {
 	public void generateResourceUsage(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources) {
 		while (tasks == null)
 			tasks = generateTasks();
-		
+
 		int fails = 0;
 		Random ran = new Random();
 		long number_of_resource_requested_tasks = Math.round(rsf * tasks.size());
