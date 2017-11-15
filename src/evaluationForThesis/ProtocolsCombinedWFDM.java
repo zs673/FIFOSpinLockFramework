@@ -44,26 +44,63 @@ public class ProtocolsCombinedWFDM {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
+		final CountDownLatch downLatch = new CountDownLatch((9+6+9+10));
+
 		for (int i = 1; i < 10; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingWorkload(i);
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					test.initResults();
+					test.parallelExperimentIncreasingWorkload(count);
+					downLatch.countDown();
+				}
+			}).start();
+
 		}
 		for (int i = 1; i < 7; i++) {
-			test.initResults();
-			test.parallelExperimentIncreasingCriticalSectionLength(i);
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					test.initResults();
+					test.parallelExperimentIncreasingCriticalSectionLength(count);
+					downLatch.countDown();
+				}
+			}).start();
 		}
 		for (int i = 1; i < 42; i = i + 5) {
-			test.initResults();
-			test.parallelExperimentIncreasingAccess(i);
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					test.initResults();
+					test.parallelExperimentIncreasingAccess(count);
+					downLatch.countDown();
+				}
+			}).start();
 		}
-		for (int i = 2; i < 23; i = i + 2) {
-			test.initResults();
-			test.parallelExperimentIncreasingPartitions(i);
+		for (int i = 4; i < 23; i = i + 2) {
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					test.initResults();
+					test.parallelExperimentIncreasingPartitions(count);
+					downLatch.countDown();
+				}
+			}).start();
 		}
 		// for (int i = 1; i < 6; i++) {
 		// test.initResults();
 		// test.parallelExperimentIncreasingrsf(i);
 		// }
+
+		downLatch.await();
 		TestResultFileReader.schedreader(null, false);
 	}
 
