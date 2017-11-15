@@ -32,19 +32,52 @@ public class ProtocolsCombinedWFDM {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
-	int Dcombine = 0;
-	int Dnew = 0;
-	int fnp = 0;
-	int fp = 0;
-	int mrsp = 0;
-
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	final double RSF = 0.3;
+	
+	class Counter {
+
+		int Dcombine = 0;
+		int Dnew = 0;
+		int fnp = 0;
+		int fp = 0;
+		int mrsp = 0;
+
+		public synchronized void incfnp() {
+			fnp++;
+		}
+
+		public synchronized void incfp() {
+			fp++;
+		}
+
+		public synchronized void incmrsp() {
+			mrsp++;
+		}
+
+		public synchronized void incDcombine() {
+			Dcombine++;
+		}
+
+		public synchronized void incDnew() {
+			Dnew++;
+		}
+
+		public synchronized void initResults() {
+			mrsp = 0;
+			fp = 0;
+			fnp = 0;
+			Dcombine = 0;
+			Dnew = 0;
+		}
+
+	}
+	
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
-		final CountDownLatch downLatch = new CountDownLatch((9+6+9+10));
+		final CountDownLatch downLatch = new CountDownLatch((9 + 6 + 9 + 10));
 
 		for (int i = 1; i < 10; i++) {
 			final int count = i;
@@ -52,8 +85,9 @@ public class ProtocolsCombinedWFDM {
 
 				@Override
 				public void run() {
-					test.initResults();
-					test.parallelExperimentIncreasingWorkload(count);
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingWorkload(count, counter);
 					downLatch.countDown();
 				}
 			}).start();
@@ -65,8 +99,9 @@ public class ProtocolsCombinedWFDM {
 
 				@Override
 				public void run() {
-					test.initResults();
-					test.parallelExperimentIncreasingCriticalSectionLength(count);
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
 					downLatch.countDown();
 				}
 			}).start();
@@ -77,8 +112,9 @@ public class ProtocolsCombinedWFDM {
 
 				@Override
 				public void run() {
-					test.initResults();
-					test.parallelExperimentIncreasingAccess(count);
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingAccess(count, counter);
 					downLatch.countDown();
 				}
 			}).start();
@@ -89,8 +125,9 @@ public class ProtocolsCombinedWFDM {
 
 				@Override
 				public void run() {
-					test.initResults();
-					test.parallelExperimentIncreasingPartitions(count);
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingPartitions(count, counter);
 					downLatch.countDown();
 				}
 			}).start();
@@ -104,7 +141,7 @@ public class ProtocolsCombinedWFDM {
 		TestResultFileReader.schedreader(null, false);
 	}
 
-	public void parallelExperimentIncreasingAccess(int NoA) {
+	public void parallelExperimentIncreasingAccess(int NoA, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
@@ -137,20 +174,20 @@ public class ProtocolsCombinedWFDM {
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incmrsp();
+						counter.incmrsp();
 
 					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfnp();
+						counter.incfnp();
 
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfp();
+						counter.incfp();
 
 					if (solver.checkSchedulability(true)[0] == 1) {
-						incDcombine();
+						counter.incDcombine();
 						if (solver.checkSchedulability(true)[1] == 0) {
-							incDnew();
+							counter.incDnew();
 						}
 					}
 
@@ -158,7 +195,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName("3 "+NoA + " " + i);
+			worker.setName("3 " + NoA + " " + i);
 			worker.start();
 		}
 
@@ -167,15 +204,15 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 3 2 " + NoA, result);
 		System.out.println(result);
 	}
 
-	public void parallelExperimentIncreasingCriticalSectionLength(int cslen) {
+	public void parallelExperimentIncreasingCriticalSectionLength(int cslen, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
@@ -235,20 +272,20 @@ public class ProtocolsCombinedWFDM {
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incmrsp();
+						counter.incmrsp();
 
 					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfnp();
+						counter.incfnp();
 
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfp();
+						counter.incfp();
 
 					if (solver.checkSchedulability(true)[0] == 1) {
-						incDcombine();
+						counter.incDcombine();
 						if (solver.checkSchedulability(true)[1] == 0) {
-							incDnew();
+							counter.incDnew();
 						}
 					}
 
@@ -265,15 +302,15 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 2 2 " + cslen, result);
 		System.out.println(result);
 	}
 
-	public void parallelExperimentIncreasingPartitions(int NoP) {
+	public void parallelExperimentIncreasingPartitions(int NoP, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
@@ -307,20 +344,20 @@ public class ProtocolsCombinedWFDM {
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incmrsp();
+						counter.incmrsp();
 
 					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfnp();
+						counter.incfnp();
 
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfp();
+						counter.incfp();
 
 					if (solver.checkSchedulability(true)[0] == 1) {
-						incDcombine();
+						counter.incDcombine();
 						if (solver.checkSchedulability(true)[1] == 0) {
-							incDnew();
+							counter.incDnew();
 						}
 					}
 
@@ -328,7 +365,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName("4 "+NoP + " " + i);
+			worker.setName("4 " + NoP + " " + i);
 			worker.start();
 		}
 
@@ -337,15 +374,15 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 4 2 " + NoP, result);
 		System.out.println(result);
 	}
 
-	public void parallelExperimentIncreasingrsf(int resourceSharingFactor) {
+	public void parallelExperimentIncreasingrsf(int resourceSharingFactor, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 1;
 		double rsf;
@@ -401,20 +438,20 @@ public class ProtocolsCombinedWFDM {
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incmrsp();
+						counter.incmrsp();
 
 					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfnp();
+						counter.incfnp();
 
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfp();
+						counter.incfp();
 
 					if (solver.checkSchedulability(true)[0] == 1) {
-						incDcombine();
+						counter.incDcombine();
 						if (solver.checkSchedulability(true)[1] == 0) {
-							incDnew();
+							counter.incDnew();
 						}
 					}
 
@@ -422,7 +459,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName("5 "+resourceSharingFactor + " " + i);
+			worker.setName("5 " + resourceSharingFactor + " " + i);
 			worker.start();
 		}
 
@@ -431,15 +468,15 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 5 2 " + resourceSharingFactor, result);
 		System.out.println(result);
 	}
 
-	public void parallelExperimentIncreasingWorkload(int NoT) {
+	public void parallelExperimentIncreasingWorkload(int NoT, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
 		double rsf = 0.2;
@@ -474,20 +511,20 @@ public class ProtocolsCombinedWFDM {
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incmrsp();
+						counter.incmrsp();
 
 					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfnp();
+						counter.incfnp();
 
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
-						incfp();
+						counter.incfp();
 
 					if (solver.checkSchedulability(true)[0] == 1) {
-						incDcombine();
+						counter.incDcombine();
 						if (solver.checkSchedulability(true)[1] == 0) {
-							incDnew();
+							counter.incDnew();
 						}
 					}
 
@@ -495,7 +532,7 @@ public class ProtocolsCombinedWFDM {
 					downLatch.countDown();
 				}
 			});
-			worker.setName("1 "+NoT + " " + i);
+			worker.setName("1 " + NoT + " " + i);
 			worker.start();
 		}
 
@@ -504,41 +541,15 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 1 2 " + NoT, result);
 		System.out.println(result);
 	}
 
-	public synchronized void incfnp() {
-		fnp++;
-	}
 
-	public synchronized void incfp() {
-		fp++;
-	}
-
-	public synchronized void incmrsp() {
-		mrsp++;
-	}
-
-	public synchronized void incDcombine() {
-		Dcombine++;
-	}
-
-	public synchronized void incDnew() {
-		Dnew++;
-	}
-
-	public void initResults() {
-		mrsp = 0;
-		fp = 0;
-		fnp = 0;
-		Dcombine = 0;
-		Dnew = 0;
-	}
 
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
