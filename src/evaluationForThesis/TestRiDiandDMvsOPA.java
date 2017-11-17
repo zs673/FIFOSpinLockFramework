@@ -85,50 +85,43 @@ public class TestRiDiandDMvsOPA {
 
 		String result = "";
 		int RiDM = 0;
-		int DiDM = 0;
 		int OPA = 0;
 		int slackOPA = 0;
-		int newPrioAssign = 0;
-		int RiDMcannotOPAcan = 0;
-		int RiDMcanOPAcannot = 0;
-		int OPAcannotNEWOPAcan = 0;
-		int OPAcanNEWOPAcannot = 0;
-		int RiDMcannotNEWOPAcan = 0;
-		int RiDMcanNEWOPAcannot = 0;
+
+		int DMcannotOPAcan = 0;
+		int DMcanOPAcannot = 0;
+		int OPAcannotSBPOcan = 0;
+		int OPAcanSBPOcannot = 0;
+		int DMcannotSBPOAcan = 0;
+		int DMcanSBPOcannot = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-			ArrayList<Resource> resources = generator.generateResources();
-			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-			
-			if(tasks == null){
-				System.err.println("tasks is NULL");
-				System.exit(-1);
-			}
-			
-			for (int k = 0; k < resources.size(); k++) {
-				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
-				// resources.get(k).protocol = 3;
+			ArrayList<SporadicTask> tasksToAlloc = null;
+			ArrayList<Resource> resources = null;
+			ArrayList<ArrayList<SporadicTask>> tasks = null;
+
+			while (tasks == null) {
+				tasksToAlloc = generator.generateTasks();
+				resources = generator.generateResources();
+				generator.generateResourceUsage(tasksToAlloc, resources);
+				tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 			}
 
-			boolean RiDMok = false, DiDMok = false, OPAok = false, NEWOPAok = false;
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
+			}
+
+			boolean DMok = false, OPAok = false, SBPOok = false;
 			Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, true, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				RiDM++;
-				RiDMok = true;
-			}
-
-			Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, false);
-			if (isSystemSchedulable(tasks, Ris)) {
-				DiDM++;
-				DiDMok = true;
+				DMok = true;
 			}
 
 			Ris = combined.getResponseTimeBySBPO(tasks, resources, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				slackOPA++;
-				NEWOPAok = true;
+				SBPOok = true;
 			}
 
 			Ris = combined.getResponseTimeByOPA(tasks, resources, true, false);
@@ -137,90 +130,33 @@ public class TestRiDiandDMvsOPA {
 				OPAok = true;
 			}
 
-			if (combined.getResponseTimeByNewPriorityFramework(tasks, resources, false))
-				newPrioAssign++;
+			if (!DMok && OPAok)
+				DMcannotOPAcan++;
 
-			if (!RiDMok && OPAok)
-				RiDMcannotOPAcan++;
+			if (DMok && !OPAok)
+				DMcanOPAcannot++;
 
-			if (RiDMok && !OPAok)
-				RiDMcanOPAcannot++;
-
-			if (OPAok && !NEWOPAok) {
-				OPAcanNEWOPAcannot++;
-
-				// Ris = combined.getResponseTimeByOPA(tasks, resources, true,
-				// true);
-				// for (int j = 0; j < tasks.size(); j++) {
-				// for (int k = 0; k < tasks.get(j).size(); k++) {
-				// System.out.print("T" + tasks.get(j).get(k).id + ": " +
-				// tasks.get(j).get(k).priority + " ");
-				// }
-				// System.out.println();
-				//
-				// }
-				//
-				//
-				// Ris = combined.getResponseTimeByNewOPA(tasks, resources,
-				// true);
-				// for (int j = 0; j < tasks.size(); j++) {
-				// for (int k = 0; k < tasks.get(j).size(); k++) {
-				// System.out.print("T" + tasks.get(j).get(k).id + ": " +
-				// tasks.get(j).get(k).priority + " ");
-				// }
-				// System.out.println();
-				//
-				// }
-				//
-				//
-				// Ris = combined.getResponseTimeByOPA(tasks, resources, true,
-				// true);
-				//
-				//
-				//
-				// generator.PrintAllocatedSystem(tasks, resources);
-				// Ris = combined.getResponseTimeByNewOPA(tasks, resources,
-				// true);
+			if (OPAok && !SBPOok) {
+				OPAcanSBPOcannot++;
 			}
 
-			if (!OPAok && NEWOPAok)
-				OPAcannotNEWOPAcan++;
+			if (!OPAok && SBPOok)
+				OPAcannotSBPOcan++;
 
-			if (!RiDMok && NEWOPAok)
-				RiDMcannotNEWOPAcan++;
+			if (!DMok && SBPOok)
+				DMcannotSBPOAcan++;
 
-			if (RiDMok && !NEWOPAok)
-				RiDMcanNEWOPAcannot++;
+			if (DMok && !SBPOok)
+				DMcanSBPOcannot++;
 
-			if (DiDMok && !OPAok) {
-				System.err.println("found!");
+			 System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 
-				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
-				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
-
-				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
-				Ris = combined.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, false, true, true);
-
-				Ris = combined.getResponseTimeByOPA(tasks, resources, true, true);
-
-				System.exit(-1);
-			}
-
-//			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
-			
-
-			if(tasks == null){
-				System.err.println("NULL" + 2 + " " + 1 + " " + cs_len + " times: " + i);
-				System.exit(-1);
-			}
 		}
 
-		result = "DM+Ri: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    DM+Di: " + (double) DiDM / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ "    OPA+Di: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    newOPA+Ri: " + (double) slackOPA / (double) TOTAL_NUMBER_OF_SYSTEMS
-				+ "    new priorityFramework: " + (double) newPrioAssign / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA+Di ok & DM+Ri fail: " + RiDMcannotOPAcan
-				+ "    OPA+Di fail & DM+Ri ok: " + RiDMcanOPAcannot + "    OPA+Di ok & newOPA+Ri fail: " + OPAcanNEWOPAcannot
-				+ "    OPA+Di fail & newOPA+Ri ok: " + OPAcannotNEWOPAcan + "   newOPA+Di ok & DM+Ri fail: " + RiDMcannotNEWOPAcan
-				+ "   newOPA+Di fail & DM+Ri ok: " + RiDMcanNEWOPAcannot + "\n";
+		result = "DM: " + (double) RiDM / (double) TOTAL_NUMBER_OF_SYSTEMS + "    DM+Di: " + "    OPA: " + (double) OPA / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "    SBPO: " + (double) slackOPA / (double) TOTAL_NUMBER_OF_SYSTEMS + "    OPA ok & DM fail: " + DMcannotOPAcan + "    OPA fail & DM ok: "
+				+ DMcanOPAcannot + "    OPA ok & SBPO fail: " + OPAcanSBPOcannot + "    OPA fail & SBPO ok: " + OPAcannotSBPOcan + "   SBPO ok & DM fail: "
+				+ DMcannotSBPOAcan + "   SBPO fail & DM ok: " + DMcanSBPOcannot + "\n";
 
 		writeSystem(("ioa " + 2 + " " + 1 + " " + cs_len), result);
 	}

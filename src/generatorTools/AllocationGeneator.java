@@ -566,7 +566,7 @@ public class AllocationGeneator {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return NextFitAllocation(sortedT, partitions, maxUtilPerCore);
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLengthDecreaseAllocation(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
@@ -597,7 +597,7 @@ public class AllocationGeneator {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return NextFitAllocation(sortedT, partitions, maxUtilPerCore);
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLengthIncreaseAllocation(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
@@ -631,7 +631,7 @@ public class AllocationGeneator {
 			System.exit(-1);
 		}
 
-		return FirstFitAllocation(sortedT, partitions, maxUtilPerCore);
+		return NextFitAllocation(sortedT, partitions, maxUtilPerCore);
 	}
 
 }
