@@ -59,7 +59,7 @@ public class TestAllocationByMSRPandMrsP {
 	public static void main(String[] args) throws Exception {
 		TestAllocationByMSRPandMrsP test = new TestAllocationByMSRPandMrsP();
 
-		final CountDownLatch cslencountdown = new CountDownLatch(6);
+		final CountDownLatch cslencountdown = new CountDownLatch(1);
 		for (int i = 1; i < 2; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
