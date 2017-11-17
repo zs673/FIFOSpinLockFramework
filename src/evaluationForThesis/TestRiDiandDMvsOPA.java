@@ -96,16 +96,10 @@ public class TestRiDiandDMvsOPA {
 		int DMcanSBPOcannot = 0;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			ArrayList<SporadicTask> tasksToAlloc = null;
-			ArrayList<Resource> resources = null;
-			ArrayList<ArrayList<SporadicTask>> tasks = null;
-
-			while (tasks == null) {
-				tasksToAlloc = generator.generateTasks();
-				resources = generator.generateResources();
-				generator.generateResourceUsage(tasksToAlloc, resources);
-				tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-			}
+			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+			ArrayList<Resource> resources = generator.generateResources();
+			generator.generateResourceUsage(tasksToAlloc, resources);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
@@ -149,7 +143,7 @@ public class TestRiDiandDMvsOPA {
 			if (DMok && !SBPOok)
 				DMcanSBPOcannot++;
 
-			 System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
+			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 
 		}
 
