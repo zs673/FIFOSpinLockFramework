@@ -229,9 +229,11 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true)[0] == 1) {
+					int[] combinedResult = solver.checkSchedulability(true);
+
+					if (combinedResult[0] == 1) {
 						counter.incDcombine();
-						if (solver.checkSchedulability(true)[1] == 0) {
+						if (combinedResult[1] == 0) {
 							counter.incDnew();
 						}
 					}
@@ -327,12 +329,15 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true)[0] == 1) {
+					int[] combinedResult = solver.checkSchedulability(true);
+
+					if (combinedResult[0] == 1) {
 						counter.incDcombine();
-						if (solver.checkSchedulability(true)[1] == 0) {
+						if (combinedResult[1] == 0) {
 							counter.incDnew();
 						}
 					}
+
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
@@ -399,12 +404,15 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true)[0] == 1) {
+					int[] combinedResult = solver.checkSchedulability(true);
+
+					if (combinedResult[0] == 1) {
 						counter.incDcombine();
-						if (solver.checkSchedulability(true)[1] == 0) {
+						if (combinedResult[1] == 0) {
 							counter.incDnew();
 						}
 					}
+
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
@@ -492,10 +500,12 @@ public class ProtocolsCombinedWFDM {
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
+					
+					int[] combinedResult = solver.checkSchedulability(true);
 
-					if (solver.checkSchedulability(true)[0] == 1) {
+					if (combinedResult[0] == 1) {
 						counter.incDcombine();
-						if (solver.checkSchedulability(true)[1] == 0) {
+						if (combinedResult[1] == 0) {
 							counter.incDnew();
 						}
 					}
@@ -566,12 +576,15 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true)[0] == 1) {
+					int[] combinedResult = solver.checkSchedulability(true);
+
+					if (combinedResult[0] == 1) {
 						counter.incDcombine();
-						if (solver.checkSchedulability(true)[1] == 0) {
+						if (combinedResult[1] == 0) {
 							counter.incDnew();
 						}
 					}
+
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
