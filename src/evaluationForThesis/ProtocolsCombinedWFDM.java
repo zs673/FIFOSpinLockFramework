@@ -229,11 +229,9 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					int[] combinedResult = solver.checkSchedulability(true);
-
-					if (combinedResult[0] == 1) {
+					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (combinedResult[1] == 0) {
+						if (solver.protocol == 0) {
 							counter.incDnew();
 						}
 					}
@@ -329,11 +327,9 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					int[] combinedResult = solver.checkSchedulability(true);
-
-					if (combinedResult[0] == 1) {
+					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (combinedResult[1] == 0) {
+						if (solver.protocol == 0) {
 							counter.incDnew();
 						}
 					}
@@ -404,11 +400,9 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					int[] combinedResult = solver.checkSchedulability(true);
-
-					if (combinedResult[0] == 1) {
+					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (combinedResult[1] == 0) {
+						if (solver.protocol == 0) {
 							counter.incDnew();
 						}
 					}
@@ -501,11 +495,9 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 					
-					int[] combinedResult = solver.checkSchedulability(true);
-
-					if (combinedResult[0] == 1) {
+					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (combinedResult[1] == 0) {
+						if (solver.protocol == 0) {
 							counter.incDnew();
 						}
 					}
@@ -576,11 +568,9 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					int[] combinedResult = solver.checkSchedulability(true);
-
-					if (combinedResult[0] == 1) {
+					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (combinedResult[1] == 0) {
+						if (solver.protocol == 0) {
 							counter.incDnew();
 						}
 					}
