@@ -59,8 +59,8 @@ public class TestAllocationByMSRPandMrsP {
 	public static void main(String[] args) throws Exception {
 		TestAllocationByMSRPandMrsP test = new TestAllocationByMSRPandMrsP();
 
-		final CountDownLatch cslencountdown = new CountDownLatch(1);
-		for (int i = 1; i < 2; i++) {
+		final CountDownLatch cslencountdown = new CountDownLatch(6);
+		for (int i = 1; i < 7; i++) {
 			final int cslen = i;
 			new Thread(new Runnable() {
 				@Override
@@ -71,20 +71,19 @@ public class TestAllocationByMSRPandMrsP {
 			}).start();
 		}
 
-		// final CountDownLatch accesscountdown = new CountDownLatch(5);
-		// for (int i = 1; i < 21; i++) {
-		// final int access = i;
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// test.experimentIncreasingContention(access);
-		// accesscountdown.countDown();
-		// }
-		// }).start();
-		// }
-		//
-		// accesscountdown.await();
-
+//		final CountDownLatch accesscountdown = new CountDownLatch(9);
+//		for (int i = 1; i < 42; i = i + 5) {
+//			final int access = i;
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					test.experimentIncreasingContention(access);
+//					accesscountdown.countDown();
+//				}
+//			}).start();
+//		}
+//
+//		accesscountdown.await();
 		cslencountdown.await();
 
 		TestResultFileReader.schedreader(null, false);
