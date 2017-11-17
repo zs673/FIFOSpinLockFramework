@@ -315,6 +315,7 @@ public class AllocationGeneator {
 			SporadicTask task = tasksToAllocate.get(j);
 			for (int k = 0; k < task.resource_required_index.size(); k++) {
 				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + 1);
+				// TODO whether by task number or request number?
 			}
 		}
 
@@ -343,7 +344,7 @@ public class AllocationGeneator {
 		return NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
 	}
 
-	private ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocationAdvanced(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
+	public ArrayList<ArrayList<SporadicTask>> ResourceRequestTasksAllocationBackUp(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
 			int partitions, double maxUtilPerCore) {
 		for (int i = 0; i < tasksToAllocate.size(); i++) {
 			tasksToAllocate.get(i).partition = -1;
@@ -442,6 +443,56 @@ public class AllocationGeneator {
 	}
 
 	private ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocation(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources, int partitions,
+			double maxUtilPerCore) {
+		for (int i = 0; i < tasksToAllocate.size(); i++) {
+			tasksToAllocate.get(i).partition = -1;
+		}
+
+		int number_of_resources = resources.size();
+
+		ArrayList<ArrayList<Double>> NoQT = new ArrayList<>();
+		for (int i = 0; i < number_of_resources; i++) {
+			ArrayList<Double> noq = new ArrayList<>();
+			noq.add((double)i);
+			noq.add((double)0);
+			NoQT.add(noq);
+		}
+
+		for (int j = 0; j < tasksToAllocate.size(); j++) {
+			SporadicTask task = tasksToAllocate.get(j);
+			for (int k = 0; k < task.resource_required_index.size(); k++) {
+				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + task.util);
+			}
+		}
+
+		NoQT.sort((p1, p2) -> -Double.compare(p1.get(1), p2.get(1)));
+
+		ArrayList<SporadicTask> sortedTasks = new ArrayList<>();
+		ArrayList<SporadicTask> cleanTasks = new ArrayList<>();
+		for (int i = 0; i < NoQT.size(); i++) {
+			for (int j = 0; j < tasksToAllocate.size(); j++) {
+				SporadicTask task = tasksToAllocate.get(j);
+				double index = NoQT.get(i).get(0);
+				int intIndex = (int) index;
+				if (task.resource_required_index.contains(intIndex) && !sortedTasks.contains(task)) {
+					sortedTasks.add(task);
+				}
+				if (!cleanTasks.contains(task) && task.resource_required_index.size() == 0) {
+					cleanTasks.add(task);
+				}
+			}
+		}
+		sortedTasks.addAll(cleanTasks);
+
+		if (sortedTasks.size() != tasksToAllocate.size()) {
+			System.out.println("RESOURCE REQUEST FIT sorted tasks size error!");
+			System.exit(-1);
+		}
+
+		return NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
+	}
+	
+	public ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocationBackUp(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources, int partitions,
 			double maxUtilPerCore) {
 		ArrayList<SporadicTask> UnAllocatedT = new ArrayList<>(tasksToAllocate);
 
