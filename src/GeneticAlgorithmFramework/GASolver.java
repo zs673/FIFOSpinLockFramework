@@ -314,7 +314,7 @@ public class GASolver {
 			protocol = 0;
 			allocation = gene[resources.size() + 1];
 		} else {
-			if (PRIORITY_SCHEME_NUMBER == 2) {
+			if (PRIORITY_SCHEME_NUMBER > 1) {
 				long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
 				if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
 					fitness[0] = 0;
@@ -323,14 +323,16 @@ public class GASolver {
 					protocol = 0;
 					allocation = gene[resources.size() + 1];
 				}
-			} else if (PRIORITY_SCHEME_NUMBER == 3) {
-				long[][] RisSBPO = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, false);
-				if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
-					fitness[0] = 0;
-					fitness[1] = 0;
-					bestPriority = 3;
-					protocol = 0;
-					allocation = gene[resources.size() + 1];
+
+				if (PRIORITY_SCHEME_NUMBER > 2) {
+					long[][] RisSBPO = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, false);
+					if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
+						fitness[0] = 0;
+						fitness[1] = 0;
+						bestPriority = 3;
+						protocol = 0;
+						allocation = gene[resources.size() + 1];
+					}
 				}
 			}
 		}
