@@ -197,8 +197,8 @@ public class PreGASolver {
 		 * If not possible in all cases, we suggest the GA to finish.
 		 */
 		if (lazyMode && !isPossible) {
-			if (print)
-				System.out.println("not schedulable");
+			// if (print)
+			// System.out.println("not schedulable");
 			return -1;
 		}
 
