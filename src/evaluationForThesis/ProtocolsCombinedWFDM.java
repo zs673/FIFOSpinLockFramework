@@ -74,8 +74,8 @@ public class ProtocolsCombinedWFDM {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 	
-	public static int GENERATIONS = 500;
-	public static int POPULATION = 500;
+	public static int GENERATIONS = 100;
+	public static int POPULATION = 100;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
