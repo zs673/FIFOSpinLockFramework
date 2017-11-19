@@ -102,7 +102,7 @@ public class ProtocolsCombined {
 		ProtocolsCombined test = new ProtocolsCombined();
 		final CountDownLatch downLatch = new CountDownLatch((/*9 +*/ /*6 + 9 + 10*/  1));
 
-		for (int i = 7; i < 8; i++) {
+		for (int i = 8; i < 9; i++) {
 			final int count = i;
 			new Thread(new Runnable() {
 
