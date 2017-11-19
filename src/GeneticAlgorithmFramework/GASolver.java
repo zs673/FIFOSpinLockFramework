@@ -322,9 +322,7 @@ public class GASolver {
 					bestPriority = 2;
 					protocol = 0;
 					allocation = gene[resources.size()];
-				}
-
-				if (PRIORITY_SCHEME_NUMBER > 2) {
+				} else if (PRIORITY_SCHEME_NUMBER > 2) {
 					long[][] RisSBPO = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, false);
 					if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
 						fitness[0] = 0;
