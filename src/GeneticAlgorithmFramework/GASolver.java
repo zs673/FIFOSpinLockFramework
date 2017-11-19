@@ -88,7 +88,7 @@ public class GASolver {
 	 *         within the given generation and population size.
 	 */
 	public int checkSchedulability(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
+		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, 1, isPrint);
 		int initial = preSovler.initialCheck(true);
 
 		if (initial != 0) {
