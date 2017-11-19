@@ -39,7 +39,7 @@ public class PreGASolver {
 			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
 		this.PROTOCOL_NUMBER = PROTOCOL_NUMBER;
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
-		this.PRIORITY_SCHEME_NUMBER = PRIORITY_SCHEME_NUMBER;
+		this.PRIORITY_SCHEME_NUMBER = 1;
 		this.geneator = geneator;
 		this.tasks = tasks;
 		this.resources = resources;
