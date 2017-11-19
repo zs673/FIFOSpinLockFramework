@@ -100,22 +100,22 @@ public class ProtocolsCombined {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombined test = new ProtocolsCombined();
-		final CountDownLatch downLatch = new CountDownLatch((9 + 6 + 9 + 10));
+		final CountDownLatch downLatch = new CountDownLatch((/*9 +*/ 6 + 9 + 10));
 
-		for (int i = 1; i < 10; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingWorkload(count, counter);
-					downLatch.countDown();
-				}
-			}).start();
-
-		}
+//		for (int i = 1; i < 10; i++) {
+//			final int count = i;
+//			new Thread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					Counter counter = test.new Counter();
+//					counter.initResults();
+//					test.parallelExperimentIncreasingWorkload(count, counter);
+//					downLatch.countDown();
+//				}
+//			}).start();
+//
+//		}
 		for (int i = 1; i < 7; i++) {
 			final int count = i;
 			new Thread(new Runnable() {
