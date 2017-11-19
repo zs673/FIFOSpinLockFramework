@@ -312,7 +312,7 @@ public class GASolver {
 		if (fitness[0] == 0) {
 			bestPriority = 1;
 			protocol = 0;
-			allocation = gene[resources.size() + 1];
+			allocation = gene[resources.size()];
 		} else {
 			if (PRIORITY_SCHEME_NUMBER > 1) {
 				long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
@@ -321,7 +321,7 @@ public class GASolver {
 					fitness[1] = 0;
 					bestPriority = 2;
 					protocol = 0;
-					allocation = gene[resources.size() + 1];
+					allocation = gene[resources.size()];
 				}
 
 				if (PRIORITY_SCHEME_NUMBER > 2) {
@@ -331,7 +331,7 @@ public class GASolver {
 						fitness[1] = 0;
 						bestPriority = 3;
 						protocol = 0;
-						allocation = gene[resources.size() + 1];
+						allocation = gene[resources.size()];
 					}
 				}
 			}
