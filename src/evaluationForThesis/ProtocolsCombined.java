@@ -50,7 +50,7 @@ public class ProtocolsCombined {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
-	public static int GENERATIONS = 100;
+	public static int GENERATIONS = 50;
 	public static int POPULATION = 100;
 
 	public static int ALLOCATION_POLICY = 8;
