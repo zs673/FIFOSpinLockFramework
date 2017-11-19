@@ -47,7 +47,7 @@ public class ProtocolsCombined {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	public static int GENERATIONS = 100;
@@ -100,22 +100,22 @@ public class ProtocolsCombined {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombined test = new ProtocolsCombined();
-		final CountDownLatch downLatch = new CountDownLatch((9 + 6 + 9 + 10));
+		final CountDownLatch downLatch = new CountDownLatch((/*9 +*/ 6 + 9 + 10));
 
-		for (int i = 1; i < 10; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingWorkload(count, counter);
-					downLatch.countDown();
-				}
-			}).start();
-
-		}
+//		for (int i = 1; i < 10; i++) {
+//			final int count = i;
+//			new Thread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					Counter counter = test.new Counter();
+//					counter.initResults();
+//					test.parallelExperimentIncreasingWorkload(count, counter);
+//					downLatch.countDown();
+//				}
+//			}).start();
+//
+//		}
 		for (int i = 1; i < 7; i++) {
 			final int count = i;
 			new Thread(new Runnable() {
@@ -155,10 +155,6 @@ public class ProtocolsCombined {
 				}
 			}).start();
 		}
-		// for (int i = 1; i < 6; i++) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingrsf(i);
-		// }
 
 		downLatch.await();
 		TestResultFileReader.schedreader(null, false);
