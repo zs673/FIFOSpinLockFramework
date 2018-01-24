@@ -166,7 +166,7 @@ public class MrsP {
 				interference += indriectblocking;
 				t.indirectspin += indriectblocking;
 				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
-						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
+						* (AnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 

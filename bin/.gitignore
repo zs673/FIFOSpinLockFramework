@@ -1,7 +1,5 @@
 /native/
+/utils/
+/analysis/
+/entity/
 /evaluationForThesis/
-/basicAnalysis/
-/generatorTools/
-/GeneticAlgorithmFramework/
-/evaluation/
-/test/

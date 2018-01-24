@@ -174,7 +174,7 @@ public class FIFONP {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET);
 				t.implementation_overheads += Math.ceil((double) (Ri) / (double) hpTask.period)
-						* (AnalysisUtils.FULL_CONTEXT_SWTICH1 + AnalysisUtils.FULL_CONTEXT_SWTICH2);
+						* (AnalysisUtils.FULL_CONTEXT_SWTICH2);
 
 				long btb_interference = getIndirectSpinDelay(hpTask, allTasks, resources, Ris, Ri, Ris[partition][i], btbHit,
 						useRi, t);

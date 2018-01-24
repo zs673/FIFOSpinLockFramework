@@ -24,15 +24,14 @@ public class AnalysisUtils {
 
 	public static double LINUX_SCHED_AWAY = (double) (736) / (double) 1000;
 	public static double LITMUS_COMPLETE = (double) (411) / (double) 1000;
-
 	public static double LITMUS_RELEASE = (double) (1383) / (double) 1000;
+
 	public static double MrsP_HELP_IN_LOCK = (double) 2431 / (double) 1000;
 	public static double MrsP_HELP_IN_SCHEDULE = (double) 745 / (double) 1000;
 	public static double MrsP_INSERT = (double) 2347 / (double) 1000;
-
 	public static double MrsP_LOCK = (double) (794 + 259 + 219) / (double) 1000;
-
 	public static double MrsP_UNLOCK = (double) (744 + 65 + 571 + 262) / (double) 1000;
+
 	public static double PFP_SCHED_CHECK = (double) (492) / (double) 1000;
 	public static double PFP_SCHED_REQUEUE = (double) (603) / (double) 1000;
 
@@ -41,26 +40,27 @@ public class AnalysisUtils {
 
 	public static double PFP_SCHEDULER = (double) (492 + 603 + 274 + 308) / (double) 1000;
 
-	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE
-			+ MrsP_HELP_IN_SCHEDULE + PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
+	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
+			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
 
-	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
-	public static double FULL_CONTEXT_SWTICH2 = FULL_CONTEXT_SWTICH1 + LITMUS_RELEASE + LITMUS_COMPLETE;
+	private static double FULL_CXS = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
+	public static double FULL_CONTEXT_SWTICH1 = FULL_CXS + LITMUS_RELEASE;
+	public static double FULL_CONTEXT_SWTICH2 = FULL_CXS * 2 + LITMUS_RELEASE + LITMUS_COMPLETE;
 
-//	 public static double FIFONP_LOCK = 0;
-//	 public static double FIFONP_UNLOCK = 0;
-//	 public static double FIFOP_LOCK = 0;
-//	 public static double FIFOP_UNLOCK = 0;
-//	 public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
-//	 public static double FIFOP_RE_REQUEST = 0;
-//	 public static double MrsP_LOCK = 0;
-//	 public static double MrsP_UNLOCK = 0;
-//	 public static double MrsP_HELP_IN_LOCK = 0;
-//	 public static double MrsP_INSERT = 0;
-//	 public static double MrsP_HELP_IN_SCHEDULE = 0;
-//	 public static double FULL_CONTEXT_SWTICH1 = 0;
-//	 public static double FULL_CONTEXT_SWTICH2 = 0;
-//	 public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
+	// public static double FIFONP_LOCK = 0;
+	// public static double FIFONP_UNLOCK = 0;
+	// public static double FIFOP_LOCK = 0;
+	// public static double FIFOP_UNLOCK = 0;
+	// public static double FIFOP_DEQUEUE_IN_SCHEDULE = 0;
+	// public static double FIFOP_RE_REQUEST = 0;
+	// public static double MrsP_LOCK = 0;
+	// public static double MrsP_UNLOCK = 0;
+	// public static double MrsP_HELP_IN_LOCK = 0;
+	// public static double MrsP_INSERT = 0;
+	// public static double MrsP_HELP_IN_SCHEDULE = 0;
+	// public static double FULL_CONTEXT_SWTICH1 = 0;
+	// public static double FULL_CONTEXT_SWTICH2 = 0;
+	// public static double MrsP_PREEMPTION_AND_MIGRATION = 6;
 
 	public static void cloneList(long[][] oldList, long[][] newList) {
 		for (int i = 0; i < oldList.length; i++) {
@@ -99,7 +99,7 @@ public class AnalysisUtils {
 		}
 		return false;
 	}
-	
+
 	public static boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
 		for (int i = 0; i < tasks.size(); i++) {
 			for (int j = 0; j < tasks.get(i).size(); j++) {
@@ -111,26 +111,25 @@ public class AnalysisUtils {
 	}
 
 	public static void printResponseTime(long[][] Ris, ArrayList<ArrayList<SporadicTask>> tasks) {
-		
+
 		for (int i = 0; i < Ris.length; i++) {
 			for (int j = 0; j < Ris[i].length; j++) {
-				System.out.println("T" + tasks.get(i).get(j).id + " RT: " + Ris[i][j] + ", P: " + tasks.get(i).get(j).priority + ", D: " + tasks.get(i).get(j).deadline + ", S = "
-						+ tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = "
-						+ tasks.get(i).get(j).interference + ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: "
-						+ tasks.get(i).get(j).pure_resource_execution_time + ", B = " + tasks.get(i).get(j).indirectspin
-						+ ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
-				
+				System.out.println(
+						"T" + tasks.get(i).get(j).id + " RT: " + Ris[i][j] + ", P: " + tasks.get(i).get(j).priority + ", D: " + tasks.get(i).get(j).deadline
+								+ ", S = " + tasks.get(i).get(j).spin + ", L = " + tasks.get(i).get(j).local + ", I = " + tasks.get(i).get(j).interference
+								+ ", WCET = " + tasks.get(i).get(j).WCET + ", Resource: " + tasks.get(i).get(j).pure_resource_execution_time + ", B = "
+								+ tasks.get(i).get(j).indirectspin + ", implementation_overheads: " + tasks.get(i).get(j).implementation_overheads);
+
 			}
 			System.out.println();
 		}
 	}
-	
+
 	public static void main(String args[]) {
 		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   "
 				+ (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST));
 		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK);
-		System.out.println(
-				" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
+		System.out.println(" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
 		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);
 	}
 
