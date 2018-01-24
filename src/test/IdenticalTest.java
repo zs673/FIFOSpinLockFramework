@@ -94,6 +94,8 @@ public class IdenticalTest {
 			if (!isEqual1 || !isEqual2 || !isEqual3) {
 				System.out.println("not equal");
 				isEqual(r1, r2, true);
+				isEqual(r3, r4, true);
+				isEqual(r5, r6, true);
 				generator.PrintAllocatedSystem(tasks, resources);
 				r1 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, true);
 				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
