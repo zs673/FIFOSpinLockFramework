@@ -10,43 +10,43 @@ public class AnalysisUtils {
 
 	public static double FIFONP_LOCK = (double) (501 + 259 + 219) / (double) 1000;
 	public static double FIFONP_UNLOCK = (double) 602 / (double) 1000;
-	public static double FIFOP_DEQUEUE_IN_SCHEDULE = (double) 703 / (double) 1000;
 
+	private static int FIFOP_DEQUEUE_IN_SCHEDULE = 703;
+	private static int FIFOP_RE_REQUEST = 744 + 216;
+	public static double FIFOP_CANCEL = (double) (FIFOP_DEQUEUE_IN_SCHEDULE + FIFOP_RE_REQUEST) / (double) 1000;
 	public static double FIFOP_LOCK = (double) (744 + 216 + 295) / (double) 1000;
-	public static double FIFOP_RE_REQUEST = (double) (744 + 216) / (double) 1000;
 	public static double FIFOP_UNLOCK = (double) 602 / (double) 1000;
 
-	public static double FINISH_SWITCH = (double) (1113 + 1165) / (double) 1000;
-
-	public static double LINUX_CONTEXT_SWTICH = (double) (965) / (double) 1000;
-	// private static double CACHE_OVERHEADS = (double) (1905) / (double) 1000;
-	public static double LINUX_SCHED = (double) (845) / (double) 1000;
-
-	public static double LINUX_SCHED_AWAY = (double) (736) / (double) 1000;
-	public static double LITMUS_COMPLETE = (double) (411) / (double) 1000;
-	public static double LITMUS_RELEASE = (double) (1383) / (double) 1000;
-
-	public static double MrsP_HELP_IN_LOCK = (double) 2431 / (double) 1000;
-	public static double MrsP_HELP_IN_SCHEDULE = (double) 745 / (double) 1000;
-	public static double MrsP_INSERT = (double) 2347 / (double) 1000;
+	// public static double MrsP_HELP_IN_LOCK = (double) 2431 / (double) 1000;
+	private static int MrsP_HELP_IN_SCHEDULE = 745;
+	private static int MrsP_INSERT = 2347;
 	public static double MrsP_LOCK = (double) (794 + 259 + 219) / (double) 1000;
 	public static double MrsP_UNLOCK = (double) (744 + 65 + 571 + 262) / (double) 1000;
 
-	public static double PFP_SCHED_CHECK = (double) (492) / (double) 1000;
-	public static double PFP_SCHED_REQUEUE = (double) (603) / (double) 1000;
+	// public static double FINISH_SWITCH = (double) (1113 + 1165) / (double)
+	// 1000;
+	private static int LINUX_CONTEXT_SWTICH = 965;
+	// private static double CACHE_OVERHEADS = (double) (1905) / (double) 1000;
+	private static int LINUX_SCHED = 845;
+	private static int LINUX_SCHED_AWAY = 736;
+	private static int LITMUS_COMPLETE = 411;
+	private static int LITMUS_RELEASE = 1383;
 
-	public static double PFP_SCHED_SET_NEXT = (double) (308) / (double) 1000;
-	public static double PFP_SCHED_TAKE_NEXT = (double) (274) / (double) 1000;
+	private static int PFP_SCHED_CHECK = 492;
+	private static int PFP_SCHED_REQUEUE = 603;
+	private static int PFP_SCHED_SET_NEXT = 308;
+	private static int PFP_SCHED_TAKE_NEXT = 274;
+	private static int PFP_SCHEDULER = PFP_SCHED_CHECK + PFP_SCHED_REQUEUE + PFP_SCHED_SET_NEXT + PFP_SCHED_TAKE_NEXT;
 
-	public static double PFP_SCHEDULER = (double) (492 + 603 + 274 + 308) / (double) 1000;
-
-	public static double MrsP_PREEMPTION_AND_MIGRATION = LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE + MrsP_HELP_IN_SCHEDULE
-			+ PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH;
+	public static double MrsP_PREEMPTION_AND_MIGRATION = (double) (LINUX_SCHED * 2 + PFP_SCHED_CHECK * 2 + MrsP_INSERT + PFP_SCHED_REQUEUE
+			+ MrsP_HELP_IN_SCHEDULE + PFP_SCHED_SET_NEXT + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH) / (double) 1000;
 
 	// private static double FULL_CXS = LINUX_SCHED + LINUX_SCHED_AWAY +
 	// LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
-	public static double FULL_CONTEXT_SWTICH1 = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
-	public static double FULL_CONTEXT_SWTICH2 = LITMUS_RELEASE + LITMUS_COMPLETE + FULL_CONTEXT_SWTICH1;
+
+	private static int CXS = LINUX_SCHED + LINUX_SCHED_AWAY + LINUX_CONTEXT_SWTICH + PFP_SCHEDULER;
+	public static double FULL_CONTEXT_SWTICH1 = (double) (CXS) / (double) 1000;
+	public static double FULL_CONTEXT_SWTICH2 = (double) (LITMUS_COMPLETE + CXS * 2 + LITMUS_RELEASE) / (double) 1000;
 
 	// public static double FIFONP_LOCK = 0;
 	// public static double FIFONP_UNLOCK = 0;
@@ -127,8 +127,7 @@ public class AnalysisUtils {
 	}
 
 	public static void main(String args[]) {
-		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   "
-				+ (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST));
+		System.out.println(" FIFO-P Lock:   " + FIFOP_LOCK + "   FIFO-P UNLOCK:   " + FIFOP_UNLOCK + "   RE-REQUEST:   " + FIFOP_CANCEL);
 		System.out.println(" FIFO-NP Lock:   " + FIFONP_LOCK + "   FIFO-NP UNLOCK:   " + FIFONP_UNLOCK);
 		System.out.println(" MrsP Lock:   " + MrsP_LOCK + "   MrsP UNLOCK:   " + MrsP_UNLOCK + "   MIG:   " + MrsP_PREEMPTION_AND_MIGRATION);
 		System.out.println(" CX1:    " + FULL_CONTEXT_SWTICH1 + "   CX2:   " + FULL_CONTEXT_SWTICH2);

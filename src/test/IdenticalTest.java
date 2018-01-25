@@ -92,7 +92,7 @@ public class IdenticalTest {
 			boolean isEqual3 = isEqual(r5, r6, false);
 
 			if (!isEqual1 || !isEqual2 || !isEqual3) {
-				System.out.println("not equal");
+				System.out.println("not equal: " + isEqual1 + " " + isEqual2 + " " + isEqual3);
 				isEqual(r1, r2, true);
 				isEqual(r3, r4, true);
 				isEqual(r5, r6, true);

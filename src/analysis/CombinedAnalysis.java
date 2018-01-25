@@ -530,8 +530,8 @@ public class CombinedAnalysis {
 					preemptions += (int) Math.ceil((double) (time) / (double) tasks.get(task.partition).get(i).period);
 				}
 			}
-			task.implementation_overheads += preemptions * (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
-			task.blocking_overheads += preemptions * (AnalysisUtils.FIFOP_DEQUEUE_IN_SCHEDULE + AnalysisUtils.FIFOP_RE_REQUEST);
+			task.implementation_overheads += preemptions * (AnalysisUtils.FIFOP_CANCEL);
+			task.blocking_overheads += preemptions * (AnalysisUtils.FIFOP_CANCEL);
 
 			while (preemptions > 0) {
 

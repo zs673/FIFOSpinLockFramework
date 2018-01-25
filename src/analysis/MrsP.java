@@ -9,8 +9,8 @@ import utils.AnalysisUtils;
 
 public class MrsP {
 
-	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal,
-			boolean testSchedulability, boolean btbHit, boolean useRi, boolean printDebug) {
+	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal, boolean testSchedulability,
+			boolean btbHit, boolean useRi, boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -31,8 +31,8 @@ public class MrsP {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION,
-					npsection, extendCal, testSchedulability, btbHit, useRi);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, extendCal,
+					testSchedulability, btbHit, useRi);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -68,8 +68,69 @@ public class MrsP {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
-			double oneMig, long np, int extendCal, boolean testSchedulability, boolean btbHit, boolean useRi) {
+	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal, boolean testSchedulability,
+			boolean btbHit, boolean useRi, boolean mig, boolean np, boolean printDebug) {
+		if (tasks == null)
+			return null;
+
+		// assign priorities by Deadline Monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+
+		long count = 0;
+		boolean isEqual = false, missdeadline = false;
+		long[][] response_time = AnalysisUtils.initResponseTime(tasks);
+
+		long npsection = 0;
+		if (np) {
+			for (int i = 0; i < resources.size(); i++) {
+				if (npsection < resources.get(i).csl)
+					npsection = resources.get(i).csl;
+			}
+		}
+
+		/* a huge busy window to get a fixed Ri */
+		while (!isEqual) {
+			isEqual = true;
+			boolean should_finish = true;
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, mig ? AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION : 0, npsection,
+					extendCal, testSchedulability, btbHit, useRi);
+
+			for (int i = 0; i < response_time_plus.length; i++) {
+				for (int j = 0; j < response_time_plus[i].length; j++) {
+					if (response_time[i][j] != response_time_plus[i][j])
+						isEqual = false;
+					if (testSchedulability) {
+						if (response_time_plus[i][j] > tasks.get(i).get(j).deadline)
+							missdeadline = true;
+					} else {
+						if (response_time_plus[i][j] <= tasks.get(i).get(j).deadline * extendCal)
+							should_finish = false;
+					}
+				}
+			}
+
+			count++;
+			AnalysisUtils.cloneList(response_time_plus, response_time);
+
+			if (testSchedulability) {
+				if (missdeadline)
+					break;
+			} else {
+				if (should_finish)
+					break;
+			}
+		}
+
+		if (printDebug) {
+			System.out.println("MrsP NP    after " + count + " tims of recursion, we got the response time.");
+			AnalysisUtils.printResponseTime(response_time, tasks);
+		}
+
+		return response_time;
+	}
+
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, double oneMig, long np,
+			int extendCal, boolean testSchedulability, boolean btbHit, boolean useRi) {
 		if (tasks == null)
 			return null;
 		long[][] response_time_plus = new long[tasks.size()][];
@@ -96,12 +157,10 @@ public class MrsP {
 				task.migration_overheads_plus = 0;
 				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
 
-				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, btbHit,
-						useRi, task);
-				task.interference = highPriorityInterference(task, tasks, resources, response_time, response_time[i][j], oneMig,
-						np, btbHit, useRi);
+				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, btbHit, useRi, task);
+				task.interference = highPriorityInterference(task, tasks, resources, response_time, response_time[i][j], oneMig, np, btbHit, useRi);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np, btbHit, useRi);
-				long npsection = (isTaskIncurNPSection(task, tasks.get(task.partition), resources) ? np : 0);
+				long npsection = (np>0 && isTaskIncurNPSection(task, tasks.get(task.partition), resources) ? np : 0);
 
 				if (npsection > task.local + task.mrsp_arrivalblocking_overheads) {
 					task.np_section = npsection;
@@ -114,8 +173,7 @@ public class MrsP {
 
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads + task.migration_overheads_plus);
 
-				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
-						+ implementation_overheads;
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
 
 				if (testSchedulability && task.Ri > task.deadline) {
 					return response_time_plus;
@@ -125,8 +183,7 @@ public class MrsP {
 		return response_time_plus;
 	}
 
-	private boolean isTaskIncurNPSection(SporadicTask task, ArrayList<SporadicTask> tasksOnItsParititon,
-			ArrayList<Resource> resources) {
+	private boolean isTaskIncurNPSection(SporadicTask task, ArrayList<SporadicTask> tasksOnItsParititon, ArrayList<Resource> resources) {
 		int partition = task.partition;
 		int priority = task.priority;
 		int minCeiling = 1000;
@@ -150,8 +207,8 @@ public class MrsP {
 	 * Calculate the local high priority tasks' interference for a given task t.
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, long[][] Ris,
-			long time, double oneMig, long np, boolean btbHit, boolean useRi) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			double oneMig, long np, boolean btbHit, boolean useRi) {
 		long interference = 0;
 		int partition = t.partition;
 
@@ -165,23 +222,21 @@ public class MrsP {
 						btbHit ? (useRi ? Ris[partition][i] : hpTask.deadline) : 0, oneMig, np, btbHit, useRi, t);
 				interference += indriectblocking;
 				t.indirectspin += indriectblocking;
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
-						* (AnalysisUtils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (AnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 
 		return interference;
 	}
 
-	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, long jitter, double oneMig, long np, boolean btbHit, boolean useRi, SporadicTask calT) {
+	private long resourceAccessingTime(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			long jitter, double oneMig, long np, boolean btbHit, boolean useRi, SporadicTask calT) {
 		long resource_accessing_time = 0;
 
 		for (int i = 0; i < task.resource_required_index.size(); i++) {
 			Resource resource = resources.get(task.resource_required_index.get(i));
 
-			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period)
-					* task.number_of_access_in_one_release.get(i);
+			int number_of_request_with_btb = (int) Math.ceil((double) (time + jitter) / (double) task.period) * task.number_of_access_in_one_release.get(i);
 
 			for (int j = 1; j < number_of_request_with_btb + 1; j++) {
 				long oneAccess = 0;
@@ -205,8 +260,8 @@ public class MrsP {
 		return resource_accessing_time;
 	}
 
-	private long resourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
-			long[][] Ris, long time, long jitter, int request_number, boolean btbHit, boolean useRi, SporadicTask calTask) {
+	private long resourceAccessingTimeInOne(SporadicTask task, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris, long time,
+			long jitter, int request_number, boolean btbHit, boolean useRi, SporadicTask calTask) {
 		int number_of_access = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
@@ -218,14 +273,11 @@ public class MrsP {
 						SporadicTask remote_task = tasks.get(i).get(j);
 						int indexR = getIndexRInTask(remote_task, resource);
 						int number_of_release = (int) Math
-								.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0))
-										/ (double) remote_task.period);
-						number_of_request_by_Remote_P += number_of_release
-								* remote_task.number_of_access_in_one_release.get(indexR);
+								.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0)) / (double) remote_task.period);
+						number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
 					}
 				}
-				int getNoRFromHP = getNoRFromHP(task, resource, tasks.get(task.partition), Ris[task.partition], time, btbHit,
-						useRi);
+				int getNoRFromHP = getNoRFromHP(task, resource, tasks.get(task.partition), Ris[task.partition], time, btbHit, useRi);
 				int possible_spin_delay = number_of_request_by_Remote_P - getNoRFromHP - request_number + 1 < 0 ? 0
 						: number_of_request_by_Remote_P - getNoRFromHP - request_number + 1;
 				number_of_access += Integer.min(possible_spin_delay, 1);
@@ -237,8 +289,7 @@ public class MrsP {
 
 		calTask.implementation_overheads += number_of_access * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
 
-		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl
-				+ number_of_access * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
+		calTask.mrsp[resource.id - 1] += number_of_access * resource.csl + number_of_access * (AnalysisUtils.MrsP_LOCK + AnalysisUtils.MrsP_UNLOCK);
 
 		return number_of_access * resource.csl;
 	}
@@ -246,8 +297,8 @@ public class MrsP {
 	/*
 	 * Calculate the local blocking for task t.
 	 */
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long time, double oneMig, long np, boolean btbHit, boolean useRi) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long time, double oneMig,
+			long np, boolean btbHit, boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 		ArrayList<Double> overheads = new ArrayList<>();
@@ -268,7 +319,8 @@ public class MrsP {
 					int partition = res.partitions.get(parition_index);
 					int norHP = getNoRFromHP(t, res, tasks.get(t.partition), Ris[t.partition], time, btbHit, useRi);
 					int norT = t.resource_required_index.contains(res.id - 1)
-							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1)) : 0;
+							? t.number_of_access_in_one_release.get(t.resource_required_index.indexOf(res.id - 1))
+							: 0;
 					int norR = 0;
 					try {
 						norR = getNoRRemote(res, tasks.get(partition), Ris[partition], time, btbHit, useRi);
@@ -320,8 +372,7 @@ public class MrsP {
 	/*
 	 * gives a set of resources that can cause local blocking for a given task
 	 */
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
-			ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 
@@ -357,8 +408,7 @@ public class MrsP {
 			if (i != task.partition) {
 				int number_requests_left = 0;
 				number_requests_left = getNoRRemote(resource, tasks.get(i), Ris[i], time, btbHit, useRi)
-						- getNoRFromHP(task, resource, tasks.get(task.partition), Ris[task.partition], time, btbHit, useRi)
-						- request_number + 1;
+						- getNoRFromHP(task, resource, tasks.get(task.partition), Ris[task.partition], time, btbHit, useRi) - request_number + 1;
 
 				if (number_requests_left > 0)
 					migration_targets.add(i);
@@ -377,8 +427,8 @@ public class MrsP {
 		return mcarrival;
 	}
 
-	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource,
-			ArrayList<ArrayList<SporadicTask>> tasks, SporadicTask calT) {
+	private double migrationCost(double oneMig, long np, ArrayList<Integer> migration_targets, Resource resource, ArrayList<ArrayList<SporadicTask>> tasks,
+			SporadicTask calT) {
 		double migrationCost = 0;
 		ArrayList<Integer> migration_targets_with_P = new ArrayList<>();
 
@@ -405,15 +455,13 @@ public class MrsP {
 			// 1. If there is no preemptors on the task's partition OR there is
 			// no
 			// other migration targets
-			if (!migration_targets_with_P.contains(partition)
-					|| (migration_targets.size() == 1 && migration_targets.get(0) == partition))
+			if (!migration_targets_with_P.contains(partition) || (migration_targets.size() == 1 && migration_targets.get(0) == partition))
 				migration_cost_for_one_access = 0;
 
 			// 2. If there is preemptors on the task's partition AND there are
 			// no
 			// preemptors on other migration targets
-			else if (migration_targets_with_P.size() == 1 && migration_targets_with_P.get(0) == partition
-					&& migration_targets.size() > 1)
+			else if (migration_targets_with_P.size() == 1 && migration_targets_with_P.get(0) == partition && migration_targets.size() > 1)
 				migration_cost_for_one_access = 2 * oneMig;
 
 			// 3. If there exist multiple migration targets with preemptors.
@@ -422,12 +470,10 @@ public class MrsP {
 			else {
 				if (np > 0) {
 					double migCostWithNP = (long) (1 + Math.ceil((double) resource.csl / (double) np)) * oneMig;
-					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT,
-							migCostWithNP);
+					double migCostWithHP = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, migCostWithNP);
 					migration_cost_for_one_access = Math.min(migCostWithHP, migCostWithNP);
 				} else {
-					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks,
-							calT, -1);
+					migration_cost_for_one_access = migrationCostBusyWindow(migration_targets_with_P, oneMig, resource, tasks, calT, -1);
 				}
 			}
 			migrationCost += migration_cost_for_one_access;
@@ -457,8 +503,8 @@ public class MrsP {
 		return migCost;
 	}
 
-	private double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration,
-			Resource resource, ArrayList<ArrayList<SporadicTask>> tasks) {
+	private double migrationCostOneCal(ArrayList<Integer> migration_targets_with_P, double oneMig, double duration, Resource resource,
+			ArrayList<ArrayList<SporadicTask>> tasks) {
 		double migCost = 0;
 
 		for (int i = 0; i < migration_targets_with_P.size(); i++) {
@@ -482,8 +528,7 @@ public class MrsP {
 	 * gives that number of requests from HP local tasks for a resource that is
 	 * required by the given task.
 	 */
-	private int getNoRFromHP(SporadicTask task, Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri,
-			boolean btbHit, boolean useRi) {
+	private int getNoRFromHP(SporadicTask task, Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean btbHit, boolean useRi) {
 		int number_of_request_by_HP = 0;
 		int priority = task.priority;
 
@@ -491,24 +536,21 @@ public class MrsP {
 			if (tasks.get(i).priority > priority && tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask hpTask = tasks.get(i);
 				int indexR = getIndexRInTask(hpTask, resource);
-				number_of_request_by_HP += Math
-						.ceil((double) (Ri + (btbHit ? (useRi ? Ris[i] : hpTask.deadline) : 0)) / (double) hpTask.period)
+				number_of_request_by_HP += Math.ceil((double) (Ri + (btbHit ? (useRi ? Ris[i] : hpTask.deadline) : 0)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(indexR);
 			}
 		}
 		return number_of_request_by_HP;
 	}
 
-	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean btbHit,
-			boolean useRi) {
+	private int getNoRRemote(Resource resource, ArrayList<SporadicTask> tasks, long[] Ris, long Ri, boolean btbHit, boolean useRi) {
 		int number_of_request_by_Remote_P = 0;
 
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).resource_required_index.contains(resource.id - 1)) {
 				SporadicTask remote_task = tasks.get(i);
 				int indexR = getIndexRInTask(remote_task, resource);
-				number_of_request_by_Remote_P += Math.ceil(
-						(double) (Ri + (btbHit ? (useRi ? Ris[i] : remote_task.deadline) : 0)) / (double) remote_task.period)
+				number_of_request_by_Remote_P += Math.ceil((double) (Ri + (btbHit ? (useRi ? Ris[i] : remote_task.deadline) : 0)) / (double) remote_task.period)
 						* remote_task.number_of_access_in_one_release.get(indexR);
 			}
 		}

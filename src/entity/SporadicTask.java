@@ -12,7 +12,6 @@ public class SporadicTask {
 	public int priority;
 	public double util;
 
-	public int hasResource = 0;
 	public long pure_resource_execution_time = 0;
 	public ArrayList<Integer> resource_required_index;
 	public ArrayList<Integer> number_of_access_in_one_release;
@@ -30,6 +29,11 @@ public class SporadicTask {
 	public double[] mrsp = null;
 	public double[] fifonp = null;
 	public double[] fifop = null;
+	
+	/* Used by LP solver from C code */
+	public int hasResource = 0;
+	public int[] resource_required_index_cpoy = null;
+	public int[] number_of_access_in_one_release_copy = null;
 
 	public SporadicTask(int priority, long period, long WCET, int partition, int id, double util) {
 		this.priority = priority;
