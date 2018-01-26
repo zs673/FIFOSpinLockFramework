@@ -30,10 +30,7 @@ public class SporadicTask {
 	public double[] fifonp = null;
 	public double[] fifop = null;
 	
-	/* Used by LP solver from C code */
 	public int hasResource = 0;
-	public int[] resource_required_index_cpoy = null;
-	public int[] number_of_access_in_one_release_copy = null;
 
 	public SporadicTask(int priority, long period, long WCET, int partition, int id, double util) {
 		this.priority = priority;
