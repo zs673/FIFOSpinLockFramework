@@ -1,12 +1,6 @@
 /native/
-/.DS_Store
-/.gitignore
 /GeneticAlgorithmFramework/
-/analysis/
-/basicAnalysis/
-/entity/
 /evaluation/
 /evaluationForThesis/
 /generatorTools/
 /test/
-/utils/
