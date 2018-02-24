@@ -72,7 +72,7 @@ public class NewOPATest {
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
-			combined.getResponseTimeBySBPO(tasks, resources, false);
+			combined.getResponseTimeByRPA(tasks, resources, false);
 			
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}

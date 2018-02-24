@@ -125,7 +125,7 @@ public class TestRiDiandDMvsOPA {
 				DiDMok = true;
 			}
 
-			Ris = combined.getResponseTimeBySBPO(tasks, resources, false);
+			Ris = combined.getResponseTimeByRPA(tasks, resources, false);
 			if (isSystemSchedulable(tasks, Ris)) {
 				slackOPA++;
 				NEWOPAok = true;

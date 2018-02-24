@@ -138,9 +138,9 @@ public class PreGASolver {
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
-			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, false));
-			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, false));
-			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, false));
+			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
+			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
+			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
 
 			break;
 

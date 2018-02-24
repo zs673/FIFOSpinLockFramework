@@ -62,7 +62,7 @@ public class CombinedAnalysis {
 
 		if (isprint)
 			System.out.println("Checking with Slack Based OPA...");
-		time = getResponseTimeBySBPO(tasks, resources, isprint);
+		time = getResponseTimeByRPA(tasks, resources, isprint);
 		isSchedulable = AnalysisUtils.isSystemSchedulable(tasks, time);
 
 		if (isSchedulable){
@@ -82,7 +82,7 @@ public class CombinedAnalysis {
 
 	}
 
-	public long[][] getResponseTimeBySBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+	public long[][] getResponseTimeByRPA(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 
@@ -144,6 +144,17 @@ public class CombinedAnalysis {
 
 				}
 
+				if (unassignedTasks.get(0).addition_slack_by_newOPA < 0) {
+					long[][] dummy_response_time = new long[tasks.size()][];
+					for (int h = 0; h < dummy_response_time.length; h++) {
+						dummy_response_time[h] = new long[tasks.get(h).size()];
+					}
+					dummy_response_time[0][0] = tasks.get(0).get(0).deadline + 1;
+
+					return dummy_response_time;
+				}
+				
+				
 				unassignedTasks.get(0).priority = sratingP;
 				tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
 				unassignedTasks.remove(0);
