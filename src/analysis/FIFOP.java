@@ -9,8 +9,8 @@ import utils.AnalysisUtils;
 
 public class FIFOP {
 
-	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal,
-			boolean testSchedulability, boolean btbHit, boolean useRi, boolean printDebug) {
+	public long[][] getResponseTimeByDMPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal, boolean testSchedulability,
+			boolean btbHit, boolean useRi, boolean printDebug) {
 		if (tasks == null)
 			return null;
 
@@ -25,8 +25,7 @@ public class FIFOP {
 		while (!isEqual) {
 			isEqual = true;
 			boolean should_finish = true;
-			long[][] response_time_plus = busyWindow(tasks, resources, response_time, extendCal, testSchedulability, btbHit,
-					useRi);
+			long[][] response_time_plus = busyWindow(tasks, resources, response_time, extendCal, testSchedulability, btbHit, useRi);
 
 			for (int i = 0; i < response_time_plus.length; i++) {
 				for (int j = 0; j < response_time_plus[i].length; j++) {
@@ -65,8 +64,8 @@ public class FIFOP {
 		return response_time;
 	}
 
-	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time,
-			int extendCal, boolean testSchedulability, boolean btbHit, boolean useRi) {
+	private long[][] busyWindow(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, int extendCal,
+			boolean testSchedulability, boolean btbHit, boolean useRi) {
 		long[][] response_time_plus = new long[tasks.size()][];
 
 		for (int i = 0; i < response_time.length; i++) {
@@ -90,13 +89,11 @@ public class FIFOP {
 				task.implementation_overheads += AnalysisUtils.FULL_CONTEXT_SWTICH1;
 
 				task.spin = getSpinDelay(task, tasks, resources, response_time[i][j], response_time, btbHit, useRi);
-				task.interference = highPriorityInterference(task, tasks, resources, response_time, response_time[i][j], btbHit,
-						useRi);
+				task.interference = highPriorityInterference(task, tasks, resources, response_time, response_time[i][j], btbHit, useRi);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], btbHit, useRi);
 
 				long implementation_overheads = (long) Math.ceil(task.implementation_overheads);
-				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local
-						+ implementation_overheads;
+				response_time_plus[i][j] = task.Ri = task.WCET + task.spin + task.interference + task.local + implementation_overheads;
 
 				if (testSchedulability && task.Ri > task.deadline) {
 					return response_time_plus;
@@ -106,8 +103,8 @@ public class FIFOP {
 		return response_time_plus;
 	}
 
-	private long getSpinDelay(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long time, long[][] Ris, boolean btbHit, boolean useRi) {
+	private long getSpinDelay(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long time, long[][] Ris,
+			boolean btbHit, boolean useRi) {
 		long spin = 0;
 		ArrayList<ArrayList<Long>> requestsLeftOnRemoteP = new ArrayList<>();
 		ArrayList<Resource> fifop_resources = new ArrayList<>();
@@ -146,8 +143,7 @@ public class FIFOP {
 				spin += max_delay;
 				task.fifop[resource.id - 1] += max_delay;
 				for (int i = 0; i < requestsLeftOnRemoteP.get(max_delay_resource_index).size(); i++) {
-					requestsLeftOnRemoteP.get(max_delay_resource_index).set(i,
-							requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) - 1);
+					requestsLeftOnRemoteP.get(max_delay_resource_index).set(i, requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) - 1);
 					if (requestsLeftOnRemoteP.get(max_delay_resource_index).get(i) < 1) {
 						requestsLeftOnRemoteP.get(max_delay_resource_index).remove(i);
 						i--;
@@ -172,8 +168,7 @@ public class FIFOP {
 		for (int i = 0; i < tasks.get(task.partition).size(); i++) {
 			SporadicTask hpTask = tasks.get(task.partition).get(i);
 			if (hpTask.priority > task.priority && hpTask.resource_required_index.contains(resource.id - 1)) {
-				ncs += (int) Math.ceil((double) (time + (btbHit ? (useRi ? Ris[hpTask.partition][i] : hpTask.deadline) : 0))
-						/ (double) hpTask.period)
+				ncs += (int) Math.ceil((double) (time + (btbHit ? (useRi ? Ris[hpTask.partition][i] : hpTask.deadline) : 0)) / (double) hpTask.period)
 						* hpTask.number_of_access_in_one_release.get(hpTask.resource_required_index.indexOf(resource.id - 1));
 			}
 		}
@@ -191,10 +186,8 @@ public class FIFOP {
 							SporadicTask remote_task = tasks.get(i).get(j);
 							int indexR = getIndexRInTask(remote_task, resource);
 							int number_of_release = (int) Math
-									.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0))
-											/ (double) remote_task.period);
-							number_of_request_by_Remote_P += number_of_release
-									* remote_task.number_of_access_in_one_release.get(indexR);
+									.ceil((double) (time + (btbHit ? (useRi ? Ris[i][j] : remote_task.deadline) : 0)) / (double) remote_task.period);
+							number_of_request_by_Remote_P += number_of_release * remote_task.number_of_access_in_one_release.get(indexR);
 						}
 					}
 
@@ -208,8 +201,7 @@ public class FIFOP {
 
 		task.implementation_overheads += (spin + ncs) * (AnalysisUtils.FIFOP_LOCK + AnalysisUtils.FIFOP_UNLOCK);
 
-		task.fifop[resource.id - 1] += spin * resource.csl + ncs * resource.csl
-				+ (spin + ncs) * (AnalysisUtils.FIFOP_LOCK + AnalysisUtils.FIFOP_UNLOCK);
+		task.fifop[resource.id - 1] += spin * resource.csl + ncs * resource.csl + (spin + ncs) * (AnalysisUtils.FIFOP_LOCK + AnalysisUtils.FIFOP_UNLOCK);
 		return spin * resource.csl + ncs * resource.csl;
 	}
 
@@ -217,8 +209,8 @@ public class FIFOP {
 	 * Calculate the local high priority tasks' interference for a given task t.
 	 * CI is a set of computation time of local tasks, including spin delay.
 	 */
-	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, long[][] Ris,
-			long time, boolean btbHit, boolean useRi) {
+	private long highPriorityInterference(SporadicTask t, ArrayList<ArrayList<SporadicTask>> allTasks, ArrayList<Resource> resources, long[][] Ris, long time,
+			boolean btbHit, boolean useRi) {
 		long interference = 0;
 		int partition = t.partition;
 		ArrayList<SporadicTask> tasks = allTasks.get(partition);
@@ -227,15 +219,14 @@ public class FIFOP {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
 				interference += Math.ceil((double) (time) / (double) hpTask.period) * (hpTask.WCET);
-				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period)
-						* (AnalysisUtils.FULL_CONTEXT_SWTICH2);
+				t.implementation_overheads += Math.ceil((double) (time) / (double) hpTask.period) * (AnalysisUtils.FULL_CONTEXT_SWTICH2);
 			}
 		}
 		return interference;
 	}
 
-	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			long[][] Ris, long Ri, boolean btbHit, boolean useRi) {
+	private long localBlocking(SporadicTask t, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] Ris, long Ri, boolean btbHit,
+			boolean useRi) {
 		ArrayList<Resource> LocalBlockingResources = getLocalBlockingResources(t, resources, tasks.get(t.partition));
 		ArrayList<Long> local_blocking_each_resource = new ArrayList<>();
 
@@ -255,16 +246,14 @@ public class FIFOP {
 		return local_blocking_each_resource.size() > 0 ? local_blocking_each_resource.get(0) : 0;
 	}
 
-	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources,
-			ArrayList<SporadicTask> localTasks) {
+	private ArrayList<Resource> getLocalBlockingResources(SporadicTask task, ArrayList<Resource> resources, ArrayList<SporadicTask> localTasks) {
 		ArrayList<Resource> localBlockingResources = new ArrayList<>();
 		int partition = task.partition;
 
 		for (int i = 0; i < resources.size(); i++) {
 			Resource resource = resources.get(i);
 			// local resources that have a higher ceiling
-			if (resource.partitions.size() == 1 && resource.partitions.get(0) == partition
-					&& resource.getCeilingForProcessor(localTasks) >= task.priority) {
+			if (resource.partitions.size() == 1 && resource.partitions.get(0) == partition && resource.getCeilingForProcessor(localTasks) >= task.priority) {
 				for (int j = 0; j < resource.requested_tasks.size(); j++) {
 					SporadicTask LP_task = resource.requested_tasks.get(j);
 					if (LP_task.partition == partition && LP_task.priority < task.priority) {

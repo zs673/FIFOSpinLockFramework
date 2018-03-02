@@ -12,7 +12,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 public class IdenticalTest {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
-	
+
 	public static int MAX_PERIOD = 1000;
 	static long maxC = 0;
 	public static int MIN_PERIOD = 1;
@@ -61,31 +61,28 @@ public class IdenticalTest {
 		int i = 0;
 
 		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
-				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR,
-				CS_LENGTH_RANGE.VERY_SHORT_CS_LEN, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+				TOTAL_PARTITIONS * NUMBER_OF_MAX_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, CS_LENGTH_RANGE.VERY_SHORT_CS_LEN,
+				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		i = 0;
 		while (i <= TOTAL_NUMBER_OF_SYSTEMS) {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 3;
 			}
 
 			r1 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, isPrint);
-			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true,
-					useDM, isPrint);
+			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, isPrint);
 
 			r3 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, isPrint);
-			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false,
-					useDM, isPrint);
+			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, isPrint);
 
 			r5 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, isPrint);
-			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false,
-					useDM, isPrint);
+			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, isPrint);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -98,20 +95,17 @@ public class IdenticalTest {
 				isEqual(r5, r6, true);
 				generator.PrintAllocatedSystem(tasks, resources);
 				r1 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, true);
-				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						true, useDM, true);
+				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, true);
 
 				r3 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, true);
-				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						false, useDM, true);
+				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, true);
 
 				r5 = mrsp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, true);
-				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false,
-						false, useDM, true);
+				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, true);
 				System.exit(0);
 			}
 			i++;
-			System.out.println(i+ "    MrsP");
+			System.out.println(i + "    MrsP");
 		}
 		System.out.println("MrsP TEST DONE");
 
@@ -120,24 +114,20 @@ public class IdenticalTest {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
-			
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 1;
 			}
 
 			r1 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, isPrint);
-			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true,
-					useDM, isPrint);
+			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, isPrint);
 
 			r3 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, isPrint);
-			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false,
-					useDM, isPrint);
+			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, isPrint);
 
 			r5 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, isPrint);
-			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false,
-					useDM, isPrint);
+			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, isPrint);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -148,20 +138,17 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				generator.PrintAllocatedSystem(tasks, resources);
 				r1 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, true);
-				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						true, useDM, true);
+				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, true);
 
 				r3 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, true);
-				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						false, useDM, true);
+				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, true);
 
 				r5 = fnp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, true);
-				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false,
-						false, useDM, true);
+				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, true);
 				System.exit(0);
 			}
 			i++;
-			System.out.println(i+ "    FIFO-NP");
+			System.out.println(i + "    FIFO-NP");
 		}
 		System.out.println("FIFO-NP TEST DONE");
 
@@ -170,23 +157,20 @@ public class IdenticalTest {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			for (int j = 0; j < resources.size(); j++) {
 				resources.get(j).protocol = 2;
 			}
 
 			r1 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, isPrint);
-			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true,
-					useDM, isPrint);
+			r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, isPrint);
 
 			r3 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, isPrint);
-			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false,
-					useDM, isPrint);
+			r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, isPrint);
 
 			r5 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, isPrint);
-			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false,
-					useDM, isPrint);
+			r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, isPrint);
 
 			boolean isEqual1 = isEqual(r1, r2, false);
 			boolean isEqual2 = isEqual(r3, r4, false);
@@ -197,21 +181,18 @@ public class IdenticalTest {
 				isEqual(r1, r2, true);
 				generator.PrintAllocatedSystem(tasks, resources);
 				r1 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, true);
-				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						true, useDM, true);
+				r2 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, true, useDM, true);
 
 				r3 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, true);
-				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true,
-						false, useDM, true);
+				r4 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, true, false, useDM, true);
 
 				r5 = fp.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, true);
-				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false,
-						false, useDM, true);
+				r6 = combined_analysis.getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, false, false, useDM, true);
 
 				System.exit(0);
 			}
 			i++;
-			System.out.println(i+ "    FIFO-P");
+			System.out.println(i + "    FIFO-P");
 		}
 
 		System.out.println("FIFO-P TEST DONE");

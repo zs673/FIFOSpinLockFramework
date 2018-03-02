@@ -55,9 +55,8 @@ public class TestCSLEN {
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
-				TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR, null, RESOURCES_RANGE.PARTITIONS,
-				NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION,
+				RESOURCE_SHARING_FACTOR, null, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, cs_len, false);
 
 		long[][] Ris;
 		FIFONP fnp = new FIFONP();
@@ -73,7 +72,7 @@ public class TestCSLEN {
 			ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
-			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,generator.total_partitions,  0);
+			ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
 
 			Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 			if (isSystemSchedulable(tasks, Ris))

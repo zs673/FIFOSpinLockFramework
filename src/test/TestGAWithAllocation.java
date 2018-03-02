@@ -22,9 +22,8 @@ public class TestGAWithAllocation {
 		int TOTAL_PARTITIONS = 16;
 		int schedulable = 0;
 
-		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true,
-				TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS, RESOURCE_SHARING_FACTOR, range,
-				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
+		SystemGenerator geneator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, NUMBER_OF_TASKS_ON_EACH_PARTITION * TOTAL_PARTITIONS,
+				RESOURCE_SHARING_FACTOR, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, -1, false);
 
 		for (int i = 0; i < 1000; i++) {
 			ArrayList<SporadicTask> tasks = geneator.generateTasks();

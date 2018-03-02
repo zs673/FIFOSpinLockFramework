@@ -160,7 +160,7 @@ public class MrsP {
 				task.spin = resourceAccessingTime(task, tasks, resources, response_time, response_time[i][j], 0, oneMig, np, btbHit, useRi, task);
 				task.interference = highPriorityInterference(task, tasks, resources, response_time, response_time[i][j], oneMig, np, btbHit, useRi);
 				task.local = localBlocking(task, tasks, resources, response_time, response_time[i][j], oneMig, np, btbHit, useRi);
-				long npsection = (np>0 && isTaskIncurNPSection(task, tasks.get(task.partition), resources) ? np : 0);
+				long npsection = (np > 0 && isTaskIncurNPSection(task, tasks.get(task.partition), resources) ? np : 0);
 
 				if (npsection > task.local + task.mrsp_arrivalblocking_overheads) {
 					task.np_section = npsection;

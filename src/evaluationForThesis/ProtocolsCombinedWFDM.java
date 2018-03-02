@@ -22,47 +22,23 @@ import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
-
 /**
- * 100 100 GA
- * Work Load
-21 1.0 1.0 1.0 1.0 0.0
-22 0.989 0.989 0.989 0.989 0.0
-23 0.921 0.949 0.947 0.952 0.0
-24 0.799 0.84 0.855 0.87 0.0
-25 0.681 0.713 0.755 0.795 0.005
-26 0.492 0.497 0.564 0.631 0.013
-27 0.294 0.282 0.33 0.444 0.03
-28 0.013 0.02 0.005 0.039 0.014
-29 0.0 0.0 0.0 0.0 0.0
-CS Length 
-21 0.688 0.942 0.941 0.946 0.0
-22 0.627 0.794 0.788 0.805 0.0
-23 0.51 0.503 0.586 0.63 0.007
-24 0.367 0.139 0.362 0.432 0.023
-25 0.243 0.031 0.159 0.271 0.021
-26 0.387 0.087 0.361 0.441 0.024
-Resource Access 
-21 0.642 0.535 0.71 0.728 0.003
-26 0.373 0.436 0.452 0.524 0.014
-211 0.261 0.326 0.324 0.389 0.013
-216 0.185 0.294 0.256 0.337 0.009
-221 0.134 0.251 0.2 0.27 0.004
-226 0.109 0.206 0.162 0.223 0.005
-231 0.095 0.189 0.14 0.2 0.003
-Parallel 
-24 0.995 0.999 0.999 0.999 0.0
-26 0.975 0.979 0.98 0.981 0.0
-28 0.921 0.946 0.946 0.952 0.0
-210 0.87 0.911 0.904 0.922 0.0
-212 0.753 0.81 0.81 0.84 0.001
-214 0.603 0.633 0.683 0.719 0.002
-216 0.478 0.489 0.565 0.619 0.003
-218 0.333 0.308 0.404 0.469 0.022
-220 0.241 0.181 0.308 0.359 0.017
-222 0.167 0.133 0.226 0.276 0.021
+ * 100 100 GA Work Load 21 1.0 1.0 1.0 1.0 0.0 22 0.989 0.989 0.989 0.989 0.0 23
+ * 0.921 0.949 0.947 0.952 0.0 24 0.799 0.84 0.855 0.87 0.0 25 0.681 0.713 0.755
+ * 0.795 0.005 26 0.492 0.497 0.564 0.631 0.013 27 0.294 0.282 0.33 0.444 0.03
+ * 28 0.013 0.02 0.005 0.039 0.014 29 0.0 0.0 0.0 0.0 0.0 CS Length 21 0.688
+ * 0.942 0.941 0.946 0.0 22 0.627 0.794 0.788 0.805 0.0 23 0.51 0.503 0.586 0.63
+ * 0.007 24 0.367 0.139 0.362 0.432 0.023 25 0.243 0.031 0.159 0.271 0.021 26
+ * 0.387 0.087 0.361 0.441 0.024 Resource Access 21 0.642 0.535 0.71 0.728 0.003
+ * 26 0.373 0.436 0.452 0.524 0.014 211 0.261 0.326 0.324 0.389 0.013 216 0.185
+ * 0.294 0.256 0.337 0.009 221 0.134 0.251 0.2 0.27 0.004 226 0.109 0.206 0.162
+ * 0.223 0.005 231 0.095 0.189 0.14 0.2 0.003 Parallel 24 0.995 0.999 0.999
+ * 0.999 0.0 26 0.975 0.979 0.98 0.981 0.0 28 0.921 0.946 0.946 0.952 0.0 210
+ * 0.87 0.911 0.904 0.922 0.0 212 0.753 0.81 0.81 0.84 0.001 214 0.603 0.633
+ * 0.683 0.719 0.002 216 0.478 0.489 0.565 0.619 0.003 218 0.333 0.308 0.404
+ * 0.469 0.022 220 0.241 0.181 0.308 0.359 0.017 222 0.167 0.133 0.226 0.276
+ * 0.021
  */
-
 
 public class ProtocolsCombinedWFDM {
 
@@ -73,14 +49,14 @@ public class ProtocolsCombinedWFDM {
 	public static int MIN_PERIOD = 1;
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
-	
+
 	public static int GENERATIONS = 100;
 	public static int POPULATION = 100;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
 	final double RSF = 0.3;
-	
+
 	class Counter {
 
 		int Dcombine = 0;
@@ -118,7 +94,6 @@ public class ProtocolsCombinedWFDM {
 		}
 
 	}
-	
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
@@ -334,7 +309,6 @@ public class ProtocolsCombinedWFDM {
 						}
 					}
 
-
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
@@ -406,7 +380,6 @@ public class ProtocolsCombinedWFDM {
 							counter.incDnew();
 						}
 					}
-
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
@@ -494,7 +467,7 @@ public class ProtocolsCombinedWFDM {
 					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
-					
+
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
 						if (solver.protocol == 0) {
@@ -575,7 +548,6 @@ public class ProtocolsCombinedWFDM {
 						}
 					}
 
-
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
@@ -596,8 +568,6 @@ public class ProtocolsCombinedWFDM {
 		writeSystem("ioa 1 2 " + NoT, result);
 		System.out.println(result);
 	}
-
-
 
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;

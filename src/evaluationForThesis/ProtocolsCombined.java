@@ -100,7 +100,8 @@ public class ProtocolsCombined {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombined test = new ProtocolsCombined();
-		final CountDownLatch downLatch = new CountDownLatch((/*9 +*/ /*6 + 9 + 10*/  1));
+		final CountDownLatch downLatch = new CountDownLatch(
+				(/* 9 + */ /* 6 + 9 + 10 */ 1));
 
 		for (int i = 8; i < 9; i++) {
 			final int count = i;
@@ -116,45 +117,46 @@ public class ProtocolsCombined {
 			}).start();
 
 		}
-//		for (int i = 1; i < 7; i++) {
-//			final int count = i;
-//			new Thread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					Counter counter = test.new Counter();
-//					counter.initResults();
-//					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
-//					downLatch.countDown();
-//				}
-//			}).start();
-//		}
-//		for (int i = 1; i < 42; i = i + 5) {
-//			final int count = i;
-//			new Thread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					Counter counter = test.new Counter();
-//					counter.initResults();
-//					test.parallelExperimentIncreasingAccess(count, counter);
-//					downLatch.countDown();
-//				}
-//			}).start();
-//		}
-//		for (int i = 4; i < 23; i = i + 2) {
-//			final int count = i;
-//			new Thread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					Counter counter = test.new Counter();
-//					counter.initResults();
-//					test.parallelExperimentIncreasingPartitions(count, counter);
-//					downLatch.countDown();
-//				}
-//			}).start();
-//		}
+		// for (int i = 1; i < 7; i++) {
+		// final int count = i;
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(count,
+		// counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// }
+		// for (int i = 1; i < 42; i = i + 5) {
+		// final int count = i;
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingAccess(count, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// }
+		// for (int i = 4; i < 23; i = i + 2) {
+		// final int count = i;
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingPartitions(count, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// }
 
 		downLatch.await();
 		ResultReader.schedreader();

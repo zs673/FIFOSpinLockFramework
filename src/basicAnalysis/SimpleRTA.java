@@ -9,8 +9,7 @@ import utils.AnalysisUtils;
 
 public class SimpleRTA {
 
-	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources,
-			boolean printBebug) {
+	public long[][] getResponseTimeByDM(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean printBebug) {
 		if (tasks == null)
 			return null;
 
@@ -82,8 +81,7 @@ public class SimpleRTA {
 		for (int i = 0; i < tasks.size(); i++) {
 			if (tasks.get(i).priority > t.priority) {
 				SporadicTask hpTask = tasks.get(i);
-				interference += Math.ceil((double) (Ri) / (double) hpTask.period)
-						* (hpTask.WCET + hpTask.pure_resource_execution_time);
+				interference += Math.ceil((double) (Ri) / (double) hpTask.period) * (hpTask.WCET + hpTask.pure_resource_execution_time);
 			}
 		}
 		return interference;

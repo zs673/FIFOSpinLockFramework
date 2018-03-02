@@ -363,7 +363,8 @@ public class AllocationGeneatorcopy {
 		for (int j = 0; j < tasksToAllocate.size(); j++) {
 			SporadicTask task = tasksToAllocate.get(j);
 			for (int k = 0; k < task.resource_required_index.size(); k++) {
-				NoQT.get(task.resource_required_index.get(k)).set(1, NoQT.get(task.resource_required_index.get(k)).get(1) + task.number_of_access_in_one_release.get(k));
+				NoQT.get(task.resource_required_index.get(k)).set(1,
+						NoQT.get(task.resource_required_index.get(k)).get(1) + task.number_of_access_in_one_release.get(k));
 			}
 		}
 
@@ -384,27 +385,26 @@ public class AllocationGeneatorcopy {
 		}
 
 		cleanTasks.sort((p1, p2) -> -Double.compare(p1.util, p2.util));
-		
+
 		if (sortedTasks.size() + cleanTasks.size() != tasksToAllocate.size()) {
 			System.out.println("RESOURCE REQUEST FIT sorted tasks size error!");
 			System.exit(-1);
 		}
 
 		ArrayList<ArrayList<SporadicTask>> alloc = NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
-		
-		if(alloc != null){
+
+		if (alloc != null) {
 			ArrayList<Double> utilPerPartition = new ArrayList<>();
-			
-			for(int i=0;i<alloc.size();i++){
+
+			for (int i = 0; i < alloc.size(); i++) {
 				double totalUtil = 0;
-				for(int j=0; j<alloc.get(i).size();j++){
-					
-					totalUtil+= alloc.get(i).get(j).util;
+				for (int j = 0; j < alloc.get(i).size(); j++) {
+
+					totalUtil += alloc.get(i).get(j).util;
 				}
 				utilPerPartition.add(totalUtil);
 			}
-			
-			
+
 			for (int i = 0; i < cleanTasks.size(); i++) {
 				SporadicTask task = cleanTasks.get(i);
 				int target = -1;
@@ -453,8 +453,8 @@ public class AllocationGeneatorcopy {
 		ArrayList<ArrayList<Double>> NoQT = new ArrayList<>();
 		for (int i = 0; i < number_of_resources; i++) {
 			ArrayList<Double> noq = new ArrayList<>();
-			noq.add((double)i);
-			noq.add((double)0);
+			noq.add((double) i);
+			noq.add((double) 0);
 			NoQT.add(noq);
 		}
 
@@ -491,9 +491,9 @@ public class AllocationGeneatorcopy {
 
 		return NextFitAllocation(sortedTasks, partitions, maxUtilPerCore);
 	}
-	
-	public ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocationBackUp(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources, int partitions,
-			double maxUtilPerCore) {
+
+	public ArrayList<ArrayList<SporadicTask>> ResourceLocalAllocationBackUp(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources,
+			int partitions, double maxUtilPerCore) {
 		ArrayList<SporadicTask> UnAllocatedT = new ArrayList<>(tasksToAllocate);
 
 		for (int i = 0; i < UnAllocatedT.size(); i++) {

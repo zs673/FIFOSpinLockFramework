@@ -50,7 +50,7 @@ public class GeneatorUtils {
 										 * FF.
 										 */
 	};
-	
+
 	/* define how many resources in the system */
 	public static enum PRIORITY_ASSIGNMENT {
 		DMPO, /* partitions us */

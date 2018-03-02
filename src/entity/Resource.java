@@ -22,8 +22,8 @@ public class Resource {
 
 	@Override
 	public String toString() {
-		return "R" + this.id + " : cs len = " + this.csl + ", partitions: " + partitions.size() + ", tasks: "
-				+ requested_tasks.size() + ", isGlobal: " + isGlobal;
+		return "R" + this.id + " : cs len = " + this.csl + ", partitions: " + partitions.size() + ", tasks: " + requested_tasks.size() + ", isGlobal: "
+				+ isGlobal;
 	}
 
 	public int getCeilingForProcessor(ArrayList<ArrayList<SporadicTask>> tasks, int partition) {
