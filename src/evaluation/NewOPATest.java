@@ -24,12 +24,7 @@ public class NewOPATest {
 
 	public static void main(String[] args) throws Exception {
 		NewOPATest test = new NewOPATest();
-
-		for (int i = 1; i < 7; i++) {
-			test.experimentIncreasingCriticalSectionLength(i);
-
-		}
-
+		test.experimentIncreasingCriticalSectionLength(6);
 	}
 
 	public void experimentIncreasingCriticalSectionLength(int cs_len) {
@@ -72,8 +67,8 @@ public class NewOPATest {
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
 			}
-			combined.getResponseTimeByRPA(tasks, resources, false);
-			
+			combined.getResponseTimeBySBPO(tasks, resources, 1, false, true, true, false);
+
 			System.out.println(2 + " " + 1 + " " + cs_len + " times: " + i);
 		}
 

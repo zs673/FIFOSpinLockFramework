@@ -18,10 +18,10 @@ import basicAnalysis.FIFOPbasic;
 import basicAnalysis.MrsPbasic;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.TestResultFileReader;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
+import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
@@ -69,7 +69,7 @@ public class DynamicTestWF {
 		// test.initResults();
 		// test.parallelExperimentIncreasingrsf(i);
 		// }
-		TestResultFileReader.schedreader(null, false);
+		ResultReader.schedreader();
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA) {

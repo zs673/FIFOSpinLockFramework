@@ -15,7 +15,7 @@ public class MrsP {
 			return null;
 
 		// assign priorities by Deadline Monotonic
-		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks);
 
 		long count = 0;
 		boolean isEqual = false, missdeadline = false;
@@ -74,7 +74,7 @@ public class MrsP {
 			return null;
 
 		// assign priorities by Deadline Monotonic
-		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks, resources);
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks);
 
 		long count = 0;
 		boolean isEqual = false, missdeadline = false;

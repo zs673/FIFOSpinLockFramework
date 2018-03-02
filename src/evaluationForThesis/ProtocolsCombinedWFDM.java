@@ -17,8 +17,8 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
-import generatorTools.TestResultFileReader;
 import utils.AnalysisUtils;
+import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
@@ -183,7 +183,7 @@ public class ProtocolsCombinedWFDM {
 		// }
 
 		downLatch.await();
-		TestResultFileReader.schedreader(null, false);
+		ResultReader.schedreader();
 	}
 
 	public void parallelExperimentIncreasingAccess(int NoA, Counter counter) {

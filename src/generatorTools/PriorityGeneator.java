@@ -2,14 +2,12 @@ package generatorTools;
 
 import java.util.ArrayList;
 
-import entity.Resource;
 import entity.SporadicTask;
 
 public class PriorityGeneator {
 	public static final int MAX_PRIORITY = 1000;
 
-	public ArrayList<ArrayList<SporadicTask>> assignPrioritiesByDM(ArrayList<ArrayList<SporadicTask>> tasksToAssgin,
-			ArrayList<Resource> resources) {
+	public ArrayList<ArrayList<SporadicTask>> assignPrioritiesByDM(ArrayList<ArrayList<SporadicTask>> tasksToAssgin) {
 		if (tasksToAssgin == null) {
 			return null;
 		}

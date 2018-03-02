@@ -88,7 +88,7 @@ public class GASolver {
 	 *         within the given generation and population size.
 	 */
 	public int checkSchedulability(boolean useGA) {
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, 1, isPrint);
+		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
 		int initial = preSovler.initialCheck(true);
 
 		if (initial != 0) {
@@ -315,22 +315,13 @@ public class GASolver {
 			allocation = gene[resources.size()];
 		} else {
 			if (PRIORITY_SCHEME_NUMBER > 1) {
-				long[][] RisOPA = framework.getResponseTimeByOPA(tasksWithAllocation, resources, true, false);
-				if (isSystemSchedulable(tasksWithAllocation, RisOPA)) {
+				long[][] RisSBPO = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForStatic, true, true, true, false);
+				if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
 					fitness[0] = 0;
 					fitness[1] = 0;
 					bestPriority = 2;
 					protocol = 0;
 					allocation = gene[resources.size()];
-				} else if (PRIORITY_SCHEME_NUMBER > 2) {
-					long[][] RisSBPO = framework.getResponseTimeByRPA(tasksWithAllocation, resources, false);
-					if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
-						fitness[0] = 0;
-						fitness[1] = 0;
-						bestPriority = 3;
-						protocol = 0;
-						allocation = gene[resources.size()];
-					}
 				}
 			}
 		}

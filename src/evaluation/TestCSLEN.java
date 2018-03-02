@@ -14,10 +14,10 @@ import analysis.FIFOP;
 import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
-import generatorTools.TestResultFileReader;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
+import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
@@ -50,7 +50,7 @@ public class TestCSLEN {
 			}).start();
 		}
 		workloadcd.await();
-		TestResultFileReader.schedreader("minT: " + MIN_PERIOD + "  maxT: " + MAX_PERIOD, true);
+		ResultReader.schedreader();
 
 	}
 

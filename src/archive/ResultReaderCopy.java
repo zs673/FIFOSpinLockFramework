@@ -1,4 +1,4 @@
-package generatorTools;
+package archive;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class TestResultFileReader {
+public class ResultReaderCopy {
 
 	public static void main(String[] args) {
 

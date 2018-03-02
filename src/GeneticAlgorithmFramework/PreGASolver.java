@@ -1,7 +1,6 @@
 package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import analysis.CombinedAnalysis;
 import entity.Resource;
@@ -13,7 +12,6 @@ import utils.AnalysisUtils;
 public class PreGASolver {
 	int ALLOCATION_POLICY_NUMBER;
 	int PRIORITY_SCHEME_NUMBER;
-
 	int PROTOCOL_NUMBER;
 
 	boolean print;
@@ -39,7 +37,7 @@ public class PreGASolver {
 			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
 		this.PROTOCOL_NUMBER = PROTOCOL_NUMBER;
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
-		this.PRIORITY_SCHEME_NUMBER = 1;
+		this.PRIORITY_SCHEME_NUMBER = PRIORITY_SCHEME_NUMBER;
 		this.geneator = geneator;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -121,27 +119,20 @@ public class PreGASolver {
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 1;
 			}
-			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByOPA(tasksWithAlloc, resources, btbHit, false));
+			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
+					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 2;
 			}
-			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByOPA(tasksWithAlloc, resources, btbHit, false));
+			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
+					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 3;
 			}
-			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByOPA(tasksWithAlloc, resources, btbHit, false));
-			break;
-
-		case 2:
-			for (int k = 0; k < resources.size(); k++) {
-				resources.get(k).protocol = new Random().nextInt(65535) % 3 + 1;
-			}
-			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
-			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
-			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByRPA(tasksWithAlloc, resources, false));
-
+			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
+					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
 			break;
 
 		default:
