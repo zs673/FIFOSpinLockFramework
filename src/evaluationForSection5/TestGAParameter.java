@@ -77,7 +77,7 @@ public class TestGAParameter {
 	public static void main(String[] args) throws InterruptedException {
 		TestGAParameter test = new TestGAParameter();
 
-		final CountDownLatch downLatch = new CountDownLatch(1);
+		final CountDownLatch downLatch = new CountDownLatch(5);
 		for (double crossover = 0.4; crossover <= 0.8; crossover += 0.1) {
 			final double count = crossover;
 			new Thread(new Runnable() {
@@ -113,7 +113,7 @@ public class TestGAParameter {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5,
-							crossoverRate, 0.01, 3, 5, 5, true);
+							crossoverRate, 0.01, 3, 5, 5, false);
 
 					if (solver.checkSchedulability(true) == 1 && solver.bestProtocol == 0) {
 						counter.incResult1();
