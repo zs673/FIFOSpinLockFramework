@@ -27,15 +27,15 @@ public class TestGAParameter {
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
-
-	public static int ALLOCATION_POLICY = 1;
-	public static int PRIORITY_RULE = 1;
-
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 	final double RSF = 0.3;
+	
+	public static int ALLOCATION_POLICY = 1;
+	public static int PRIORITY_RULE = 1;
+	public static int GENERATIONS = 100;
+	public static int POPULATION = 100;
 
 	class Counter {
 		int result1 = 0;
@@ -78,15 +78,15 @@ public class TestGAParameter {
 		TestGAParameter test = new TestGAParameter();
 
 		final CountDownLatch downLatch = new CountDownLatch(1);
-		for (int i = 6; i < 7; i++) {
-			final int count = i;
+		for (double crossover = 0.4; crossover <= 0.8; crossover += 0.1) {
+			final double count = crossover;
 			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
 					Counter counter = test.new Counter();
 					counter.initResults();
-					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
+					test.parallelExperimentCrossoverRate(count, counter);
 					downLatch.countDown();
 				}
 			}).start();
@@ -96,34 +96,8 @@ public class TestGAParameter {
 		ResultReader.schedreader();
 	}
 
-	public void parallelExperimentIncreasingCriticalSectionLength(int cslen, Counter counter) {
+	public void parallelExperimentCrossoverRate(double crossoverRate, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
-		final CS_LENGTH_RANGE cs_range;
-		switch (cslen) {
-		case 1:
-			cs_range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
-			break;
-		case 2:
-			cs_range = CS_LENGTH_RANGE.SHORT_CS_LEN;
-			break;
-		case 3:
-			cs_range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
-			break;
-		case 4:
-			cs_range = CS_LENGTH_RANGE.LONG_CSLEN;
-			break;
-		case 5:
-			cs_range = CS_LENGTH_RANGE.VERY_LONG_CSLEN;
-			break;
-		case 6:
-			cs_range = CS_LENGTH_RANGE.RANDOM;
-			break;
-		default:
-			cs_range = null;
-			break;
-		}
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			Thread worker = new Thread(new Runnable() {
@@ -131,50 +105,25 @@ public class TestGAParameter {
 				@Override
 				public void run() {
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, cs_range, RESOURCES_RANGE.PARTITIONS,
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS,
 							NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
 
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.4, 0.01,
-							3, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5,
+							crossoverRate, 0.01, 3, 5, 5, true);
 
-					solver.crossoverRate = 0.4;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true) == 1 && solver.bestProtocol == 0) {
 						counter.incResult1();
-					}
-
-					solver.crossoverRate = 0.5;
-					if (solver.checkSchedulability(true) == 1) {
-						counter.incResult2();
-
-					}
-
-					solver.crossoverRate = 0.6;
-					if (solver.checkSchedulability(true) == 1) {
-						counter.incResult3();
-
-					}
-
-					solver.crossoverRate = 0.7;
-					if (solver.checkSchedulability(true) == 1) {
-						counter.incResult4();
-
-					}
-
-					solver.crossoverRate = 0.8;
-					if (solver.checkSchedulability(true) == 1) {
-						counter.incResult5();
-
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
 					downLatch.countDown();
 				}
 			});
-			worker.setName("2 " + cslen + " " + i);
+			worker.setName("2 " + crossoverRate + " " + i);
 			worker.start();
 		}
 
@@ -183,11 +132,9 @@ public class TestGAParameter {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.result1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result2 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result3 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result4 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result5 / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = (double) counter.result1 / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
-		writeSystem("ioa 2 2 " + cslen, result);
+		writeSystem("crossover Rate: " + crossoverRate, result);
 		System.out.println(result);
 	}
 
