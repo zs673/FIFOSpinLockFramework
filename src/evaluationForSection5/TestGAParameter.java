@@ -113,7 +113,7 @@ public class TestGAParameter {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5,
-							crossoverRate, 0.01, 3, 5, 5, false);
+							crossoverRate, 0.01, 3, 5, 5, true);
 
 					if (solver.checkSchedulability(true) == 1 && solver.bestProtocol == 0) {
 						counter.incResult1();
