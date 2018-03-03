@@ -108,7 +108,7 @@ public class GASolver {
 
 		if (allocations.size() == 0)
 			return -1;
-		
+
 		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
 		int initial = preSovler.initialCheck(true);
 
@@ -127,16 +127,9 @@ public class GASolver {
 		getFirstGene();
 		getFitness(nextGenes, schedFitness, rtFitness);
 		if (bestGene != null) {
-			int protocol = bestGene[0];
-			bestProtocol = -1;
-			for (int i = 1; i < bestGene.length - 1; i++) {
-				if (bestGene[i] != protocol)
-					bestProtocol = 0;
-			}
-
 			if (isPrint)
-				System.out.println(
-						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
+				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " protocol: "
+						+ bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
 			return 1;
 		}
 
@@ -247,16 +240,9 @@ public class GASolver {
 			getFitness(nextGenes, sched_temp, rt_temp);
 
 			if (bestGene != null) {
-				int protocol = bestGene[0];
-				bestProtocol = -1;
-				for (int i = 1; i < bestGene.length - 1; i++) {
-					if (bestGene[i] != protocol)
-						bestProtocol = 0;
-				}
-
 				if (isPrint)
-					System.out.println(
-							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
+					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " protocol: "
+							+ bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
 				return 1;
 			}
 
@@ -288,8 +274,8 @@ public class GASolver {
 		ArrayList<ArrayList<Long>> fitness = new ArrayList<>();
 
 		for (int i = 0; i < gene.length; i++) {
-//			 System.out.println("Compute " + i + "th gene in generation " +
-//			 currentGeneration);
+			// System.out.println("Compute " + i + "th gene in generation " +
+			// currentGeneration);
 			long fit[] = null;
 			if (sched[i] == -1)
 				fit = computeFristFitness(gene[i]);
@@ -412,6 +398,7 @@ public class GASolver {
 		}
 
 		if (sched_fitness == 0) {
+			bestProtocol = 0;
 			bestPriority = 1;
 			bestAllocation = gene[resources.size()];
 		}
