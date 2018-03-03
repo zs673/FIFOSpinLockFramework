@@ -24,7 +24,7 @@ public class TestGAParameter {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
