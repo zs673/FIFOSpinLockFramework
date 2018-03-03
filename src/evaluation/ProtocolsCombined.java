@@ -1,4 +1,4 @@
-package evaluationForThesis;
+package evaluation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,8 +53,8 @@ public class ProtocolsCombined {
 	public static int GENERATIONS = 100;
 	public static int POPULATION = 100;
 
-	public static int ALLOCATION_POLICY = 8;
-	public static int PRIORITY_RULE = 3;
+	public static int ALLOCATION_POLICY = 1;
+	public static int PRIORITY_RULE = 1;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
@@ -100,24 +100,8 @@ public class ProtocolsCombined {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombined test = new ProtocolsCombined();
-		final CountDownLatch downLatch = new CountDownLatch(
-				(/* 9 + */ /* 6 + 9 + 10 */ 1));
 
-		for (int i = 8; i < 9; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingWorkload(count, counter);
-					downLatch.countDown();
-				}
-			}).start();
-
-		}
-		// for (int i = 1; i < 7; i++) {
+		// for (int i = 8; i < 9; i++) {
 		// final int count = i;
 		// new Thread(new Runnable() {
 		//
@@ -125,12 +109,29 @@ public class ProtocolsCombined {
 		// public void run() {
 		// Counter counter = test.new Counter();
 		// counter.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(count,
-		// counter);
+		// test.parallelExperimentIncreasingWorkload(count, counter);
 		// downLatch.countDown();
 		// }
 		// }).start();
+		//
 		// }
+
+		final CountDownLatch downLatch = new CountDownLatch(1);
+		for (int i = 6; i < 7; i++) {
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
+					downLatch.countDown();
+				}
+			}).start();
+		}
+		downLatch.await();
+
 		// for (int i = 1; i < 42; i = i + 5) {
 		// final int count = i;
 		// new Thread(new Runnable() {
@@ -158,7 +159,6 @@ public class ProtocolsCombined {
 		// }).start();
 		// }
 
-		downLatch.await();
 		ResultReader.schedreader();
 	}
 
@@ -208,7 +208,7 @@ public class ProtocolsCombined {
 
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (solver.protocol == 0 || solver.allocation > 4 || solver.bestPriority > 1) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
 						}
 					}
@@ -290,8 +290,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 0.5, 0.1,
-							5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.5, 0.01,
+							3, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -307,7 +307,7 @@ public class ProtocolsCombined {
 
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (solver.protocol == 0 || solver.allocation > 4 || solver.bestPriority > 1) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
 						}
 					}
@@ -380,7 +380,7 @@ public class ProtocolsCombined {
 
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (solver.protocol == 0 || solver.allocation > 4 || solver.bestPriority > 1) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
 						}
 					}
@@ -475,7 +475,7 @@ public class ProtocolsCombined {
 
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (solver.protocol == 0 || solver.allocation > 4 || solver.bestPriority > 1) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
 						}
 					}
@@ -549,7 +549,7 @@ public class ProtocolsCombined {
 
 					if (solver.checkSchedulability(true) == 1) {
 						counter.incDcombine();
-						if (solver.protocol == 0 || solver.allocation > 4 || solver.bestPriority > 1) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
 						}
 					}

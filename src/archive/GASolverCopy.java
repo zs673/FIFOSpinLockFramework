@@ -1,4 +1,4 @@
-package GeneticAlgorithmFramework;
+package archive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
-public class GASolver {
+public class GASolverCopy {
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
@@ -24,10 +24,7 @@ public class GASolver {
 
 	int[][] nextGenes;
 	int[][] parentGenes;
-
 	int[][] elitismGene;
-	int[] elitismGeneIndex;
-
 	long[] rtFitness;
 	long[] schedFitness;
 
@@ -46,16 +43,15 @@ public class GASolver {
 	public int currentGeneration = 0;
 	int toumamentSize1, toumamentSize2;
 	ArrayList<Integer> allocations = new ArrayList<>();
-	ArrayList<AllocatedSystem> allocatedSystems = new ArrayList<>();
 
-	public int bestAllocation = -1;
-	public int bestProtocol = -1; // 1 MrsP; 2 FIFONP; 3 FIFOP; 0 combined.
+	public int allocation = -1;
+	public int protocol = -1; // 1 MrsP; 2 FIFONP; 3 FIFOP; 0 combined.
 	public int bestPriority = -1;
 	// public int priority = -1;
 
 	/****************** GA Properties ******************/
 
-	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
+	public GASolverCopy(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
 			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, double crossoverRate, double mutationRate, int mutationBound,
 			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
@@ -77,14 +73,9 @@ public class GASolver {
 		nextGenes = new int[population][resources.size() + 1];
 		parentGenes = new int[population][resources.size() + 1];
 		elitismGene = new int[elitismSize][resources.size() + 1];
-		elitismGeneIndex = new int[elitismSize];
 
 		schedFitness = new long[population];
 		rtFitness = new long[population];
-
-		for (int i = 0; i < population; i++) {
-			schedFitness[i] = -1;
-		}
 	}
 
 	/**
@@ -97,43 +88,32 @@ public class GASolver {
 	 *         within the given generation and population size.
 	 */
 	public int checkSchedulability(boolean useGA) {
+//		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, 1, isPrint);
+//		int initial = preSovler.initialCheck(false);
+//
+//		if (initial != 0) {
+//			this.allocation = preSovler.allocation;
+//			this.bestPriority = preSovler.priority;
+//			this.protocol = preSovler.protocol;
+//			return initial;
+//		}
+//
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
-			ArrayList<ArrayList<SporadicTask>> alloced = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, i);
-			if (alloced != null) {
+			if (allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, i) != null) {
 				allocations.add(i);
-				AllocatedSystem allocsys = new AllocatedSystem(alloced);
-				allocatedSystems.add(allocsys);
 			}
 		}
 
 		if (allocations.size() == 0)
 			return -1;
-		
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
-		int initial = preSovler.initialCheck(true);
 
-		if (initial != 0) {
-			this.bestAllocation = preSovler.allocation;
-			this.bestPriority = preSovler.priority;
-			this.bestProtocol = preSovler.protocol;
-			return initial;
-		}
-
-		System.out.println("GA starts");
 		return solve(useGA);
 	}
 
 	private int solve(boolean useGA) {
 		getFirstGene();
-		getFitness(nextGenes, schedFitness, rtFitness);
+		getFitness(nextGenes);
 		if (bestGene != null) {
-			int protocol = bestGene[0];
-			bestProtocol = -1;
-			for (int i = 1; i < bestGene.length - 1; i++) {
-				if (bestGene[i] != protocol)
-					bestProtocol = 0;
-			}
-
 			if (isPrint)
 				System.out.println(
 						"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
@@ -141,11 +121,6 @@ public class GASolver {
 		}
 
 		while (currentGeneration <= maxGeneration) {
-			long[] sched_temp = new long[population];
-			long[] rt_temp = new long[population];
-			for (int i = 0; i < population; i++) {
-				sched_temp[i] = -1;
-			}
 			currentGeneration++;
 			for (int i = 0; i < population; i++) {
 				for (int j = 0; j < resources.size() + 1; j++) {
@@ -157,8 +132,6 @@ public class GASolver {
 				for (int i = 0; i < elitismSize; i++) {
 					for (int j = 0; j < resources.size() + 1; j++) {
 						nextGenes[i][j] = elitismGene[i][j];
-						sched_temp[i] = schedFitness[elitismGeneIndex[i]];
-						rt_temp[i] = rtFitness[elitismGeneIndex[i]];
 					}
 				}
 				for (int i = nextGeneIndex; i < population; i++) {
@@ -208,32 +181,24 @@ public class GASolver {
 						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
 							long index = toumament1.get(0).get(2);
 							nextGenes[i] = parentGenes[(int) index];
-							sched_temp[i] = schedFitness[(int) index];
-							rt_temp[i] = rtFitness[(int) index];
 						} else {
 							long index = toumament2.get(0).get(2);
 							nextGenes[i] = parentGenes[(int) index];
-							sched_temp[i] = schedFitness[(int) index];
-							rt_temp[i] = rtFitness[(int) index];
 						}
 					}
 
 					double mute = ran.nextDouble();
 					if (mute < mutationRate) {
-						int muteCount = ran.nextInt(mutationBound) + 1;
+						int muteCount = ran.nextInt(mutationBound);
 						for (int j = 0; j < muteCount; j++) {
 							int muteindex1 = ran.nextInt(resources.size());
 							int muteindex2 = ran.nextInt(resources.size());
 							int temp = nextGenes[i][muteindex1];
 							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
 							nextGenes[i][muteindex2] = temp;
-
 						}
 
-						sched_temp[i] = -1;
-
-						// nextGenes[i][resources.size()] =
-						// ran.nextInt(randomBound) % allocations.size();
+						nextGenes[i][resources.size()] = ran.nextInt(randomBound) % allocations.size();
 					}
 				}
 			} else {
@@ -243,17 +208,8 @@ public class GASolver {
 					}
 				}
 			}
-
-			getFitness(nextGenes, sched_temp, rt_temp);
-
+			getFitness(nextGenes);
 			if (bestGene != null) {
-				int protocol = bestGene[0];
-				bestProtocol = -1;
-				for (int i = 1; i < bestGene.length - 1; i++) {
-					if (bestGene[i] != protocol)
-						bestProtocol = 0;
-				}
-
 				if (isPrint)
 					System.out.println(
 							"new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " priority: " + bestPriority);
@@ -271,7 +227,7 @@ public class GASolver {
 			for (int j = 0; j < resources.size(); j++) {
 				nextGenes[i][j] = i % 3 + 1;
 			}
-			nextGenes[i][resources.size()] = allocations.get(i / PROTOCOL_SIZE);
+			nextGenes[i][resources.size()] = i / PROTOCOL_SIZE;
 		}
 
 		for (int i = PROTOCOL_SIZE * allocations.size(); i < nextGenes.length; i++) {
@@ -284,20 +240,11 @@ public class GASolver {
 		System.out.println();
 	}
 
-	void getFitness(int[][] gene, long[] sched, long[] rt) {
+	void getFitness(int[][] gene) {
 		ArrayList<ArrayList<Long>> fitness = new ArrayList<>();
 
 		for (int i = 0; i < gene.length; i++) {
-//			 System.out.println("Compute " + i + "th gene in generation " +
-//			 currentGeneration);
-			long fit[] = null;
-			if (sched[i] == -1)
-				fit = computeFristFitness(gene[i]);
-			else {
-				fit = new long[2];
-				fit[0] = sched[i];
-				fit[1] = rt[i];
-			}
+			long[] fit = computeFitness(gene[i]);
 			schedFitness[i] = fit[0];
 			rtFitness[i] = fit[1];
 
@@ -315,21 +262,9 @@ public class GASolver {
 
 		fitness.sort((l1, l2) -> compareFitness(l1, l2));
 
-		if (PRIORITY_SCHEME_NUMBER > 1) {
-			for (int i = 0; i < elitismSize; i++) {
-				long index = fitness.get(i).get(2);
-				long fit = computeSBPO(gene[(int) index]);
-				if (fit == 0) {
-					bestGene = gene[(int) index];
-					return;
-				}
-			}
-		}
-
 		for (int i = 0; i < elitismSize; i++) {
 			long index = fitness.get(i).get(2);
 			elitismGene[i] = nextGenes[(int) index];
-			elitismGeneIndex[i] = (int) index;
 		}
 
 		long maxindex = fitness.get(0).get(2);
@@ -338,9 +273,8 @@ public class GASolver {
 					+ Arrays.toString(nextGenes[(int) maxindex]));
 	}
 
-	private long[] computeFristFitness(int[] gene) {
-		int sched_fitness = 0;
-		long rt_fitness = 0;
+	private long[] computeFitness(int[] gene) {
+		long[] fitness = new long[2];
 		if (gene.length != resources.size() + 1 || gene[resources.size()] >= 8) {
 			System.err.println(" gene length error! or alloc gene error");
 			System.exit(-1);
@@ -349,165 +283,50 @@ public class GASolver {
 			resources.get(i).protocol = gene[i];
 		}
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocatedSystems.get(allocations.indexOf(gene[resources.size()])).tasks;
-
-		if (tasksWithAllocation != null) {
-			for (int i = 0; i < tasksWithAllocation.size(); i++) {
-				if (tasksWithAllocation.get(i).size() == 0) {
-					tasksWithAllocation.remove(i);
-					i--;
-				}
-			}
-
-			for (int i = 0; i < tasksWithAllocation.size(); i++) {
-				for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-					tasksWithAllocation.get(i).get(j).partition = i;
-				}
-			}
-
-			if (resources != null && resources.size() > 0) {
-				for (int i = 0; i < resources.size(); i++) {
-					Resource res = resources.get(i);
-					res.isGlobal = false;
-					res.partitions.clear();
-					res.requested_tasks.clear();
-				}
-
-				/* for each resource */
-				for (int i = 0; i < resources.size(); i++) {
-					Resource resource = resources.get(i);
-
-					/* for each partition */
-					for (int j = 0; j < tasksWithAllocation.size(); j++) {
-
-						/* for each task in the given partition */
-						for (int k = 0; k < tasksWithAllocation.get(j).size(); k++) {
-							SporadicTask task = tasksWithAllocation.get(j).get(k);
-
-							if (task.resource_required_index.contains(resource.id - 1)) {
-								resource.requested_tasks.add(task);
-								if (!resource.partitions.contains(task.partition)) {
-									resource.partitions.add(task.partition);
-								}
-							}
-						}
-					}
-
-					if (resource.partitions.size() > 1)
-						resource.isGlobal = true;
-				}
-			}
-
-		}
-
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions,
+				gene[resources.size()]);
 		long[][] Ris = framework.getResponseTimeByDMPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForGA, false, true, true, true, false);
 
-		for (int i = 0; i < tasksWithAllocation.size(); i++) {
-			for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-				if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
-					sched_fitness++;
-					rt_fitness += Ris[i][j] - tasksWithAllocation.get(i).get(j).deadline;
-				}
+		if (Ris == null) {
+			int NoT = 0;
+			for (int i = 0; i < tasks.size(); i++) {
+				NoT++;
 			}
-		}
-
-		if (sched_fitness == 0) {
-			bestPriority = 1;
-			bestAllocation = gene[resources.size()];
-		}
-
-		// Ris = framework.getResponseTimeByDMPO(tasksWithAllocation, resources,
-		// AnalysisUtils.extendCalForGA, false, true, true, true, false);
-		//
-		// for (int i = 0; i < tasksWithAllocation.size(); i++) {
-		// for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-		// if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
-		// rt_fitness += Ris[i][j] - tasksWithAllocation.get(i).get(j).deadline;
-		// }
-		// }
-		// }
-
-		long[] fitness = new long[2];
-		fitness[0] = sched_fitness;
-		fitness[1] = rt_fitness;
-
-		return fitness;
-	}
-
-	private long computeSBPO(int[] gene) {
-
-		for (int i = 0; i < resources.size(); i++) {
-			resources.get(i).protocol = gene[i];
-		}
-
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocatedSystems.get(allocations.indexOf(gene[resources.size()])).tasks;
-
-		if (tasksWithAllocation != null) {
-			for (int i = 0; i < tasksWithAllocation.size(); i++) {
-				if (tasksWithAllocation.get(i).size() == 0) {
-					tasksWithAllocation.remove(i);
-					i--;
-				}
-			}
-
+			fitness[0] = NoT;
+			fitness[1] = Long.MAX_VALUE;
+		} else {
+			int sched_fitness = 0;
+			long rt_fitness = 0;
 			for (int i = 0; i < tasksWithAllocation.size(); i++) {
 				for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-					tasksWithAllocation.get(i).get(j).partition = i;
-				}
-			}
-
-			if (resources != null && resources.size() > 0) {
-				for (int i = 0; i < resources.size(); i++) {
-					Resource res = resources.get(i);
-					res.isGlobal = false;
-					res.partitions.clear();
-					res.requested_tasks.clear();
-				}
-
-				/* for each resource */
-				for (int i = 0; i < resources.size(); i++) {
-					Resource resource = resources.get(i);
-
-					/* for each partition */
-					for (int j = 0; j < tasksWithAllocation.size(); j++) {
-
-						/* for each task in the given partition */
-						for (int k = 0; k < tasksWithAllocation.get(j).size(); k++) {
-							SporadicTask task = tasksWithAllocation.get(j).get(k);
-
-							if (task.resource_required_index.contains(resource.id - 1)) {
-								resource.requested_tasks.add(task);
-								if (!resource.partitions.contains(task.partition)) {
-									resource.partitions.add(task.partition);
-								}
-							}
-						}
+					if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
+						sched_fitness++;
+						rt_fitness += Ris[i][j] - tasksWithAllocation.get(i).get(j).deadline;
 					}
-
-					if (resource.partitions.size() > 1)
-						resource.isGlobal = true;
 				}
 			}
-
+			fitness[0] = sched_fitness;
+			fitness[1] = rt_fitness;
 		}
 
-		// Get 1st Fitness Values.
-		long[][] Ris = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForStatic, true, true, true, false);
-		int sched_fitness = 0;
-		for (int i = 0; i < tasksWithAllocation.size(); i++) {
-			for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
-				if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
-					sched_fitness++;
+		if (fitness[0] == 0) {
+			bestPriority = 1;
+			protocol = 0;
+			allocation = gene[resources.size()];
+		} else {
+			if (PRIORITY_SCHEME_NUMBER > 1) {
+				long[][] RisSBPO = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForStatic, true, true, true, false);
+				if (isSystemSchedulable(tasksWithAllocation, RisSBPO)) {
+					fitness[0] = 0;
+					fitness[1] = 0;
+					bestPriority = 2;
+					protocol = 0;
+					allocation = gene[resources.size()];
 				}
 			}
 		}
 
-		if (sched_fitness == 0) {
-			bestPriority = 2;
-			bestAllocation = gene[resources.size()];
-		}
-
-		return sched_fitness;
+		return fitness;
 	}
 
 	int compareFitness(ArrayList<Long> a, ArrayList<Long> b) {
@@ -555,15 +374,6 @@ public class GASolver {
 			}
 		}
 		return true;
-	}
-
-	class AllocatedSystem {
-		public ArrayList<ArrayList<SporadicTask>> tasks = null;
-
-		public AllocatedSystem(ArrayList<ArrayList<SporadicTask>> tsks) {
-			this.tasks = new ArrayList<ArrayList<SporadicTask>>(tsks);
-
-		}
 	}
 
 }

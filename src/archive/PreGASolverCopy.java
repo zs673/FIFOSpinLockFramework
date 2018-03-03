@@ -1,4 +1,4 @@
-package GeneticAlgorithmFramework;
+package archive;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
-public class PreGASolver {
+public class PreGASolverCopy {
 	int ALLOCATION_POLICY_NUMBER;
 	int PRIORITY_SCHEME_NUMBER;
 	int PROTOCOL_NUMBER;
@@ -33,7 +33,7 @@ public class PreGASolver {
 	public static boolean btbHit = true;
 	public static boolean testSchedulability = false;
 
-	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int PROTOCOL_NUMBER,
+	public PreGASolverCopy(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int PROTOCOL_NUMBER,
 			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, boolean print) {
 		this.PROTOCOL_NUMBER = PROTOCOL_NUMBER;
 		this.ALLOCATION_POLICY_NUMBER = ALLOCATION_POLICY_NUMBER;
@@ -51,9 +51,6 @@ public class PreGASolver {
 	 * @return 0: needs GA; -1: not possible; 1: is feasible;
 	 */
 	public int initialCheck(boolean lazyMode) {
-		if (print) {
-			System.out.println("inital check started");
-		}
 		this.lazyMode = lazyMode;
 		int notpossiblecount = 0;
 
