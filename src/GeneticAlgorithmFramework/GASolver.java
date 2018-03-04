@@ -36,12 +36,13 @@ public class GASolver {
 	int PRIORITY_SCHEME_NUMBER;
 	int PROTOCOL_SIZE = 3;
 	boolean isPrint;
-	public int population;
+	int population;
 	int elitismSize;
-	public double crossoverRate;
-	public double mutationRate;
-	public int mutationBound;
-	public int maxGeneration;
+	int crossoverPoint;
+	double crossoverRate;
+	double mutationRate;
+	int mutationBound;
+	int maxGeneration;
 	int randomBound = 65535;
 	public int currentGeneration = 0;
 	int toumamentSize1, toumamentSize2;
@@ -56,7 +57,7 @@ public class GASolver {
 	/****************** GA Properties ******************/
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
-			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, double crossoverRate, double mutationRate, int mutationBound,
+			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, int crossoverPoint, double crossoverRate, double mutationRate, int mutationBound,
 			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
