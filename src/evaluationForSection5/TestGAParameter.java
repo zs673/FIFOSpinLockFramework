@@ -17,9 +17,9 @@ import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
+import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
-import utils.AnalysisUtils;
 import utils.ResultReader;
 
 public class TestGAParameter {
@@ -184,7 +184,15 @@ public class TestGAParameter {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.4, 0.01,
+					GASolver solver1 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.4, 0.01,
+							3, 5, 5, true);
+					GASolver solver2 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.5, 0.01,
+							3, 5, 5, true);
+					GASolver solver3 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.6, 0.01,
+							3, 5, 5, true);
+					GASolver solver4 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.7, 0.01,
+							3, 5, 5, true);
+					GASolver solver5 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 0.8, 0.01,
 							3, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
@@ -199,42 +207,37 @@ public class TestGAParameter {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incPWLP();
 
-					solver.crossoverRate = 0.4;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver1.checkSchedulability(true) == 1) {
 						counter.incResult1();
-						if (solver.bestProtocol == 0) {
+						if (solver1.bestProtocol == 0) {
 							counter.incResult1_1();
 						}
 					}
 
-					solver.crossoverRate = 0.5;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver2.checkSchedulability(true) == 1) {
 						counter.incResult2();
-						if (solver.bestProtocol == 0) {
+						if (solver2.bestProtocol == 0) {
 							counter.incResult2_1();
 						}
 					}
 
-					solver.crossoverRate = 0.6;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver3.checkSchedulability(true) == 1) {
 						counter.incResult3();
-						if (solver.bestProtocol == 0) {
+						if (solver3.bestProtocol == 0) {
 							counter.incResult3_1();
 						}
 					}
 
-					solver.crossoverRate = 0.7;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver4.checkSchedulability(true) == 1) {
 						counter.incResult4();
-						if (solver.bestProtocol == 0) {
+						if (solver4.bestProtocol == 0) {
 							counter.incResult4_1();
 						}
 					}
 
-					solver.crossoverRate = 0.8;
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver5.checkSchedulability(true) == 1) {
 						counter.incResult5();
-						if (solver.bestProtocol == 0) {
+						if (solver5.bestProtocol == 0) {
 							counter.incResult5_1();
 						}
 					}
