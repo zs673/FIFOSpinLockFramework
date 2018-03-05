@@ -29,7 +29,7 @@ public class TestGAParameter {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -39,7 +39,7 @@ public class TestGAParameter {
 
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
-	public static int GENERATIONS = 100;
+	public static int GENERATIONS = 50;
 	public static int POPULATION = 100;
 
 	class Counter {
@@ -186,11 +186,11 @@ public class TestGAParameter {
 					FIFONP fnp = new FIFONP();
 					GASolver solver1 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.8,
 							0.01, 3, 5, 5, true);
-					GASolver solver2 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.8,
+					GASolver solver2 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1, 0.8,
 							0.01, 3, 5, 5, true);
-					GASolver solver3 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.8,
+					GASolver solver3 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 3, 1, 0.8,
 							0.01, 3, 5, 5, true);
-					GASolver solver4 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.8,
+					GASolver solver4 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 4, 1, 0.8,
 							0.01, 3, 5, 5, true);
 					GASolver solver5 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.8,
 							0.01, 3, 5, 5, true);

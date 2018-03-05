@@ -2,7 +2,6 @@ package GeneticAlgorithmFramework;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 import analysis.CombinedAnalysis;
 import entity.Resource;
@@ -12,13 +11,14 @@ import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
 public class GASolver {
+	
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
 	ArrayList<Resource> resources;
 	CombinedAnalysis framework = new CombinedAnalysis();
 	AllocationGeneator allocGeneator = new AllocationGeneator();
 
-	Random ran = new Random(System.currentTimeMillis());
+
 
 	public int[] bestGene = null;
 
@@ -57,8 +57,8 @@ public class GASolver {
 	/****************** GA Properties ******************/
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
-			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, int crossoverPoint, double crossoverRate, double mutationRate, int mutationBound,
-			int toumamentSize1, int toumamentSize2, boolean isPrint) {
+			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, int crossoverPoint, double crossoverRate, double mutationRate,
+			int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -69,6 +69,7 @@ public class GASolver {
 		this.population = population;
 		this.maxGeneration = maxGeneration;
 		this.elitismSize = elitismSize;
+		this.crossoverPoint = crossoverPoint;
 		this.crossoverRate = crossoverRate;
 		this.mutationRate = mutationRate;
 		this.mutationBound = mutationBound;
@@ -160,7 +161,7 @@ public class GASolver {
 					ArrayList<ArrayList<Long>> toumament2 = new ArrayList<>();
 
 					for (int j = 0; j < toumamentSize1; j++) {
-						int randomIndex = ran.nextInt(population);
+						int randomIndex = AnalysisUtils.ran.nextInt(population);
 						ArrayList<Long> randomGeneFitness = new ArrayList<>();
 						randomGeneFitness.add(schedFitness[randomIndex]);
 						randomGeneFitness.add(rtFitness[randomIndex]);
@@ -168,7 +169,7 @@ public class GASolver {
 						toumament1.add(randomGeneFitness);
 					}
 					for (int j = 0; j < toumamentSize2; j++) {
-						int randomIndex = ran.nextInt(population);
+						int randomIndex = AnalysisUtils.ran.nextInt(population);
 						ArrayList<Long> randomGeneFitness = new ArrayList<>();
 						randomGeneFitness.add(schedFitness[randomIndex]);
 						randomGeneFitness.add(rtFitness[randomIndex]);
@@ -179,24 +180,73 @@ public class GASolver {
 					toumament2.sort((l1, l2) -> compareFitness(l1, l2));
 					long index1 = toumament1.get(0).get(2), index2 = toumament2.get(0).get(2);
 
-					double crossover = ran.nextDouble();
+					double crossover = AnalysisUtils.ran.nextDouble();
 					if (crossover <= crossoverRate) {
-						int crosspoint = ran.nextInt(resources.size() - 1) + 1;
-						int[] newGene = new int[resources.size() + 1];
-						for (int j = 0; j < resources.size(); j++) {
-							if (j < crosspoint)
-								newGene[j] = parentGenes[(int) index1][j];
-							else
-								newGene[j] = parentGenes[(int) index2][j];
-						}
+						int crosspoint1 = AnalysisUtils.ran.nextInt(resources.size() - 1) + 1;
+						int crosspoint2 = AnalysisUtils.ran.nextInt(resources.size() - 1) + 1;
 
-						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
-							newGene[resources.size()] = parentGenes[(int) index1][resources.size()];
+						int[] gene1 = parentGenes[(int) index1];
+						int[] gene2 = parentGenes[(int) index2];
+
+						int[] newGene1 = new int[resources.size() + 1];
+						int[] newGene2 = new int[resources.size() + 1];
+
+						if (crossoverPoint == 1 || crosspoint1 == crosspoint2) {
+							for (int j = 0; j < resources.size() + 1; j++) {
+								if (j < crosspoint1) {
+									newGene1[j] = gene1[j];
+									newGene2[j] = gene2[j];
+								} else {
+									newGene1[j] = gene2[j];
+									newGene2[j] = gene1[j];
+								}
+							}
 						} else {
-							newGene[resources.size()] = parentGenes[(int) index2][resources.size()];
-						}
+							int a = -1, b = -1;
+							if (crosspoint1 < crosspoint2) {
+								a = crosspoint1;
+								b = crosspoint2;
+							} else {
+								a = crosspoint2;
+								b = crosspoint1;
+							}
 
-						nextGenes[i] = newGene;
+							for (int j = 0; j < resources.size() + 1; j++) {
+								if (j < a) {
+									newGene1[j] = gene1[j];
+									newGene2[j] = gene2[j];
+								} else if (j >= a && j <= b) {
+									newGene1[j] = gene2[j];
+									newGene2[j] = gene1[j];
+								} else {
+									newGene1[j] = gene1[j];
+									newGene2[j] = gene2[j];
+								}
+							}
+						}
+						
+						long[] Fit1 = computeFristFitness(newGene1);
+						long[] Fit2 = computeFristFitness(newGene2);
+						ArrayList<Long> gene1fitness = new ArrayList<>();
+						ArrayList<Long> gene2fitness = new ArrayList<>();
+						gene1fitness.add(Fit1[0]);
+						gene1fitness.add(Fit1[1]);
+						gene1fitness.add((long) 1);
+						gene2fitness.add(Fit2[0]);
+						gene2fitness.add(Fit2[1]);
+						gene2fitness.add((long) 2);
+						
+						
+						if (compareFitness(gene1fitness, gene2fitness) <= 0) {
+							nextGenes[i] = newGene1;
+							sched_temp[i] = Fit1[0];
+							rt_temp[i] = Fit1[1];
+						} else {
+							nextGenes[i] = newGene2;
+							sched_temp[i] = Fit2[0];
+							rt_temp[i] = Fit2[1];
+						}
+						
 
 					} else {
 						if (compareFitness(toumament1.get(0), toumament2.get(0)) <= 0) {
@@ -212,12 +262,12 @@ public class GASolver {
 						}
 					}
 
-					double mute = ran.nextDouble();
+					double mute = AnalysisUtils.ran.nextDouble();
 					if (mute < mutationRate) {
-						int muteCount = ran.nextInt(mutationBound) + 1;
+						int muteCount = AnalysisUtils.ran.nextInt(mutationBound) + 1;
 						for (int j = 0; j < muteCount; j++) {
-							int muteindex1 = ran.nextInt(resources.size());
-							int muteindex2 = ran.nextInt(resources.size());
+							int muteindex1 = AnalysisUtils.ran.nextInt(resources.size());
+							int muteindex2 = AnalysisUtils.ran.nextInt(resources.size());
 							int temp = nextGenes[i][muteindex1];
 							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
 							nextGenes[i][muteindex2] = temp;
@@ -225,15 +275,12 @@ public class GASolver {
 						}
 
 						sched_temp[i] = -1;
-
-						// nextGenes[i][resources.size()] =
-						// ran.nextInt(randomBound) % allocations.size();
 					}
 				}
 			} else {
 				for (int i = 0; i < nextGenes.length; i++) {
 					for (int j = 0; j < nextGenes[i].length; j++) {
-						nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
+						nextGenes[i][j] = AnalysisUtils.ran.nextInt(randomBound) % 3 + 1;
 					}
 				}
 			}
@@ -263,9 +310,9 @@ public class GASolver {
 
 		for (int i = PROTOCOL_SIZE * allocations.size(); i < nextGenes.length; i++) {
 			for (int j = 0; j < resources.size(); j++) {
-				nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
+				nextGenes[i][j] = AnalysisUtils.ran.nextInt(randomBound) % 3 + 1;
 			}
-			nextGenes[i][resources.size()] = allocations.get(ran.nextInt(randomBound) % allocations.size());
+			nextGenes[i][resources.size()] = allocations.get(AnalysisUtils.ran.nextInt(randomBound) % allocations.size());
 		}
 
 		System.out.println();
