@@ -1,31 +1,26 @@
 package test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class SortTest {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		ArrayList<Integer> array = new ArrayList<>();
+		Random r1 = new Random(Long.MAX_VALUE);
+		Random r2 = new Random(Long.MAX_VALUE);
 
-		for (int i = 0; i < 10; i++) {
-			array.add(new Random().nextInt(10000));
+		ArrayList<Integer> array1 = new ArrayList<>();
+		ArrayList<Integer> array2 = new ArrayList<>();
+
+		for (int i = 0; i < 100; i++) {
+			int a = r1.nextInt(65535);
+			int b = r2.nextInt(65535);
+			array1.add(a);
+			array2.add(b);
 		}
 
-		array.sort((p1, p2) -> Double.compare(p1, p2));
-		System.out.println(Arrays.toString(array.toArray()));
-
-		array.sort((p1, p2) -> Double.compare(p2, p1));
-		System.out.println(Arrays.toString(array.toArray()));
-
-		long[][] response_time = new long[10][];
-		for (int i = 0; i < response_time.length; i++) {
-			response_time[i] = new long[10];
-		}
-
-		System.out.println(Arrays.deepToString(response_time));
+		System.out.println(array1.toString());
+		System.out.println(array2.toString());
 
 	}
 

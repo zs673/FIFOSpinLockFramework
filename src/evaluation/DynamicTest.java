@@ -143,8 +143,8 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, 5, true);
-			if (gene.checkSchedulability(true) == 1) {
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+			if (gene.checkSchedulability(true, true) == 1) {
 				combine++;
 			}
 
@@ -334,8 +334,8 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, 5, true);
-			if (gene.checkSchedulability(true) == 1) {
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+			if (gene.checkSchedulability(true, true) == 1) {
 				combine++;
 			}
 
@@ -523,8 +523,8 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, 5, true);
-			if (gene.checkSchedulability(true) == 1) {
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+			if (gene.checkSchedulability(true, true) == 1) {
 				combine++;
 			}
 
@@ -711,8 +711,8 @@ public class DynamicTest {
 			ArrayList<Resource> resources = generator.generateResources();
 			generator.generateResourceUsage(tasksToAlloc, resources);
 
-			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5,  1,0.5, 0.1, 5, 5, 5, true);
-			if (gene.checkSchedulability(true) == 1) {
+			GASolver gene = new GASolver(tasksToAlloc, resources, generator, 8, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+			if (gene.checkSchedulability(true, true) == 1) {
 				combine++;
 			}
 

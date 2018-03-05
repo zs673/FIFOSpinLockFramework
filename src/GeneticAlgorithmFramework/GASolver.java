@@ -41,7 +41,6 @@ public class GASolver {
 	int crossoverPoint;
 	double crossoverRate;
 	double mutationRate;
-	int mutationBound;
 	int maxGeneration;
 	int randomBound = 65535;
 	public int currentGeneration = 0;
@@ -58,7 +57,7 @@ public class GASolver {
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
 			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, int crossoverPoint, double crossoverRate, double mutationRate,
-			int mutationBound, int toumamentSize1, int toumamentSize2, boolean isPrint) {
+			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -72,7 +71,6 @@ public class GASolver {
 		this.crossoverPoint = crossoverPoint;
 		this.crossoverRate = crossoverRate;
 		this.mutationRate = mutationRate;
-		this.mutationBound = mutationBound;
 		this.toumamentSize1 = toumamentSize1;
 		this.toumamentSize2 = toumamentSize2;
 
@@ -98,7 +96,7 @@ public class GASolver {
 	 * @return True: the system is feasible. False: the system is not feasible
 	 *         within the given generation and population size.
 	 */
-	public int checkSchedulability(boolean useGA) {
+	public int checkSchedulability(boolean useGA, boolean lazy) {
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
 			ArrayList<ArrayList<SporadicTask>> alloced = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, i);
 			if (alloced != null) {
@@ -112,7 +110,7 @@ public class GASolver {
 			return -1;
 
 		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
-		int initial = preSovler.initialCheck(true);
+		int initial = preSovler.initialCheck(lazy);
 
 		if (initial != 0) {
 			this.bestAllocation = preSovler.allocation;
@@ -262,24 +260,20 @@ public class GASolver {
 
 					double mute = ran.nextDouble();
 					if (mute < mutationRate) {
-						int muteCount = ran.nextInt(mutationBound) + 1;
-						for (int j = 0; j < muteCount; j++) {
-							int muteindex1 = ran.nextInt(resources.size());
-							int muteindex2 = ran.nextInt(resources.size());
-							int temp = nextGenes[i][muteindex1];
-							nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
-							nextGenes[i][muteindex2] = temp;
-
-						}
-
+						int muteindex1 = ran.nextInt(resources.size());
+						int muteindex2 = ran.nextInt(resources.size());
+						int temp = nextGenes[i][muteindex1];
+						nextGenes[i][muteindex1] = nextGenes[i][muteindex2];
+						nextGenes[i][muteindex2] = temp;
 						sched_temp[i] = -1;
 					}
 				}
 			} else {
 				for (int i = 0; i < nextGenes.length; i++) {
-					for (int j = 0; j < nextGenes[i].length; j++) {
+					for (int j = 0; j < nextGenes[i].length - 1; j++) {
 						nextGenes[i][j] = ran.nextInt(randomBound) % 3 + 1;
 					}
+					nextGenes[i][resources.size()] = allocations.get(ran.nextInt(randomBound) % allocations.size());
 				}
 			}
 
@@ -381,7 +375,18 @@ public class GASolver {
 			resources.get(i).protocol = gene[i];
 		}
 
-		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = allocatedSystems.get(allocations.indexOf(gene[resources.size()])).tasks;
+		ArrayList<ArrayList<SporadicTask>> tasksWithAllocation = null;
+
+		// try {
+		int allocation = gene[resources.size()];
+		int allocation_index = allocations.indexOf(allocation);
+		if (allocation_index < 0) {
+			System.out.println("error!");
+		}
+		tasksWithAllocation = allocatedSystems.get(allocation_index).tasks;
+		// } catch (Exception e) {
+		// System.out.println("error!");
+		// }
 
 		if (tasksWithAllocation != null) {
 			for (int i = 0; i < tasksWithAllocation.size(); i++) {

@@ -30,8 +30,8 @@ public class TestGAWithAllocation {
 			ArrayList<Resource> resources = geneator.generateResources();
 			geneator.generateResourceUsage(tasks, resources);
 
-			GASolver gene = new GASolver(tasks, resources, geneator, 8, 1, 100, 50, 5, 1, 0.5, 0.1, 5, 5, 5, true);
-			if (gene.checkSchedulability(true) == 1) {
+			GASolver gene = new GASolver(tasks, resources, geneator, 8, 1, 100, 50, 5, 1, 0.5, 0.1, 5, 5, true);
+			if (gene.checkSchedulability(true, true) == 1) {
 				schedulable++;
 			}
 			System.out.println(i);

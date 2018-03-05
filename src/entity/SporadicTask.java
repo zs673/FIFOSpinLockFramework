@@ -32,6 +32,27 @@ public class SporadicTask {
 
 	public int hasResource = 0;
 
+	public SporadicTask(int priority, long period, long WCET, int partition, int id, double util, long pure_resource_execution_time,
+			ArrayList<Integer> resource_required_index, ArrayList<Integer> number_of_access_in_one_release, int hasResource) {
+		this.priority = priority;
+		this.period = period;
+		this.WCET = WCET;
+		this.deadline = period;
+		this.partition = partition;
+		this.id = id;
+		this.util = util;
+		this.pure_resource_execution_time = pure_resource_execution_time;
+
+		this.resource_required_index = new ArrayList<>(resource_required_index);
+		this.number_of_access_in_one_release = new ArrayList<>(number_of_access_in_one_release);
+		this.hasResource = hasResource;
+
+		Ri = 0;
+		spin = 0;
+		interference = 0;
+		local = 0;
+	}
+
 	public SporadicTask(int priority, long period, long WCET, int partition, int id, double util) {
 		this.priority = priority;
 		this.period = period;

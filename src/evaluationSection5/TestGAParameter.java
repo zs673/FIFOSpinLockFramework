@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
@@ -34,104 +35,26 @@ public class TestGAParameter {
 
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
-	public static int GENERATIONS = 50;
+	public static int GENERATIONS = 100;
 	public static int POPULATION = 100;
 	public static boolean useGA = true;
+	public static boolean lazy = true;
 
 	class Counter {
-		int msrp = 0;
-		int pwlp = 0;
-		int mrsp = 0;
+		int[] results = new int[10];
+		int[] results1 = new int[10];
 
-		int result1 = 0;
-		int result1_1 = 0;
-		int result2 = 0;
-		int result2_1 = 0;
-		int result3 = 0;
-		int result3_1 = 0;
-		int result4 = 0;
-		int result4_1 = 0;
-		int result5 = 0;
-		int result5_1 = 0;
-		int result6 = 0;
-		int result6_1 = 0;
-
-		public synchronized void incMSRP() {
-			msrp++;
+		public synchronized void incResult(int index) {
+			results[index] = results[index] + 1;
 		}
 
-		public synchronized void incPWLP() {
-			pwlp++;
-		}
-
-		public synchronized void incMrsP() {
-			mrsp++;
-		}
-
-		public synchronized void incResult1() {
-			result1++;
-		}
-
-		public synchronized void incResult1_1() {
-			result1_1++;
-		}
-
-		public synchronized void incResult2() {
-			result2++;
-		}
-
-		public synchronized void incResult2_1() {
-			result2_1++;
-		}
-
-		public synchronized void incResult3() {
-			result3++;
-		}
-
-		public synchronized void incResult3_1() {
-			result3_1++;
-		}
-
-		public synchronized void incResult4() {
-			result4++;
-		}
-
-		public synchronized void incResult4_1() {
-			result4_1++;
-		}
-
-		public synchronized void incResult5() {
-			result5++;
-		}
-
-		public synchronized void incResult5_1() {
-			result5_1++;
-		}
-
-		public synchronized void incResult6() {
-			result6++;
-		}
-
-		public synchronized void incResult6_1() {
-			result6_1++;
+		public synchronized void incResult1(int index) {
+			results1[index] = results1[index] + 1;
 		}
 
 		public synchronized void initResults() {
-			msrp = 0;
-			pwlp = 0;
-			mrsp = 0;
-			result1 = 0;
-			result1_1 = 0;
-			result2 = 0;
-			result2_1 = 0;
-			result3 = 0;
-			result3_1 = 0;
-			result4 = 0;
-			result4_1 = 0;
-			result5 = 0;
-			result5_1 = 0;
-			result6 = 0;
-			result6_1 = 0;
+			results = new int[10];
+			results1 = new int[10];
 		}
 
 	}
@@ -139,9 +62,29 @@ public class TestGAParameter {
 	public static void main(String[] args) throws InterruptedException {
 		TestGAParameter test = new TestGAParameter();
 
-		Counter counter = test.new Counter();
-		counter.initResults();
-		test.parallelExperimentCrossoverRate(counter);
+		final CountDownLatch downLatch = new CountDownLatch(2);
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentCrossoverRate(counter);
+				downLatch.countDown();
+			}
+		});
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentPopulation(counter);
+				downLatch.countDown();
+			}
+		});
+
+		t1.start();
+		t2.start();
+		downLatch.await();
 
 		ResultReader.schedreader();
 	}
@@ -154,6 +97,8 @@ public class TestGAParameter {
 
 				@Override
 				public void run() {
+					double corssover = 0.3;
+
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
 							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 							false);
@@ -161,59 +106,57 @@ public class TestGAParameter {
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
 
-					GASolver solver1 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.4,
-							0.01, 3, 5, 5, true);
-					GASolver solver2 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.5,
-							0.01, 3, 5, 5, true);
-					GASolver solver3 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.6,
-							0.01, 3, 5, 5, true);
-					GASolver solver4 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 2, 0.4,
-							0.01, 3, 5, 5, true);
-					GASolver solver5 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 2, 0.5,
-							0.01, 3, 5, 5, true);
-					GASolver solver6 = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 2, 0.6,
-							0.01, 3, 5, 5, true);
+					final CountDownLatch down = new CountDownLatch(10);
 
-					if (solver1.checkSchedulability(useGA) == 1) {
-						counter.incResult1();
-						if (solver1.bestProtocol == 0) {
-							counter.incResult1_1();
-						}
+					for (int i = 0; i < 10; i++) {
+						if (i % 2 == 0)
+							corssover += 0.1;
+
+						final int point = i % 2 + 1;
+						final double cross = corssover;
+						final int index = i;
+
+						Thread t = new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								ArrayList<SporadicTask> tasks = new ArrayList<>();
+								ArrayList<Resource> res = new ArrayList<>();
+
+								for (int i = 0; i < tasksToAlloc.size(); i++) {
+									SporadicTask task = new SporadicTask(tasksToAlloc.get(i).priority, tasksToAlloc.get(i).period, tasksToAlloc.get(i).WCET,
+											tasksToAlloc.get(i).partition, tasksToAlloc.get(i).id, tasksToAlloc.get(i).util,
+											tasksToAlloc.get(i).pure_resource_execution_time, tasksToAlloc.get(i).resource_required_index,
+											tasksToAlloc.get(i).number_of_access_in_one_release, tasksToAlloc.get(i).hasResource);
+									tasks.add(task);
+								}
+								for (int i = 0; i < resources.size(); i++) {
+									Resource resource = new Resource(resources.get(i).id, resources.get(i).csl, resources.get(i).protocol,
+											resources.get(i).isGlobal, resources.get(i).partitions, resources.get(i).requested_tasks, tasks);
+									res.add(resource);
+								}
+
+								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, point,
+										cross, 0.01, 2, 5, true);
+								if (solver.checkSchedulability(useGA, lazy) == 1) {
+									counter.incResult(index);
+									if (solver.bestProtocol == 0) {
+										counter.incResult1(index);
+									}
+								}
+
+								down.countDown();
+							}
+						});
+						t.start();
+
 					}
 
-					if (solver2.checkSchedulability(useGA) == 1) {
-						counter.incResult2();
-						if (solver2.bestProtocol == 0) {
-							counter.incResult2_1();
-						}
-					}
-
-					if (solver3.checkSchedulability(useGA) == 1) {
-						counter.incResult3();
-						if (solver3.bestProtocol == 0) {
-							counter.incResult3_1();
-						}
-					}
-
-					if (solver4.checkSchedulability(useGA) == 1) {
-						counter.incResult4();
-						if (solver4.bestProtocol == 0) {
-							counter.incResult4_1();
-						}
-					}
-
-					if (solver5.checkSchedulability(useGA) == 1) {
-						counter.incResult5();
-						if (solver5.bestProtocol == 0) {
-							counter.incResult5_1();
-						}
-					}
-
-					if (solver6.checkSchedulability(useGA) == 1) {
-						counter.incResult6();
-						if (solver6.bestProtocol == 0) {
-							counter.incResult6_1();
-						}
+					try {
+						down.await();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
@@ -229,14 +172,97 @@ public class TestGAParameter {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.result1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result1_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result2 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result2_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result3 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result3_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result4 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result4_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result5 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result5_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.result6 / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.result6_1 / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+		String result = Arrays.toString(counter.results) + "\n" + Arrays.toString(counter.results1);
 
-		writeSystem("crossover Rate", result);
+		writeSystem("Crossover Rate and Crossover Point", result);
+		System.out.println(result);
+	}
+
+	public void parallelExperimentPopulation(Counter counter) {
+		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			Thread worker = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					int population = 0;
+
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
+							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
+							false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+					ArrayList<Resource> resources = generator.generateResources();
+					generator.generateResourceUsage(tasksToAlloc, resources);
+
+					final CountDownLatch down = new CountDownLatch(10);
+
+					for (int i = 0; i < 10; i++) {
+						if (i % 2 == 0)
+							population += 100;
+						final int pop = population;
+						final int generation = i % 2 == 0 ? 100 : 200;
+						final int index = i;
+
+						Thread t = new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								ArrayList<SporadicTask> tasks = new ArrayList<>();
+								ArrayList<Resource> res = new ArrayList<>();
+
+								for (int i = 0; i < tasksToAlloc.size(); i++) {
+									SporadicTask task = new SporadicTask(tasksToAlloc.get(i).priority, tasksToAlloc.get(i).period, tasksToAlloc.get(i).WCET,
+											tasksToAlloc.get(i).partition, tasksToAlloc.get(i).id, tasksToAlloc.get(i).util,
+											tasksToAlloc.get(i).pure_resource_execution_time, tasksToAlloc.get(i).resource_required_index,
+											tasksToAlloc.get(i).number_of_access_in_one_release, tasksToAlloc.get(i).hasResource);
+									tasks.add(task);
+								}
+								for (int i = 0; i < resources.size(); i++) {
+									Resource resource = new Resource(resources.get(i).id, resources.get(i).csl, resources.get(i).protocol,
+											resources.get(i).isGlobal, resources.get(i).partitions, resources.get(i).requested_tasks, tasks);
+									res.add(resource);
+								}
+
+								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, pop, generation, 2, 2, 0.8, 0.01, 2, 5,
+										true);
+								if (solver.checkSchedulability(useGA, lazy) == 1) {
+									counter.incResult(index);
+									if (solver.bestProtocol == 0) {
+										counter.incResult1(index);
+									}
+								}
+
+								down.countDown();
+							}
+						});
+						t.start();
+
+					}
+
+					try {
+						down.await();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					System.out.println(Thread.currentThread().getName() + " F");
+					downLatch.countDown();
+				}
+			});
+			worker.setName("Thead: " + i);
+			worker.start();
+		}
+
+		try {
+			downLatch.await();
+		} catch (InterruptedException e) {
+		}
+
+		String result = Arrays.toString(counter.results) + "\n" + Arrays.toString(counter.results1);
+
+		writeSystem("Population and Generation", result);
 		System.out.println(result);
 	}
 

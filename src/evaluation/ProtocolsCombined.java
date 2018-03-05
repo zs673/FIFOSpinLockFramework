@@ -161,7 +161,7 @@ public class ProtocolsCombined {
 
 		ResultReader.schedreader();
 	}
-	
+
 	public void parallelExperimentIncreasingCriticalSectionLength(int cslen, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
@@ -218,8 +218,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.5, 0.01,
-							3, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.5,
+							0.01, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -233,7 +233,7 @@ public class ProtocolsCombined {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
@@ -291,8 +291,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1,
-							5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
+							0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -306,7 +306,7 @@ public class ProtocolsCombined {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
@@ -364,8 +364,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1,
-							5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
+							0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -379,7 +379,7 @@ public class ProtocolsCombined {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
@@ -459,8 +459,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1,
-							5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
+							0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -474,7 +474,7 @@ public class ProtocolsCombined {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();
@@ -533,8 +533,8 @@ public class ProtocolsCombined {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1,
-							5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
+							0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -548,7 +548,7 @@ public class ProtocolsCombined {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 1) {
 							counter.incDnew();

@@ -12,6 +12,24 @@ public class Resource {
 	public ArrayList<Integer> partitions;
 	public ArrayList<SporadicTask> requested_tasks;
 
+	public Resource(int id, long cs_len, int protocol, boolean isGlobal, ArrayList<Integer> partitions, ArrayList<SporadicTask> requested_tasks,
+			ArrayList<SporadicTask> tasks) {
+		this.id = id;
+		this.csl = cs_len;
+		this.isGlobal = isGlobal;
+		this.partitions = new ArrayList<>(partitions);
+		this.requested_tasks = new ArrayList<>();
+		
+		for (int i = 0; i < requested_tasks.size(); i++) {
+			int tid = requested_tasks.get(i).id;
+			for (int j = 0; j < tasks.size(); j++) {
+				if (tasks.get(j).id == tid) {
+					this.requested_tasks.add(tasks.get(j));
+				}
+			}
+		}
+	}
+
 	public Resource(int id, long cs_len) {
 		this.id = id;
 		this.csl = cs_len;

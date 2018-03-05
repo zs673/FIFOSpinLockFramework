@@ -190,7 +190,7 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -204,7 +204,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -288,7 +288,7 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -302,7 +302,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -360,7 +360,7 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -374,7 +374,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -454,7 +454,7 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -468,7 +468,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -527,7 +527,7 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -541,7 +541,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true) == 1) {
+					if (solver.checkSchedulability(true, true) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
