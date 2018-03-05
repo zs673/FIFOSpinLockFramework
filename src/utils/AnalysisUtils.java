@@ -1,12 +1,11 @@
 package utils;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import entity.SporadicTask;
 
 public class AnalysisUtils {
-	public static Random ran = new Random(System.currentTimeMillis());
+//	public static Random ran = new Random(System.currentTimeMillis());
 	
 	public static int extendCalForSBPO = 3;
 	public static int extendCalForGA = 3;
