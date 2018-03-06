@@ -11,4 +11,4 @@ rm nohup.out
 
 javac $(find ./src/* | grep .java)
 
-nohup java -cp src/ evaluationSection5.TestGAParameter &
+nohup java -cp src/ evaluationSection5.TestCrossover &

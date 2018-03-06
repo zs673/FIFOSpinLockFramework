@@ -12,7 +12,7 @@ import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
 public class GASolver {
-	Random ran = new Random(System.currentTimeMillis());
+	Random ran = new Random(Long.MAX_VALUE);
 
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
