@@ -111,6 +111,7 @@ public class TestCrossover {
 
 				@Override
 				public void run() {
+					System.out.println(Thread.currentThread().getName() + " B");
 					double corssover = 0.2;
 
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
