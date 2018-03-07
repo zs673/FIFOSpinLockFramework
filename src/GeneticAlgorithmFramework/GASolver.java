@@ -359,7 +359,7 @@ public class GASolver {
 
 			resultRecorder.add((double) avgsched / (double) population);
 			resultRecorder.add((double) avgrt / (double) population);
-		} else if (currentGeneration == maxGeneration) {
+		} else if (currentGeneration == maxGeneration || bestGene != null) {
 			resultRecorder.add((double) fitness.get(0).get(0));
 			resultRecorder.add((double) fitness.get(0).get(1));
 
