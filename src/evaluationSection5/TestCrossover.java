@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 import GeneticAlgorithmFramework.GASolver;
+import GeneticAlgorithmFramework.PreGASolver;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.SystemGenerator;
@@ -37,8 +37,10 @@ public class TestCrossover {
 	public static int PRIORITY_RULE = 1;
 	public static int GENERATIONS = 100;
 	public static int POPULATION = 100;
+
 	public static boolean useGA = true;
-	public static boolean lazy = false;
+	public static boolean lazy = true;
+	public static boolean record = true;
 
 	class Counter {
 		int[] results = new int[3];
@@ -67,9 +69,10 @@ public class TestCrossover {
 		public synchronized void record3(ArrayList<Double> rec) {
 			recorder3.add(rec);
 		}
+
 		public synchronized void incCount() {
 			counter++;
-			System.out.println(counter+"th thread finish");
+			System.out.println(counter + "th thread finish");
 		}
 
 		public synchronized void initResults() {
@@ -88,22 +91,15 @@ public class TestCrossover {
 		long time = System.currentTimeMillis();
 
 		TestCrossover test = new TestCrossover();
-
-		Counter counter = test.new Counter();
-		counter.initResults();
-
-		test.parallelExperimentCrossoverRate(counter);
-
+		test.parallelExperimentCrossoverRate();
 		time = System.currentTimeMillis() - time;
 
 		ResultReader.schedreader();
-
 		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
-		
 		System.out.println("program finish");
 	}
 
-	public void parallelExperimentCrossoverRate(Counter counter) {
+	public void parallelExperimentCrossoverRate() {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
@@ -112,18 +108,36 @@ public class TestCrossover {
 
 				@Override
 				public void run() {
-					System.out.println(Thread.currentThread().getName() + " B");
+					Counter counter = new Counter();
+					counter.initResults();
+
+					System.out.println(Thread.currentThread().getName() + " Begin");
 					double corssover = 0.2;
 
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
 							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 							false);
-					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<SporadicTask> tasksToAlloc1 = generator.generateTasks();
+					ArrayList<Resource> resources1 = generator.generateResources();
+					generator.generateResourceUsage(tasksToAlloc1, resources1);
+
+					int preres = -1;
+
+					PreGASolver pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, true);
+					preres = pre.initialCheck(true);
+					while (preres != 0) {
+						tasksToAlloc1 = generator.generateTasks();
+						resources1 = generator.generateResources();
+						generator.generateResourceUsage(tasksToAlloc1, resources1);
+
+						pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, true);
+						preres = pre.initialCheck(true);
+					}
+
+					final ArrayList<SporadicTask> tasksToAlloc = tasksToAlloc1;
+					final ArrayList<Resource> resources = resources1;
 
 					final CountDownLatch down = new CountDownLatch(3);
-
 					for (int i = 0; i < 3; i++) {
 						if (i % 2 == 0)
 							corssover += 0.2;
@@ -132,7 +146,6 @@ public class TestCrossover {
 						final int index = i;
 
 						Thread t = new Thread(new Runnable() {
-
 							@Override
 							public void run() {
 								ArrayList<SporadicTask> tasks = new ArrayList<>();
@@ -152,12 +165,14 @@ public class TestCrossover {
 								}
 
 								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1, cross,
-										0.01, 2, 5, true);
+										0.01, 2, 5, record, true);
+								solver.name = "Solver " + index + ".1";
 								if (solver.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult(index);
 
 								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, cross,
-										0.01, 2, 5, true);
+										0.01, 2, 5, record, true);
+								solver1.name = "Solver " + index + ".2";
 								if (solver1.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult1(index);
 
@@ -165,12 +180,18 @@ public class TestCrossover {
 								recorder.addAll(solver.resultRecorder);
 								recorder.addAll(solver1.resultRecorder);
 
-								if (index == 0)
-									counter.recorder1.add(recorder);
-								else if (index == 1)
-									counter.recorder2.add(recorder);
-								else
-									counter.recorder3.add(recorder);
+								if (index == 0) {
+									counter.recorder1.add(solver.resultRecorder);
+									counter.recorder1.add(solver1.resultRecorder);
+								}
+								else if (index == 1) {
+									counter.recorder2.add(solver.resultRecorder);
+									counter.recorder2.add(solver1.resultRecorder);
+								}
+								else {
+									counter.recorder3.add(solver.resultRecorder);
+									counter.recorder3.add(solver1.resultRecorder);
+								}
 
 								counter.incCount();
 								down.countDown();
@@ -178,7 +199,6 @@ public class TestCrossover {
 						});
 						t.setName("Thead: " + fatherindex + "." + index);
 						t.start();
-
 					}
 
 					try {
@@ -188,6 +208,45 @@ public class TestCrossover {
 					}
 
 					System.out.println(Thread.currentThread().getName() + " F");
+
+					String sched_count = "";
+					for (int i = 0; i < counter.results.length; i++) {
+						sched_count += " " + counter.results[i];
+					}
+					for (int i = 0; i < counter.results1.length; i++) {
+						sched_count += " " + counter.results1[i];
+					}
+					sched_count += " ";
+					
+					sched_count += counter.recorder1.get(0).toString() + " ";
+					sched_count += counter.recorder2.get(0).toString() + " ";
+					sched_count += counter.recorder3.get(0).toString() + " ";
+					sched_count += counter.recorder1.get(1).toString() + " ";
+					sched_count += counter.recorder2.get(1).toString() + " ";
+					sched_count += counter.recorder3.get(1).toString() + " ";
+					
+					sched_count = sched_count.replace("[", "").replace("]", "").replace(",", "");
+					sched_count+= "\n";
+					
+					writeSystem("1 2 " + (fatherindex+1), sched_count);
+
+					// String rec = "";
+					//
+					// for (int i = 0; i < counter.recorder1.size(); i++) {
+					// rec += counter.recorder1.get(i).toString() + "\n";
+					// }
+					// rec += "\n";
+					// for (int i = 0; i < counter.recorder2.size(); i++) {
+					// rec += counter.recorder2.get(i).toString() + "\n";
+					// }
+					// rec += "\n";
+					// for (int i = 0; i < counter.recorder3.size(); i++) {
+					// rec += counter.recorder3.get(i).toString() + "\n";
+					// }
+					// result += rec;
+					//
+					// writeSystem(filename, result);
+
 					downLatch.countDown();
 				}
 			});
@@ -200,30 +259,6 @@ public class TestCrossover {
 		} catch (InterruptedException e) {
 		}
 
-		long[] result_double = new long[counter.results.length];
-		long[] result_double1 = new long[counter.results1.length];
-		for (int i = 0; i < counter.results.length; i++) {
-			result_double[i] = counter.results[i];
-			result_double1[i] = counter.results1[i];
-		}
-		String result = Arrays.toString(result_double) + "\n" + Arrays.toString(result_double1) + "\n";
-
-		String rec = "";
-
-		for (int i = 0; i < counter.recorder1.size(); i++) {
-			rec += counter.recorder1.get(i).toString() + "\n";
-		}
-		rec += "\n";
-		for (int i = 0; i < counter.recorder2.size(); i++) {
-			rec += counter.recorder2.get(i).toString() + "\n";
-		}
-		rec += "\n";
-		for (int i = 0; i < counter.recorder3.size(); i++) {
-			rec += counter.recorder3.get(i).toString() + "\n";
-		}
-		result += rec;
-		writeSystem("Crossover", result);
-		System.out.println(result);
 	}
 
 	public void writeSystem(String filename, String result) {

@@ -113,12 +113,12 @@ public class TestGeneration {
 									res.add(resource);
 								}
 
-								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, pop, 100, 2, 2, 0.8, 0.01, 2, 5,
+								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, pop, 100, 2, 2, 0.8, 0.01, 2, 5, true,
 										true);
 								if (solver.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult(index);
-								
-								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, pop, 300, 2, 2, 0.8, 0.01, 2, 5,
+
+								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, pop, 300, 2, 2, 0.8, 0.01, 2, 5, true,
 										true);
 								if (solver1.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult1(index);

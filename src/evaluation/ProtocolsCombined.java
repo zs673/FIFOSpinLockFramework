@@ -219,7 +219,7 @@ public class ProtocolsCombined {
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 5, 1, 0.5,
-							0.01, 5, 5, true);
+							0.01, 5, 5, true, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -292,7 +292,7 @@ public class ProtocolsCombined {
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
-							0.1, 5, 5, true);
+							0.1, 5, 5, true, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -365,7 +365,7 @@ public class ProtocolsCombined {
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
-							0.1, 5, 5, true);
+							0.1, 5, 5, true, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -460,7 +460,7 @@ public class ProtocolsCombined {
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
-							0.1, 5, 5, true);
+							0.1, 5, 5, true, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -534,7 +534,7 @@ public class ProtocolsCombined {
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, GENERATIONS, POPULATION, 5, 1, 0.5,
-							0.1, 5, 5, true);
+							0.1, 5, 5, true, true);
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))

@@ -1,9 +1,10 @@
-package GeneticAlgorithmFramework;
+package archive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import GeneticAlgorithmFramework.PreGASolver;
 import analysis.CombinedAnalysis;
 import entity.Resource;
 import entity.SporadicTask;
@@ -12,8 +13,7 @@ import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
 
 public class GASolver {
-	public String name = "";
-	Random ran = new Random(System.currentTimeMillis());
+	Random ran = new Random(Long.MAX_VALUE);
 
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
@@ -52,8 +52,7 @@ public class GASolver {
 	public int bestAllocation = -1;
 	public int bestProtocol = -1; // 1 MrsP; 2 FIFONP; 3 FIFOP; 0 combined.
 	public int bestPriority = -1;
-
-	boolean record;
+	// public int priority = -1;
 
 	public ArrayList<Double> resultRecorder = new ArrayList<>();
 
@@ -61,7 +60,7 @@ public class GASolver {
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
 			int PRIORITY_SCHEME_NUMBER, int population, int maxGeneration, int elitismSize, int crossoverPoint, double crossoverRate, double mutationRate,
-			int toumamentSize1, int toumamentSize2, boolean record, boolean isPrint) {
+			int toumamentSize1, int toumamentSize2, boolean isPrint) {
 		this.isPrint = isPrint;
 		this.tasks = tasks;
 		this.resources = resources;
@@ -89,7 +88,6 @@ public class GASolver {
 		for (int i = 0; i < population; i++) {
 			schedFitness[i] = -1;
 		}
-		this.record = record;
 	}
 
 	/**
@@ -126,7 +124,7 @@ public class GASolver {
 			}
 		}
 
-		System.out.println("GA starts, name: " + name);
+		System.out.println("GA starts");
 		return solve(useGA);
 	}
 
@@ -135,8 +133,8 @@ public class GASolver {
 		getFitness(nextGenes, schedFitness, rtFitness);
 		if (bestGene != null) {
 			if (isPrint)
-				System.out.println(name + " " + "new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene)
-						+ " protocol: " + bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
+				System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " protocol: "
+						+ bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
 			return 1;
 		}
 
@@ -288,14 +286,14 @@ public class GASolver {
 
 			if (bestGene != null) {
 				if (isPrint)
-					System.out.println(name + " " + "new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene)
-							+ " protocol: " + bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
+					System.out.println("new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene) + " protocol: "
+							+ bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
 				return 1;
 			}
 
 		}
 		if (isPrint)
-			System.out.println(name + " " + "not schedulable with in " + maxGeneration + " generations. GA finish");
+			System.out.println("not schedulable with in " + maxGeneration + " generations. GA finish");
 		return -1;
 	}
 
@@ -336,8 +334,6 @@ public class GASolver {
 
 			if (schedFitness[i] == 0) {
 				bestGene = gene[i];
-				if (!record)
-					return;
 			}
 
 			ArrayList<Long> fitnessofGene = new ArrayList<>();
@@ -349,42 +345,40 @@ public class GASolver {
 
 		fitness.sort((l1, l2) -> compareFitness(l1, l2));
 
-		if (record) {
-			if (currentGeneration == 0) {
-				resultRecorder.add((double) fitness.get(0).get(0));
-				resultRecorder.add((double) fitness.get(0).get(1));
+		if (currentGeneration == 0) {
+			resultRecorder.add((double) fitness.get(0).get(0));
+			resultRecorder.add((double) fitness.get(0).get(1));
 
-				resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
-				resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
 
-				long avgsched = 0, avgrt = 0;
-				for (int i = 0; i < fitness.size(); i++) {
-					avgsched += fitness.get(i).get(0);
-					avgrt += fitness.get(i).get(1);
-				}
-
-				resultRecorder.add((double) avgsched / (double) population);
-				resultRecorder.add((double) avgrt / (double) population);
-			} else if (currentGeneration == maxGeneration || bestGene != null) {
-				resultRecorder.add((double) fitness.get(0).get(0));
-				resultRecorder.add((double) fitness.get(0).get(1));
-
-				resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
-				resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
-
-				long avgsched = 0, avgrt = 0;
-				for (int i = 0; i < fitness.size(); i++) {
-					avgsched += fitness.get(i).get(0);
-					avgrt += fitness.get(i).get(1);
-				}
-
-				resultRecorder.add((double) avgsched / (double) population);
-				resultRecorder.add((double) avgrt / (double) population);
+			long avgsched = 0, avgrt = 0;
+			for (int i = 0; i < fitness.size(); i++) {
+				avgsched += fitness.get(i).get(0);
+				avgrt += fitness.get(i).get(1);
 			}
 
-			if (bestGene != null)
-				return;
+			resultRecorder.add((double) avgsched / (double) population);
+			resultRecorder.add((double) avgrt / (double) population);
+		} else if (currentGeneration == maxGeneration || bestGene != null) {
+			resultRecorder.add((double) fitness.get(0).get(0));
+			resultRecorder.add((double) fitness.get(0).get(1));
+
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
+
+			long avgsched = 0, avgrt = 0;
+			for (int i = 0; i < fitness.size(); i++) {
+				avgsched += fitness.get(i).get(0);
+				avgrt += fitness.get(i).get(1);
+			}
+
+			resultRecorder.add((double) avgsched / (double) population);
+			resultRecorder.add((double) avgrt / (double) population);
 		}
+
+		if (bestGene != null)
+			return;
 
 		if (PRIORITY_SCHEME_NUMBER > 1) {
 			for (int i = 0; i < elitismSize; i++) {
@@ -405,8 +399,8 @@ public class GASolver {
 
 		long maxindex = fitness.get(0).get(2);
 		if (isPrint)
-			System.out.println(name + " " + "Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1)
-					+ "    GENE: " + Arrays.toString(nextGenes[(int) maxindex]));
+			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
+					+ Arrays.toString(nextGenes[(int) maxindex]));
 
 	}
 
@@ -499,6 +493,17 @@ public class GASolver {
 			bestPriority = 1;
 			bestAllocation = gene[resources.size()];
 		}
+
+		// Ris = framework.getResponseTimeByDMPO(tasksWithAllocation, resources,
+		// AnalysisUtils.extendCalForGA, false, true, true, true, false);
+		//
+		// for (int i = 0; i < tasksWithAllocation.size(); i++) {
+		// for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {
+		// if (tasksWithAllocation.get(i).get(j).deadline < Ris[i][j]) {
+		// rt_fitness += Ris[i][j] - tasksWithAllocation.get(i).get(j).deadline;
+		// }
+		// }
+		// }
 
 		long[] fitness = new long[2];
 		fitness[0] = sched_fitness;

@@ -104,7 +104,7 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true, true);
 
 					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -215,7 +215,7 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true, true);
 
 					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -300,7 +300,7 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true, true);
 
 					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -407,7 +407,7 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true, true);
 
 					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -493,7 +493,7 @@ public class DynamicTestWF {
 					FIFONPbasic fnp = new FIFONPbasic();
 					FIFOPbasic fp = new FIFOPbasic();
 					MrsPbasic mrsp = new MrsPbasic();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true);
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, 100, 100, 5, 1, 0.5, 0.1, 5, 5, true, true);
 
 					Ris = IOAmrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
