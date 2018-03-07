@@ -107,6 +107,7 @@ public class TestCrossover {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			final int fatherindex = i;
 			Thread worker = new Thread(new Runnable() {
 
 				@Override
@@ -175,6 +176,7 @@ public class TestCrossover {
 								down.countDown();
 							}
 						});
+						t.setName("Thead: " + fatherindex + "." + index);
 						t.start();
 
 					}
