@@ -46,6 +46,7 @@ public class TestCrossover {
 		ArrayList<ArrayList<Double>> recorder1 = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recorder2 = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recorder3 = new ArrayList<>();
+		int counter = 0;
 
 		public synchronized void incResult(int index) {
 			results[index] = results[index] + 1;
@@ -66,6 +67,10 @@ public class TestCrossover {
 		public synchronized void record3(ArrayList<Double> rec) {
 			recorder3.add(rec);
 		}
+		public synchronized void incCount() {
+			counter++;
+			System.out.println(counter+"th thread finish");
+		}
 
 		public synchronized void initResults() {
 			results = new int[3];
@@ -73,11 +78,13 @@ public class TestCrossover {
 			recorder1 = new ArrayList<>();
 			recorder2 = new ArrayList<>();
 			recorder3 = new ArrayList<>();
+			counter = 0;
 		}
 
 	}
 
 	public static void main(String[] args) throws InterruptedException {
+		System.out.println("program start");
 		long time = System.currentTimeMillis();
 
 		TestCrossover test = new TestCrossover();
@@ -92,6 +99,8 @@ public class TestCrossover {
 		ResultReader.schedreader();
 
 		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
+		
+		System.out.println("program finish");
 	}
 
 	public void parallelExperimentCrossoverRate(Counter counter) {
@@ -161,6 +170,7 @@ public class TestCrossover {
 								else
 									counter.recorder3.add(recorder);
 
+								counter.incCount();
 								down.countDown();
 							}
 						});
