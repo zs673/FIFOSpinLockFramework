@@ -123,14 +123,14 @@ public class TestCrossover {
 
 					int preres = -1;
 
-					PreGASolver pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, true);
+					PreGASolver pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, false);
 					preres = pre.initialCheck(true);
 					while (preres != 0) {
 						tasksToAlloc1 = generator.generateTasks();
 						resources1 = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc1, resources1);
 
-						pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, true);
+						pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, false);
 						preres = pre.initialCheck(true);
 					}
 
