@@ -48,7 +48,6 @@ public class TestCrossover {
 		ArrayList<ArrayList<Double>> recorder1 = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recorder2 = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recorder3 = new ArrayList<>();
-		int counter = 0;
 
 		public synchronized void incResult(int index) {
 			results[index] = results[index] + 1;
@@ -70,18 +69,12 @@ public class TestCrossover {
 			recorder3.add(rec);
 		}
 
-		public synchronized void incCount() {
-			counter++;
-			System.out.println(counter + "th thread finish");
-		}
-
 		public synchronized void initResults() {
 			results = new int[3];
 			results1 = new int[3];
 			recorder1 = new ArrayList<>();
 			recorder2 = new ArrayList<>();
 			recorder3 = new ArrayList<>();
-			counter = 0;
 		}
 
 	}
@@ -183,17 +176,14 @@ public class TestCrossover {
 								if (index == 0) {
 									counter.recorder1.add(solver.resultRecorder);
 									counter.recorder1.add(solver1.resultRecorder);
-								}
-								else if (index == 1) {
+								} else if (index == 1) {
 									counter.recorder2.add(solver.resultRecorder);
 									counter.recorder2.add(solver1.resultRecorder);
-								}
-								else {
+								} else {
 									counter.recorder3.add(solver.resultRecorder);
 									counter.recorder3.add(solver1.resultRecorder);
 								}
 
-								counter.incCount();
 								down.countDown();
 							}
 						});
@@ -207,7 +197,7 @@ public class TestCrossover {
 						e.printStackTrace();
 					}
 
-					System.out.println(Thread.currentThread().getName() + " F");
+					System.out.println(Thread.currentThread().getName() + " Finish");
 
 					String sched_count = "";
 					for (int i = 0; i < counter.results.length; i++) {
@@ -217,18 +207,18 @@ public class TestCrossover {
 						sched_count += " " + counter.results1[i];
 					}
 					sched_count += " ";
-					
+
 					sched_count += counter.recorder1.get(0).toString() + " ";
 					sched_count += counter.recorder2.get(0).toString() + " ";
 					sched_count += counter.recorder3.get(0).toString() + " ";
 					sched_count += counter.recorder1.get(1).toString() + " ";
 					sched_count += counter.recorder2.get(1).toString() + " ";
 					sched_count += counter.recorder3.get(1).toString() + " ";
-					
+
 					sched_count = sched_count.replace("[", "").replace("]", "").replace(",", "");
-					sched_count+= "\n";
-					
-					writeSystem("1 2 " + (fatherindex+1), sched_count);
+					sched_count += "\n";
+
+					writeSystem("1 2 " + (fatherindex + 1), sched_count);
 
 					// String rec = "";
 					//
