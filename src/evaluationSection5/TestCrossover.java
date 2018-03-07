@@ -25,7 +25,7 @@ public class TestCrossover {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 3000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -38,11 +38,14 @@ public class TestCrossover {
 	public static int GENERATIONS = 100;
 	public static int POPULATION = 100;
 	public static boolean useGA = true;
-	public static boolean lazy = true;
+	public static boolean lazy = false;
 
 	class Counter {
 		int[] results = new int[3];
 		int[] results1 = new int[3];
+		ArrayList<ArrayList<Double>> recorder1 = new ArrayList<>();
+		ArrayList<ArrayList<Double>> recorder2 = new ArrayList<>();
+		ArrayList<ArrayList<Double>> recorder3 = new ArrayList<>();
 
 		public synchronized void incResult(int index) {
 			results[index] = results[index] + 1;
@@ -52,21 +55,43 @@ public class TestCrossover {
 			results1[index] = results1[index] + 1;
 		}
 
+		public synchronized void record1(ArrayList<Double> rec) {
+			recorder1.add(rec);
+		}
+
+		public synchronized void record2(ArrayList<Double> rec) {
+			recorder2.add(rec);
+		}
+
+		public synchronized void record3(ArrayList<Double> rec) {
+			recorder3.add(rec);
+		}
+
 		public synchronized void initResults() {
 			results = new int[3];
 			results1 = new int[3];
+			recorder1 = new ArrayList<>();
+			recorder2 = new ArrayList<>();
+			recorder3 = new ArrayList<>();
 		}
 
 	}
 
 	public static void main(String[] args) throws InterruptedException {
+		long time = System.currentTimeMillis();
+
 		TestCrossover test = new TestCrossover();
 
 		Counter counter = test.new Counter();
 		counter.initResults();
+
 		test.parallelExperimentCrossoverRate(counter);
 
+		time = System.currentTimeMillis() - time;
+
 		ResultReader.schedreader();
+
+		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
 	}
 
 	public void parallelExperimentCrossoverRate(Counter counter) {
@@ -115,15 +140,26 @@ public class TestCrossover {
 									res.add(resource);
 								}
 
-								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1,
-										cross, 0.01, 2, 5, true);
-								if (solver.checkSchedulability(useGA, lazy) == 1) 
+								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1, cross,
+										0.01, 2, 5, true);
+								if (solver.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult(index);
-								
-								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2,
-										cross, 0.01, 2, 5, true);
-								if (solver1.checkSchedulability(useGA, lazy) == 1) 
+
+								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, cross,
+										0.01, 2, 5, true);
+								if (solver1.checkSchedulability(useGA, lazy) == 1)
 									counter.incResult1(index);
+
+								ArrayList<Double> recorder = new ArrayList<>();
+								recorder.addAll(solver.resultRecorder);
+								recorder.addAll(solver1.resultRecorder);
+
+								if (index == 0)
+									counter.recorder1.add(recorder);
+								else if (index == 1)
+									counter.recorder2.add(recorder);
+								else
+									counter.recorder3.add(recorder);
 
 								down.countDown();
 							}
@@ -151,15 +187,29 @@ public class TestCrossover {
 		} catch (InterruptedException e) {
 		}
 
-		double[] result_double = new double[counter.results.length];
-		double[] result_double1 = new double[counter.results1.length];
+		long[] result_double = new long[counter.results.length];
+		long[] result_double1 = new long[counter.results1.length];
 		for (int i = 0; i < counter.results.length; i++) {
-			result_double[i] = (double) counter.results[i] / (double) TOTAL_NUMBER_OF_SYSTEMS;
-			result_double1[i] = (double) counter.results1[i] / (double) TOTAL_NUMBER_OF_SYSTEMS;
+			result_double[i] = counter.results[i];
+			result_double1[i] = counter.results1[i];
 		}
-		String result = Arrays.toString(result_double) + "\n" + Arrays.toString(result_double1);
+		String result = Arrays.toString(result_double) + "\n" + Arrays.toString(result_double1) + "\n";
 
-		writeSystem("Crossover Rate and Crossover Point", result);
+		String rec = "";
+
+		for (int i = 0; i < counter.recorder1.size(); i++) {
+			rec += counter.recorder1.get(i).toString() + "\n";
+		}
+		rec += "\n";
+		for (int i = 0; i < counter.recorder2.size(); i++) {
+			rec += counter.recorder2.get(i).toString() + "\n";
+		}
+		rec += "\n";
+		for (int i = 0; i < counter.recorder3.size(); i++) {
+			rec += counter.recorder3.get(i).toString() + "\n";
+		}
+		result += rec;
+		writeSystem("Crossover", result);
 		System.out.println(result);
 	}
 

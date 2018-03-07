@@ -157,7 +157,7 @@ public class TestGeneration {
 		}
 		String result = Arrays.toString(result_double) + "\n" + Arrays.toString(result_double1);
 
-		writeSystem("Population and Generation", result);
+		writeSystem("Generation", result);
 		System.out.println(result);
 	}
 

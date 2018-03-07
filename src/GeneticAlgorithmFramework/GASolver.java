@@ -53,6 +53,8 @@ public class GASolver {
 	public int bestPriority = -1;
 	// public int priority = -1;
 
+	public ArrayList<Double> resultRecorder = new ArrayList<>();
+
 	/****************** GA Properties ******************/
 
 	public GASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int ALLOCATION_POLICY_NUMBER,
@@ -109,14 +111,16 @@ public class GASolver {
 		if (allocations.size() == 0)
 			return -1;
 
-		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
-		int initial = preSovler.initialCheck(lazy);
+		if (lazy) {
+			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
+			int initial = preSovler.initialCheck(lazy);
 
-		if (initial != 0) {
-			this.bestAllocation = preSovler.allocation;
-			this.bestPriority = preSovler.priority;
-			this.bestProtocol = preSovler.protocol;
-			return initial;
+			if (initial != 0) {
+				this.bestAllocation = preSovler.allocation;
+				this.bestPriority = preSovler.priority;
+				this.bestProtocol = preSovler.protocol;
+				return initial;
+			}
 		}
 
 		System.out.println("GA starts");
@@ -329,7 +333,6 @@ public class GASolver {
 
 			if (schedFitness[i] == 0) {
 				bestGene = gene[i];
-				return;
 			}
 
 			ArrayList<Long> fitnessofGene = new ArrayList<>();
@@ -340,6 +343,41 @@ public class GASolver {
 		}
 
 		fitness.sort((l1, l2) -> compareFitness(l1, l2));
+
+		if (currentGeneration == 0) {
+			resultRecorder.add((double) fitness.get(0).get(0));
+			resultRecorder.add((double) fitness.get(0).get(1));
+
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
+
+			long avgsched = 0, avgrt = 0;
+			for (int i = 0; i < fitness.size(); i++) {
+				avgsched += fitness.get(i).get(0);
+				avgrt += fitness.get(i).get(1);
+			}
+
+			resultRecorder.add((double) avgsched / (double) population);
+			resultRecorder.add((double) avgrt / (double) population);
+		} else if (currentGeneration == maxGeneration) {
+			resultRecorder.add((double) fitness.get(0).get(0));
+			resultRecorder.add((double) fitness.get(0).get(1));
+
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(0));
+			resultRecorder.add((double) fitness.get(fitness.size() - 1).get(1));
+
+			long avgsched = 0, avgrt = 0;
+			for (int i = 0; i < fitness.size(); i++) {
+				avgsched += fitness.get(i).get(0);
+				avgrt += fitness.get(i).get(1);
+			}
+
+			resultRecorder.add((double) avgsched / (double) population);
+			resultRecorder.add((double) avgrt / (double) population);
+		}
+
+		if (bestGene != null)
+			return;
 
 		if (PRIORITY_SCHEME_NUMBER > 1) {
 			for (int i = 0; i < elitismSize; i++) {
@@ -362,6 +400,7 @@ public class GASolver {
 		if (isPrint)
 			System.out.println("Generation " + currentGeneration + "   maxsched: " + fitness.get(0).get(0) + " maxrt: " + fitness.get(0).get(1) + "    GENE: "
 					+ Arrays.toString(nextGenes[(int) maxindex]));
+
 	}
 
 	private long[] computeFristFitness(int[] gene) {
