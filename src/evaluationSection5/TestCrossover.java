@@ -25,7 +25,7 @@ public class TestCrossover {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -35,11 +35,11 @@ public class TestCrossover {
 
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 10;
+	public static int POPULATION = 10;
 
 	public static boolean useGA = true;
-	public static boolean lazy = true;
+	public static boolean lazy = false;
 	public static boolean record = true;
 
 	class Counter {
@@ -87,12 +87,13 @@ public class TestCrossover {
 		test.parallelExperimentCrossoverRate();
 		time = System.currentTimeMillis() - time;
 
-		ResultReader.schedreader();
+		ResultReader.readcrossover();
 		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
 		System.out.println("program finish");
 	}
 
 	public void parallelExperimentCrossoverRate() {
+
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
@@ -101,12 +102,20 @@ public class TestCrossover {
 
 				@Override
 				public void run() {
-					Counter counter = new Counter();
-					counter.initResults();
-
 					System.out.println(Thread.currentThread().getName() + " Begin");
-					double corssover = 0.2;
 
+					int[] cross1 = new int[3];
+					int[] cross2 = new int[3];
+
+					ArrayList<ArrayList<Double>> recorder4_1 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder6_1 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder8_1 = new ArrayList<>();
+
+					ArrayList<ArrayList<Double>> recorder4_2 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder6_2 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder8_2 = new ArrayList<>();
+
+					double corssover = 0.2;
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
 							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 							false);
@@ -132,9 +141,7 @@ public class TestCrossover {
 
 					final CountDownLatch down = new CountDownLatch(3);
 					for (int i = 0; i < 3; i++) {
-						if (i % 2 == 0)
-							corssover += 0.2;
-
+						corssover += 0.2;
 						final double cross = corssover;
 						final int index = i;
 
@@ -159,29 +166,31 @@ public class TestCrossover {
 
 								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1, cross,
 										0.01, 2, 5, record, true);
-								solver.name = "Solver " + index + ".1";
-								if (solver.checkSchedulability(useGA, lazy) == 1)
-									counter.incResult(index);
+								solver.name = "Thread: " + fatherindex + "  Solver " + index + ".1";
+								if (solver.checkSchedulability(useGA, lazy) == 1) {
+									cross1[index] = cross1[index] + 1;
+								}
 
 								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, cross,
 										0.01, 2, 5, record, true);
-								solver1.name = "Solver " + index + ".2";
-								if (solver1.checkSchedulability(useGA, lazy) == 1)
-									counter.incResult1(index);
+								solver1.name = "Thread: " + fatherindex + "  Solver " + index + ".2";
+								if (solver1.checkSchedulability(useGA, lazy) == 1) {
+									cross2[index] = cross1[index] + 1;
+								}
 
 								ArrayList<Double> recorder = new ArrayList<>();
 								recorder.addAll(solver.resultRecorder);
 								recorder.addAll(solver1.resultRecorder);
 
 								if (index == 0) {
-									counter.recorder1.add(solver.resultRecorder);
-									counter.recorder1.add(solver1.resultRecorder);
+									recorder4_1.add(solver.resultRecorder);
+									recorder4_2.add(solver1.resultRecorder);
 								} else if (index == 1) {
-									counter.recorder2.add(solver.resultRecorder);
-									counter.recorder2.add(solver1.resultRecorder);
+									recorder6_1.add(solver.resultRecorder);
+									recorder6_2.add(solver1.resultRecorder);
 								} else {
-									counter.recorder3.add(solver.resultRecorder);
-									counter.recorder3.add(solver1.resultRecorder);
+									recorder8_1.add(solver.resultRecorder);
+									recorder8_2.add(solver1.resultRecorder);
 								}
 
 								down.countDown();
@@ -200,25 +209,32 @@ public class TestCrossover {
 					System.out.println(Thread.currentThread().getName() + " Finish");
 
 					String sched_count = "";
-					for (int i = 0; i < counter.results.length; i++) {
-						sched_count += " " + counter.results[i];
-					}
-					for (int i = 0; i < counter.results1.length; i++) {
-						sched_count += " " + counter.results1[i];
-					}
-					sched_count += " ";
 
-					sched_count += counter.recorder1.get(0).toString() + " ";
-					sched_count += counter.recorder2.get(0).toString() + " ";
-					sched_count += counter.recorder3.get(0).toString() + " ";
-					sched_count += counter.recorder1.get(1).toString() + " ";
-					sched_count += counter.recorder2.get(1).toString() + " ";
-					sched_count += counter.recorder3.get(1).toString() + " ";
+					sched_count = "" + cross1[0] + " " + cross1[1] + " " + cross1[2] + " " + cross1[0] + " " + cross1[1] + " " + cross1[2] + " ";
+
+					sched_count += recorder4_1.toString() + " ";
+					sched_count += recorder6_1.toString() + " ";
+					sched_count += recorder8_1.toString() + " ";
+					sched_count += recorder4_2.toString() + " ";
+					sched_count += recorder6_2.toString() + " ";
+					sched_count += recorder8_2.toString() + " ";
 
 					sched_count = sched_count.replace("[", "").replace("]", "").replace(",", "");
 					sched_count += "\n";
+					
+					
+					sched_count += "" + cross1[0] + " " + cross1[1] + " " + cross1[2] + " " + cross1[0] + " " + cross1[1] + " " + cross1[2] + "\n";
 
-					writeSystem("1 2 " + (fatherindex + 1), sched_count);
+					sched_count += recorder4_1.toString() + "\n";
+					sched_count += recorder6_1.toString() + "\n";
+					sched_count += recorder8_1.toString() + "\n";
+					sched_count += recorder4_2.toString() + "\n";
+					sched_count += recorder6_2.toString() + "\n";
+					sched_count += recorder8_2.toString() + "\n";
+					
+					
+
+					writeSystem("1 2 " + (fatherindex), sched_count);
 
 					// String rec = "";
 					//

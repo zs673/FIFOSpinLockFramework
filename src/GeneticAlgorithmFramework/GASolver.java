@@ -13,7 +13,7 @@ import utils.AnalysisUtils;
 
 public class GASolver {
 	public String name = "";
-	Random ran = new Random(System.currentTimeMillis());
+	Random ran = new Random(Long.MAX_VALUE);
 
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;
@@ -111,8 +111,10 @@ public class GASolver {
 			}
 		}
 
-		if (allocations.size() == 0)
+		if (allocations.size() == 0) {
+			System.out.println("the task set is not allocatable!, name: " + name);
 			return -1;
+		}
 
 		if (lazy) {
 			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
@@ -122,6 +124,7 @@ public class GASolver {
 				this.bestAllocation = preSovler.allocation;
 				this.bestPriority = preSovler.priority;
 				this.bestProtocol = preSovler.protocol;
+				System.out.println("the GA is not needed!, name: " + name);
 				return initial;
 			}
 		}
@@ -313,8 +316,6 @@ public class GASolver {
 			}
 			nextGenes[i][resources.size()] = allocations.get(ran.nextInt(randomBound) % allocations.size());
 		}
-
-		System.out.println();
 	}
 
 	void getFitness(int[][] gene, long[] sched, long[] rt) {
@@ -365,7 +366,9 @@ public class GASolver {
 
 				resultRecorder.add((double) avgsched / (double) population);
 				resultRecorder.add((double) avgrt / (double) population);
-			} else if (currentGeneration == maxGeneration || bestGene != null) {
+				System.out.println(this.name + "  generation 0 recorded! ");
+			}
+			if (currentGeneration == maxGeneration || bestGene != null) {
 				resultRecorder.add((double) fitness.get(0).get(0));
 				resultRecorder.add((double) fitness.get(0).get(1));
 
@@ -380,6 +383,9 @@ public class GASolver {
 
 				resultRecorder.add((double) avgsched / (double) population);
 				resultRecorder.add((double) avgrt / (double) population);
+
+				System.out.println(this.name + " last generation recorded! last generation: " + currentGeneration + " max generation: " + maxGeneration
+						+ " bestGene?: " + (bestGene != null));
 			}
 
 			if (bestGene != null)
