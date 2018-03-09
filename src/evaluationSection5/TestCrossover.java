@@ -42,43 +42,6 @@ public class TestCrossover {
 	public static boolean lazy = false;
 	public static boolean record = true;
 
-	class Counter {
-		int[] results = new int[3];
-		int[] results1 = new int[3];
-		ArrayList<ArrayList<Double>> recorder1 = new ArrayList<>();
-		ArrayList<ArrayList<Double>> recorder2 = new ArrayList<>();
-		ArrayList<ArrayList<Double>> recorder3 = new ArrayList<>();
-
-		public synchronized void incResult(int index) {
-			results[index] = results[index] + 1;
-		}
-
-		public synchronized void incResult1(int index) {
-			results1[index] = results1[index] + 1;
-		}
-
-		public synchronized void record1(ArrayList<Double> rec) {
-			recorder1.add(rec);
-		}
-
-		public synchronized void record2(ArrayList<Double> rec) {
-			recorder2.add(rec);
-		}
-
-		public synchronized void record3(ArrayList<Double> rec) {
-			recorder3.add(rec);
-		}
-
-		public synchronized void initResults() {
-			results = new int[3];
-			results1 = new int[3];
-			recorder1 = new ArrayList<>();
-			recorder2 = new ArrayList<>();
-			recorder3 = new ArrayList<>();
-		}
-
-	}
-
 	public static void main(String[] args) throws InterruptedException {
 		System.out.println("program start");
 		long time = System.currentTimeMillis();
