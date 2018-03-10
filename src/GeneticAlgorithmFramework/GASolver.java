@@ -13,7 +13,7 @@ import utils.AnalysisUtils;
 
 public class GASolver {
 	public String name = "";
-	Random ran = new Random(Long.MAX_VALUE);
+	Random ran = new Random(System.currentTimeMillis());
 
 	SystemGenerator geneator;
 	ArrayList<SporadicTask> tasks;

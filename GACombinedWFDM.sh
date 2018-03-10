@@ -1,6 +1,7 @@
 
 
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
+
 mkdir resultCombinedWFDM
 cd resultCombinedWFDM
 pwd

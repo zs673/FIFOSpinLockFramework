@@ -50,7 +50,7 @@ public class TestCrossover {
 		test.parallelExperimentCrossoverRate();
 		time = System.currentTimeMillis() - time;
 
-		ResultReader.readcrossover();
+		ResultReader.read("resultCrossover");
 		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
 		System.out.println("program finish");
 	}
@@ -233,7 +233,7 @@ public class TestCrossover {
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File("result/" + filename + ".txt"), false));
+			writer = new PrintWriter(new FileWriter(new File("resultCrossover/" + filename + ".txt"), false));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
