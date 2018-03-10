@@ -8,9 +8,9 @@ pwd
 rm -rf *.txt
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
 pwd
-rm nohup.out
+rm nohupCombinedWFDM.out
 
 
 javac $(find ./src/* | grep .java)
 
-nohup java -cp src/ evaluationSection6.ProtocolsCombinedWFDM &
+nohup java -cp src/ evaluationSection6.ProtocolsCombinedWFDM &> nohupCombinedWFDM.out&
