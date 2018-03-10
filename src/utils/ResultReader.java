@@ -15,9 +15,6 @@ public class ResultReader {
 
 	public static void main(String[] args) {
 		readcrossover();
-//		schedreader();
-//		migReader();
-//		priorityReader();
 	}
 
 	public static void readcrossover() {

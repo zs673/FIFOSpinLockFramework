@@ -90,7 +90,6 @@ public class ProtocolsCombinedWFDM {
 		for (int i = 1; i < 7; i++) {
 			final int count = i;
 			new Thread(new Runnable() {
-
 				@Override
 				public void run() {
 					Counter counter = test.new Counter();
@@ -128,7 +127,7 @@ public class ProtocolsCombinedWFDM {
 		// }
 		// }).start();
 		// }
-		
+
 		// for (int i = 4; i < 23; i = i + 2) {
 		// final int count = i;
 		// new Thread(new Runnable() {
@@ -207,8 +206,9 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
+
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-							0.01, 2, 5, record, true);
+							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
