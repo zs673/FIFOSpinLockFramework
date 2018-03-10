@@ -85,9 +85,9 @@ public class ProtocolsCombinedWFDM {
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
 		final CountDownLatch downLatch = new CountDownLatch(
-				(6 /* + 9 + 9 + 10 */));
+				(1 /* + 9 + 9 + 10 */));
 
-		for (int i = 1; i < 7; i++) {
+		for (int i = 6; i < 7; i++) {
 			final int count = i;
 			new Thread(new Runnable() {
 				@Override
@@ -243,8 +243,8 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("2 2 " + cslen, result);

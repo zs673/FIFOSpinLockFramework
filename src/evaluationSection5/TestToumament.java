@@ -25,7 +25,7 @@ public class TestToumament {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -35,8 +35,8 @@ public class TestToumament {
 
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 10;
+	public static int POPULATION = 10;
 
 	public static boolean useGA = true;
 	public static boolean lazy = false;
