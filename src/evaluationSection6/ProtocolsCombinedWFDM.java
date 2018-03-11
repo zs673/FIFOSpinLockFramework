@@ -18,9 +18,9 @@ import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
-import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
+import utils.ResultReader;
 
 public class ProtocolsCombinedWFDM {
 
@@ -29,7 +29,7 @@ public class ProtocolsCombinedWFDM {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 2000;
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
@@ -47,11 +47,11 @@ public class ProtocolsCombinedWFDM {
 	public static boolean record = false;
 
 	class Counter {
-		int Dcombine = 0;
-		int Dnew = 0;
 		int fnp = 0;
 		int fp = 0;
 		int mrsp = 0;
+		int Dcombine = 0;
+		int Dnew = 0;
 
 		public synchronized void incfnp() {
 			fnp++;
@@ -208,7 +208,7 @@ public class ProtocolsCombinedWFDM {
 					FIFONP fnp = new FIFONP();
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-							0.01, 2, 2, record, true);
+							0.01, 2, 5, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
