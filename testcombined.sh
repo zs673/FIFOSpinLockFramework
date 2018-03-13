@@ -2,8 +2,8 @@
 
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
 
-mkdir resultCombinedWFDM
-cd resultCombinedWFDM
+mkdir result
+cd result
 pwd
 
 rm -rf *.txt
