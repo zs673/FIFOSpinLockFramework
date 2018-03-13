@@ -2,11 +2,11 @@
 
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
 
-mkdir result
-cd result
-pwd
+#mkdir result
+#cd result
+#pwd
+#rm -rf *.txt
 
-rm -rf *.txt
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
 pwd
 rm nohup.out

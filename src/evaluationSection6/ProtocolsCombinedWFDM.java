@@ -33,7 +33,7 @@ public class ProtocolsCombinedWFDM {
 	public static int TOTAL_PARTITIONS = 16;
 
 	int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
-	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	final CS_LENGTH_RANGE range = CS_LENGTH_RANGE.RANDOM;
 	final double RSF = 0.3;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
@@ -85,33 +85,35 @@ public class ProtocolsCombinedWFDM {
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
 		final CountDownLatch downLatch = new CountDownLatch(
-				(6 /* + 9 + 9 + 10 */));
+				(9 /* 6 + 9 + 9 + 10 */));
 
-		for (int i = 1; i < 7; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
-					downLatch.countDown();
-				}
-			}).start();
-		}
-
-		// for (int i = 1; i < 10; i++) {
+		// for (int i = 1; i < 7; i++) {
 		// final int count = i;
 		// new Thread(new Runnable() {
-		//
 		// @Override
 		// public void run() {
 		// Counter counter = test.new Counter();
 		// counter.initResults();
-		// test.parallelExperimentIncreasingWorkload(count, counter);
+		// test.parallelExperimentIncreasingCriticalSectionLength(count,
+		// counter);
 		// downLatch.countDown();
 		// }
 		// }).start();
+		// }
+
+		for (int i = 1; i < 10; i++) {
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingWorkload(count, counter);
+					downLatch.countDown();
+				}
+			}).start();
+		}
 
 		// }
 		// for (int i = 1; i < 42; i = i + 5) {
@@ -248,6 +250,80 @@ public class ProtocolsCombinedWFDM {
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("2 2 " + cslen, result);
+		System.out.println(result);
+	}
+
+	public void parallelExperimentIncreasingWorkload(int NoT, Counter counter) {
+		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
+
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			Thread worker = new Thread(new Runnable() {
+
+				public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
+					for (int i = 0; i < tasks.size(); i++) {
+						for (int j = 0; j < tasks.get(i).size(); j++) {
+							if (tasks.get(i).get(j).deadline < Ris[i][j])
+								return false;
+						}
+					}
+					return true;
+				}
+
+				@Override
+				public void run() {
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, RSF, range,
+							RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+					ArrayList<Resource> resources = generator.generateResources();
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
+
+					long[][] Ris;
+					MrsP mrsp = new MrsP();
+					FIFOP fp = new FIFOP();
+					FIFONP fnp = new FIFONP();
+
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
+							0.01, 2, 2, record, true);
+					solver.name = "GA: " + Thread.currentThread().getName();
+
+					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+					if (isSystemSchedulable(tasks, Ris))
+						counter.incmrsp();
+
+					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+					if (isSystemSchedulable(tasks, Ris))
+						counter.incfnp();
+
+					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+					if (isSystemSchedulable(tasks, Ris))
+						counter.incfp();
+
+					if (solver.checkSchedulability(useGA, lazy) == 1) {
+						counter.incDcombine();
+						if (solver.bestProtocol == 0) {
+							counter.incDnew();
+						}
+					}
+
+					System.out.println(Thread.currentThread().getName() + " F");
+					downLatch.countDown();
+				}
+			});
+			worker.setName("1 " + NoT + " " + i);
+			worker.start();
+		}
+
+		try {
+			downLatch.await();
+		} catch (InterruptedException e) {
+		}
+
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+
+		writeSystem("1 2 " + NoT, result);
 		System.out.println(result);
 	}
 
@@ -485,79 +561,6 @@ public class ProtocolsCombinedWFDM {
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("5 2 " + resourceSharingFactor, result);
-		System.out.println(result);
-	}
-
-	public void parallelExperimentIncreasingWorkload(int NoT, Counter counter) {
-		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 2;
-		double rsf = 0.2;
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			Thread worker = new Thread(new Runnable() {
-
-				public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
-					for (int i = 0; i < tasks.size(); i++) {
-						for (int j = 0; j < tasks.get(i).size(); j++) {
-							if (tasks.get(i).get(j).deadline < Ris[i][j])
-								return false;
-						}
-					}
-					return true;
-				}
-
-				@Override
-				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, rsf, range,
-							RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
-					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-
-					long[][] Ris;
-					MrsP mrsp = new MrsP();
-					FIFOP fp = new FIFOP();
-					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true, true);
-
-					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incmrsp();
-
-					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incfnp();
-
-					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incfp();
-
-					if (solver.checkSchedulability(true, true) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0) {
-							counter.incDnew();
-						}
-					}
-
-					System.out.println(Thread.currentThread().getName() + " F");
-					downLatch.countDown();
-				}
-			});
-			worker.setName("1 " + NoT + " " + i);
-			worker.start();
-		}
-
-		try {
-			downLatch.await();
-		} catch (InterruptedException e) {
-		}
-
-		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem("1 2 " + NoT, result);
 		System.out.println(result);
 	}
 
