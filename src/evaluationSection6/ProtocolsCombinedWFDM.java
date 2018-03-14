@@ -101,22 +101,7 @@ public class ProtocolsCombinedWFDM {
 		// }).start();
 		// }
 
-		for (int i = 1; i < 10; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingWorkload(count, counter);
-					downLatch.countDown();
-				}
-			}).start();
-		}
-
-		// }
-		// for (int i = 1; i < 42; i = i + 5) {
+		// for (int i = 1; i < 10; i++) {
 		// final int count = i;
 		// new Thread(new Runnable() {
 		//
@@ -124,11 +109,25 @@ public class ProtocolsCombinedWFDM {
 		// public void run() {
 		// Counter counter = test.new Counter();
 		// counter.initResults();
-		// test.parallelExperimentIncreasingAccess(count, counter);
+		// test.parallelExperimentIncreasingWorkload(count, counter);
 		// downLatch.countDown();
 		// }
 		// }).start();
 		// }
+
+		for (int i = 1; i < 42; i = i + 5) {
+			final int count = i;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingAccess(count, counter);
+					downLatch.countDown();
+				}
+			}).start();
+		}
 
 		// for (int i = 4; i < 23; i = i + 2) {
 		// final int count = i;
@@ -145,8 +144,17 @@ public class ProtocolsCombinedWFDM {
 		// }
 
 		// for (int i = 1; i < 6; i++) {
-		// test.initResults();
-		// test.parallelExperimentIncreasingrsf(i);
+		// final int count = i;
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingrsf(count, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
 		// }
 
 		downLatch.await();
@@ -356,7 +364,10 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true, true);
+
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
+							0.01, 2, 2, record, true);
+					solver.name = "GA: " + Thread.currentThread().getName();
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -370,7 +381,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true, true) == 1) {
+					if (solver.checkSchedulability(useGA, lazy) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -390,8 +401,8 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("ioa 3 2 " + NoA, result);
@@ -400,7 +411,6 @@ public class ProtocolsCombinedWFDM {
 
 	public void parallelExperimentIncreasingPartitions(int NoP, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
 			Thread worker = new Thread(new Runnable() {
@@ -428,7 +438,10 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true, true);
+
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
+							0.01, 2, 2, record, true);
+					solver.name = "GA: " + Thread.currentThread().getName();
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -442,7 +455,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true, true) == 1) {
+					if (solver.checkSchedulability(useGA, lazy) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -462,8 +475,8 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("4 2 " + NoP, result);
@@ -472,7 +485,7 @@ public class ProtocolsCombinedWFDM {
 
 	public void parallelExperimentIncreasingrsf(int resourceSharingFactor, Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-		int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 1;
+
 		double rsf;
 		switch (resourceSharingFactor) {
 		case 1:
@@ -522,7 +535,10 @@ public class ProtocolsCombinedWFDM {
 					MrsP mrsp = new MrsP();
 					FIFOP fp = new FIFOP();
 					FIFONP fnp = new FIFONP();
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, 1, 1, GENERATIONS, POPULATION, 5, 1, 0.5, 0.1, 5, 5, true, true);
+
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
+							0.01, 2, 2, record, true);
+					solver.name = "GA: " + Thread.currentThread().getName();
 
 					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
 					if (isSystemSchedulable(tasks, Ris))
@@ -536,7 +552,7 @@ public class ProtocolsCombinedWFDM {
 					if (isSystemSchedulable(tasks, Ris))
 						counter.incfp();
 
-					if (solver.checkSchedulability(true, true) == 1) {
+					if (solver.checkSchedulability(useGA, lazy) == 1) {
 						counter.incDcombine();
 						if (solver.bestProtocol == 0) {
 							counter.incDnew();
@@ -556,8 +572,8 @@ public class ProtocolsCombinedWFDM {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
 		writeSystem("5 2 " + resourceSharingFactor, result);
