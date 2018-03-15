@@ -84,9 +84,8 @@ public class ProtocolsCombinedWFDM {
 
 	public static void main(String[] args) throws InterruptedException {
 		ProtocolsCombinedWFDM test = new ProtocolsCombinedWFDM();
-		final CountDownLatch downLatch = new CountDownLatch(
-				(9 /* 6 + 9 + 9 + 10 */));
 
+		// final CountDownLatch cslendownLatch = new CountDownLatch(6);
 		// for (int i = 1; i < 7; i++) {
 		// final int count = i;
 		// new Thread(new Runnable() {
@@ -96,11 +95,13 @@ public class ProtocolsCombinedWFDM {
 		// counter.initResults();
 		// test.parallelExperimentIncreasingCriticalSectionLength(count,
 		// counter);
-		// downLatch.countDown();
+		// cslendownLatch.countDown();
 		// }
 		// }).start();
 		// }
-
+		// cslendownLatch.await();
+		//
+		// final CountDownLatch tasksdownLatch = new CountDownLatch(9);
 		// for (int i = 1; i < 10; i++) {
 		// final int count = i;
 		// new Thread(new Runnable() {
@@ -110,12 +111,30 @@ public class ProtocolsCombinedWFDM {
 		// Counter counter = test.new Counter();
 		// counter.initResults();
 		// test.parallelExperimentIncreasingWorkload(count, counter);
-		// downLatch.countDown();
+		// tasksdownLatch.countDown();
 		// }
 		// }).start();
 		// }
+		// tasksdownLatch.await();
+		//
+		// final CountDownLatch accessdownLatch = new CountDownLatch(9);
+		// for (int i = 1; i < 42; i = i + 5) {
+		// final int count = i;
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingAccess(count, counter);
+		// accessdownLatch.countDown();
+		// }
+		// }).start();
+		// }
+		// accessdownLatch.await();
 
-		for (int i = 1; i < 42; i = i + 5) {
+		final CountDownLatch processordownLatch = new CountDownLatch(10);
+		for (int i = 4; i < 23; i = i + 2) {
 			final int count = i;
 			new Thread(new Runnable() {
 
@@ -123,41 +142,29 @@ public class ProtocolsCombinedWFDM {
 				public void run() {
 					Counter counter = test.new Counter();
 					counter.initResults();
-					test.parallelExperimentIncreasingAccess(count, counter);
-					downLatch.countDown();
+					test.parallelExperimentIncreasingPartitions(count, counter);
+					processordownLatch.countDown();
 				}
 			}).start();
 		}
+		processordownLatch.await();
 
-		// for (int i = 4; i < 23; i = i + 2) {
-		// final int count = i;
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingPartitions(count, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		// }
+		final CountDownLatch rsfdownLatch = new CountDownLatch(5);
+		for (int i = 1; i < 6; i++) {
+			final int count = i;
+			new Thread(new Runnable() {
 
-		// for (int i = 1; i < 6; i++) {
-		// final int count = i;
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingrsf(count, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		// }
+				@Override
+				public void run() {
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingrsf(count, counter);
+					rsfdownLatch.countDown();
+				}
+			}).start();
+		}
+		rsfdownLatch.await();
 
-		downLatch.await();
 		ResultReader.schedreader("result");
 	}
 
@@ -405,7 +412,7 @@ public class ProtocolsCombinedWFDM {
 				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
 
-		writeSystem("ioa 3 2 " + NoA, result);
+		writeSystem("3 2 " + NoA, result);
 		System.out.println(result);
 	}
 
