@@ -1,4 +1,4 @@
-package evaluationSection5;
+package evaluation2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +18,7 @@ import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 import utils.ResultReader;
 
-public class TestToumament {
+public class TestCrossover {
 
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
@@ -46,11 +46,11 @@ public class TestToumament {
 		System.out.println("program start");
 		long time = System.currentTimeMillis();
 
-		TestToumament test = new TestToumament();
+		TestCrossover test = new TestCrossover();
 		test.parallelExperimentCrossoverRate();
 		time = System.currentTimeMillis() - time;
 
-		ResultReader.read("resultTourmament");
+		ResultReader.read("resultCrossover");
 		System.out.println("The program takes " + time / 1000 / 60 + " minutes to finish.");
 		System.out.println("program finish");
 	}
@@ -66,8 +66,19 @@ public class TestToumament {
 				@Override
 				public void run() {
 					System.out.println(Thread.currentThread().getName() + " Begin");
-					int[] toumament = new int[2];
 
+					int[] cross1 = new int[3];
+					int[] cross2 = new int[3];
+
+					ArrayList<ArrayList<Double>> recorder4_1 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder6_1 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder8_1 = new ArrayList<>();
+
+					ArrayList<ArrayList<Double>> recorder4_2 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder6_2 = new ArrayList<>();
+					ArrayList<ArrayList<Double>> recorder8_2 = new ArrayList<>();
+
+					double corssover = 0.2;
 					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
 							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
 							false);
@@ -91,8 +102,10 @@ public class TestToumament {
 					final ArrayList<SporadicTask> tasksToAlloc = tasksToAlloc1;
 					final ArrayList<Resource> resources = resources1;
 
-					final CountDownLatch down = new CountDownLatch(2);
-					for (int i = 0; i < 2; i++) {
+					final CountDownLatch down = new CountDownLatch(3);
+					for (int i = 0; i < 3; i++) {
+						corssover += 0.2;
+						final double cross = corssover;
 						final int index = i;
 
 						Thread t = new Thread(new Runnable() {
@@ -114,23 +127,35 @@ public class TestToumament {
 									res.add(resource);
 								}
 
-								GASolver solver = null;
-								
-								if(index == 0) {
-									solver =new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-											0.01, 2, 5, record, true);
-								}
-								else {
-									solver =new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-											0.01, 2, 2, record, true);
-								}
-								
-								solver.name = "Thread: " + fatherindex + "." + index;
+								GASolver solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 1, cross,
+										0.01, 2, 5, record, true);
+								solver.name = "Thread: " + fatherindex + "  Solver " + index + ".1";
 								if (solver.checkSchedulability(useGA, lazy) == 1) {
-									toumament[index] = toumament[index] + 1;
+									cross1[index] = cross1[index] + 1;
 								}
 
-								
+								GASolver solver1 = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, cross,
+										0.01, 2, 5, record, true);
+								solver1.name = "Thread: " + fatherindex + "  Solver " + index + ".2";
+								if (solver1.checkSchedulability(useGA, lazy) == 1) {
+									cross2[index] = cross1[index] + 1;
+								}
+
+								ArrayList<Double> recorder = new ArrayList<>();
+								recorder.addAll(solver.resultRecorder);
+								recorder.addAll(solver1.resultRecorder);
+
+								if (index == 0) {
+									recorder4_1.add(solver.resultRecorder);
+									recorder4_2.add(solver1.resultRecorder);
+								} else if (index == 1) {
+									recorder6_1.add(solver.resultRecorder);
+									recorder6_2.add(solver1.resultRecorder);
+								} else {
+									recorder8_1.add(solver.resultRecorder);
+									recorder8_2.add(solver1.resultRecorder);
+								}
+
 								down.countDown();
 							}
 						});
@@ -146,8 +171,51 @@ public class TestToumament {
 
 					System.out.println(Thread.currentThread().getName() + " Finish");
 
-					String sched_count = "" + toumament[0] + " " + toumament[1] + "\n";
+					String sched_count = "";
+
+					sched_count = "" + cross1[0] + " " + cross1[1] + " " + cross1[2] + " " + cross1[0] + " " + cross1[1] + " " + cross1[2] + " ";
+
+					sched_count += recorder4_1.toString() + " ";
+					sched_count += recorder6_1.toString() + " ";
+					sched_count += recorder8_1.toString() + " ";
+					sched_count += recorder4_2.toString() + " ";
+					sched_count += recorder6_2.toString() + " ";
+					sched_count += recorder8_2.toString() + " ";
+
+					sched_count = sched_count.replace("[", "").replace("]", "").replace(",", "");
+					sched_count += "\n";
+					
+					
+					sched_count += "" + cross1[0] + " " + cross1[1] + " " + cross1[2] + " " + cross1[0] + " " + cross1[1] + " " + cross1[2] + "\n";
+
+					sched_count += recorder4_1.toString() + "\n";
+					sched_count += recorder6_1.toString() + "\n";
+					sched_count += recorder8_1.toString() + "\n";
+					sched_count += recorder4_2.toString() + "\n";
+					sched_count += recorder6_2.toString() + "\n";
+					sched_count += recorder8_2.toString() + "\n";
+					
+					
+
 					writeSystem("1 2 " + (fatherindex), sched_count);
+
+					// String rec = "";
+					//
+					// for (int i = 0; i < counter.recorder1.size(); i++) {
+					// rec += counter.recorder1.get(i).toString() + "\n";
+					// }
+					// rec += "\n";
+					// for (int i = 0; i < counter.recorder2.size(); i++) {
+					// rec += counter.recorder2.get(i).toString() + "\n";
+					// }
+					// rec += "\n";
+					// for (int i = 0; i < counter.recorder3.size(); i++) {
+					// rec += counter.recorder3.get(i).toString() + "\n";
+					// }
+					// result += rec;
+					//
+					// writeSystem(filename, result);
+
 					downLatch.countDown();
 				}
 			});
@@ -165,7 +233,7 @@ public class TestToumament {
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new FileWriter(new File("resultTourmament/" + filename + ".txt"), false));
+			writer = new PrintWriter(new FileWriter(new File("resultCrossover/" + filename + ".txt"), false));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {

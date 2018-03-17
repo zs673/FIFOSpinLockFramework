@@ -12,6 +12,72 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class ResultReader {
+	public static void main(String args[]) {
+		readsuccessF("result");
+	}
+
+	public static void readsuccessF(String foldername) {
+
+		for (int cslen = 1; cslen < 7; cslen++) {
+			PrintWriter writer = null;
+			try {
+				writer = new PrintWriter(new FileWriter(new File(foldername + "/cslen-" + cslen + ".txt"), true));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			writer.println(foldername);
+
+			for (int times = 0; times < 1000; times++) {
+				String filepath = foldername + "/" + "2 2 " + cslen + " " + times + ".txt";
+				List<String> lines = null;
+				try {
+					lines = Files.readAllLines(Paths.get(filepath), StandardCharsets.UTF_8);
+				} catch (IOException e) {
+				}
+				if (lines != null) {
+					String result = lines.get(0);
+					writer.println(result);
+				}
+			}
+			writer.close();
+		}
+		
+		for (int access = 1; access < 17; access=access+5) {
+			PrintWriter writer = null;
+			try {
+				writer = new PrintWriter(new FileWriter(new File(foldername + "/access-" + access + ".txt"), true));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			writer.println(foldername);
+
+			for (int times = 0; times < 1000; times++) {
+				String filepath = foldername + "/" + "3 2 " + access + " " + times + ".txt";
+				List<String> lines = null;
+				try {
+					lines = Files.readAllLines(Paths.get(filepath), StandardCharsets.UTF_8);
+				} catch (IOException e) {
+				}
+				if (lines != null) {
+					String result = lines.get(0);
+					writer.println(result);
+				}
+			}
+			writer.close();
+		}
+
+		System.out.println("cslen Reading Finished ");
+	}
 
 	public static void read(String foldername) {
 		PrintWriter writer = null;
