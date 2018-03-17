@@ -48,6 +48,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 	public static boolean useGA = true;
 	public static boolean lazy = true;
 	public static boolean record = false;
+	
 
 	class Counter {
 		int fnp = 0;
@@ -92,7 +93,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 		int smallTest = Integer.parseInt(args[1]);
 
 		switch (bigTest) {
-		case 1:
+		case 2:
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -103,7 +104,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 				}
 			}).start();
 			break;
-		case 2:
+		case 3:
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -113,15 +114,14 @@ public class ProtocolsCombinedWFDMSuccessF {
 					downLatch.countDown();
 				}
 			}).start();
-
 		default:
 			break;
 		}
 
 		downLatch.await();
+		
+		ResultReader.readsuccessF("result", bigTest, smallTest );
 		System.out.println("FINISHED!!!");
-		ResultReader.readsuccessF("result");
-
 	}
 
 	public void parallelExperimentIncreasingCriticalSectionLength(int cslen, Counter counter) {
