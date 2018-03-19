@@ -19,7 +19,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 
 public class ProtocolsCombinedWFDMSuccessF {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 2000;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 	public static int TOTAL_PARTITIONS = 16;
