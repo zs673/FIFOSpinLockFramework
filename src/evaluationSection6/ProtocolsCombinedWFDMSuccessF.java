@@ -145,7 +145,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 
 					int preres = pre.initialCheck(true);
-					while (preres == 1 || preres == -1) {
+					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
@@ -153,6 +153,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 						preres = pre.initialCheck(true);
 					}
+
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
 							0.01, 2, 2, record, true);
@@ -201,7 +202,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 
 					int preres = pre.initialCheck(true);
-					while (preres == 1 || preres == -1) {
+					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
