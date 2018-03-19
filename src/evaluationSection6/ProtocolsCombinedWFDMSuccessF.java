@@ -32,8 +32,8 @@ public class ProtocolsCombinedWFDMSuccessF {
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
 
-	public static int GENERATIONS = 5;
-	public static int POPULATION = 5;
+	public static int GENERATIONS = 100;
+	public static int POPULATION = 100;
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
 
