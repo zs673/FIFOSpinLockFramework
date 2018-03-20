@@ -58,8 +58,16 @@ public class PreGASolver {
 		int notpossiblecount = 0;
 
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
-			for (int j = 0; j < PRIORITY_SCHEME_NUMBER; j++) {
-				int result = checkwithOneAllocationAndOnePriority(i, j);
+			int result = checkwithOneAllocationAndOnePriority(i, 0);
+			if (result == -1)
+				notpossiblecount++;
+			if (result > 0)
+				return result; // has a feasible solution
+		}
+		
+		if (PRIORITY_SCHEME_NUMBER > 0) {
+			for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
+				int result = checkwithOneAllocationAndOnePriority(i, 1);
 				if (result == -1)
 					notpossiblecount++;
 				if (result > 0)
@@ -141,8 +149,8 @@ public class PreGASolver {
 		default:
 			break;
 		}
-		
-		if(taskschedule_fifonp == null || taskschedule_fifop == null || taskschedule_mrsp== null) {
+
+		if (taskschedule_fifonp == null || taskschedule_fifop == null || taskschedule_mrsp == null) {
 			System.out.println("hahaha");
 		}
 
@@ -168,26 +176,26 @@ public class PreGASolver {
 		 */
 		if (mrsp_sched == 0) {
 			if (print)
-				System.out.println("mrsp schedulable with allocation: " + allocPolicy);
-			this.allocation = allocPolicy + 1;
+				System.out.println("mrsp schedulable with allocation: " + allocPolicy + " and priority: " + priorityPolicy);
+			this.allocation = allocPolicy;
 			this.protocol = 1;
-			this.priority = priorityPolicy + 1;
+			this.priority = priorityPolicy;
 			return 1;
 		}
 		if (fifonp_sched == 0) {
 			if (print)
-				System.out.println("fifonp schedulable with allocation: " + allocPolicy);
-			this.allocation = allocPolicy + 1;
+				System.out.println("fifonp schedulable with allocation: " + allocPolicy+ " and priority: " + priorityPolicy);
+			this.allocation = allocPolicy;
 			this.protocol = 2;
-			this.priority = priorityPolicy + 1;
+			this.priority = priorityPolicy;
 			return 1;
 		}
 		if (fifop_sched == 0) {
 			if (print)
-				System.out.println("fifop schedulable with allocation: " + allocPolicy);
-			this.allocation = allocPolicy + 1;
+				System.out.println("fifop schedulable with allocation: " + allocPolicy+ " and priority: " + priorityPolicy);
+			this.allocation = allocPolicy;
 			this.protocol = 3;
-			this.priority = priorityPolicy + 1;
+			this.priority = priorityPolicy;
 			return 1;
 		}
 

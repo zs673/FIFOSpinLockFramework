@@ -140,6 +140,16 @@ public class GASolver {
 			if (isPrint)
 				System.out.println(name + " " + "new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene)
 						+ " protocol: " + bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
+
+			bestProtocol = 1;
+			int firstchorm = bestGene[0];
+			for (int i = 1; i < resources.size(); i++) {
+				if (bestGene[i] != firstchorm) {
+					bestProtocol = 0;
+					break;
+				}
+			}
+
 			return 1;
 		}
 
@@ -293,6 +303,16 @@ public class GASolver {
 				if (isPrint)
 					System.out.println(name + " " + "new combination schedulable   Gene: " + currentGeneration + "   Sol: " + Arrays.toString(bestGene)
 							+ " protocol: " + bestProtocol + " allocation: " + bestAllocation + " priority: " + bestPriority);
+
+				bestProtocol = 1;
+				int firstchorm = bestGene[0];
+				for (int i = 1; i < resources.size(); i++) {
+					if (bestGene[i] != firstchorm) {
+						bestProtocol = 0;
+						break;
+					}
+				}
+
 				return 1;
 			}
 
@@ -502,7 +522,7 @@ public class GASolver {
 
 		if (sched_fitness == 0) {
 			bestProtocol = 0;
-			bestPriority = 1;
+			bestPriority = 0;
 			bestAllocation = gene[resources.size()];
 		}
 
@@ -582,7 +602,7 @@ public class GASolver {
 		}
 
 		if (sched_fitness == 0) {
-			bestPriority = 2;
+			bestPriority = 1;
 			bestAllocation = gene[resources.size()];
 		}
 
