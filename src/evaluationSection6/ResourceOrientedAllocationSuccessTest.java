@@ -21,13 +21,11 @@ public class ResourceOrientedAllocationSuccessTest {
 
 	public static int MAX_PERIOD = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_PARTITIONS = 8;
-	public static boolean useRi = true;
-	public static boolean btbHit = true;
+	public static int TOTAL_PARTITIONS = 16;
 
-	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.VERY_SHORT_CS_LEN;
-	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 1;
-	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 9;
+	static CS_LENGTH_RANGE range = CS_LENGTH_RANGE.MEDIUM_CS_LEN;
+	static int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
+	static int NUMBER_OF_TASKS_ON_EACH_PARTITION = 4;
 	static double RESOURCE_SHARING_FACTOR = 0.3;
 	int allocSize = 8;
 
@@ -36,7 +34,7 @@ public class ResourceOrientedAllocationSuccessTest {
 	public static void main(String[] args) throws Exception {
 		ResourceOrientedAllocationSuccessTest test = new ResourceOrientedAllocationSuccessTest();
 
-		for (int i = 16; i < 161; i=i+16)
+		for (int i = 1; i < 11; i++)
 			test.experimentIncreasingWorkLoad(i);
 
 		for (int i = 2; i < 25; i = i + 2)
@@ -50,7 +48,7 @@ public class ResourceOrientedAllocationSuccessTest {
 		String result = "";
 		int[] allocOK = new int[allocSize];
 
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP, NUMBER_OF_TASKS_ON_EACH_PARTITION * NoP, RESOURCE_SHARING_FACTOR,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP, NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, RESOURCE_SHARING_FACTOR,
 				range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
@@ -77,7 +75,7 @@ public class ResourceOrientedAllocationSuccessTest {
 		String result = "";
 
 		int[] allocOK = new int[allocSize];
-		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, NoT, RESOURCE_SHARING_FACTOR, range,
+		SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS, TOTAL_PARTITIONS * NoT, RESOURCE_SHARING_FACTOR, range,
 				RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {

@@ -9,9 +9,9 @@ cd /home/userfs/z/zs673/FIFOSpinLockFramework
 
 cd /home/userfs/z/zs673/FIFOSpinLockFramework
 pwd
-rm nohup2.out
+rm nohup3.out
 
 
 javac $(find ./src/* | grep .java)
 
-nohup java -cp src/ evaluationSection6.CompleteFramework 2 &> nohup2.out&
+nohup java -cp src/ evaluationSection6.CompleteFramework 3 &> nohup3.out&

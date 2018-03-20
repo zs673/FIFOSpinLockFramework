@@ -117,7 +117,8 @@ public class GASolver {
 		}
 
 		if (lazy) {
-			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, isPrint);
+			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, allocations,
+					allocatedSystems , isPrint);
 			int initial = preSovler.initialCheck(lazy);
 
 			if (initial != 0) {
@@ -591,7 +592,7 @@ public class GASolver {
 		}
 
 		// Get 1st Fitness Values.
-		long[][] Ris = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, AnalysisUtils.extendCalForStatic, true, true, true, false);
+		long[][] Ris = framework.getResponseTimeBySimpleSBPO(tasksWithAllocation, resources, false);
 		int sched_fitness = 0;
 		for (int i = 0; i < tasksWithAllocation.size(); i++) {
 			for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {

@@ -23,7 +23,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 import utils.ResultReader;
 
 public class CompleteFramework {
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
@@ -37,8 +37,8 @@ public class CompleteFramework {
 	final double RSF = 0.3;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
-	public static int GENERATIONS = 10;
-	public static int POPULATION = 10;
+	public static int GENERATIONS = 100;
+	public static int POPULATION = 100;
 	public static int ALLOCATION_POLICY = 8;
 	public static int PRIORITY_RULE = 2;
 
@@ -58,6 +58,8 @@ public class CompleteFramework {
 		int Dcombine = 0;
 		int Dnew = 0;
 		int newResourceControl = 0;
+		int newallocation = 0;
+		int newpriority = 0;
 
 		int count = 0;
 
@@ -97,6 +99,14 @@ public class CompleteFramework {
 			newResourceControl++;
 		}
 
+		public synchronized void incNewAllocation() {
+			newallocation++;
+		}
+
+		public synchronized void incNewPriority() {
+			newpriority++;
+		}
+
 		public synchronized void incCount() {
 			count++;
 		}
@@ -113,16 +123,17 @@ public class CompleteFramework {
 			Dcombine = 0;
 			Dnew = 0;
 			newResourceControl = 0;
+			newallocation = 0;
+			newpriority = 0;
 
 			count = 0;
 		}
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		// int bigTest = Integer.parseInt(args[0]);
+		int bigTest = Integer.parseInt(args[0]);
 		CompleteFramework test = new CompleteFramework();
 
-		int bigTest = 0;
 		if (bigTest == 1) {
 			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
 			for (int i = 1; i < 10; i++) {
@@ -192,13 +203,11 @@ public class CompleteFramework {
 				}).start();
 			}
 			processordownLatch.await();
-		}
-		else {
+		} else {
 			Counter counter = test.new Counter();
 			counter.initResults();
 			test.parallelExperimentIncreasingWorkload(5, counter);
 		}
-		
 
 		// final CountDownLatch rsfdownLatch = new CountDownLatch(5);
 		// for (int i = 1; i < 6; i++) {
@@ -315,6 +324,10 @@ public class CompleteFramework {
 						}
 						if (solver.bestProtocol == 0)
 							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -335,7 +348,9 @@ public class CompleteFramework {
 				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "\n";
 
 		writeSystem("2 2 " + cslen, result);
 		System.out.println(result);
@@ -411,6 +426,10 @@ public class CompleteFramework {
 						}
 						if (solver.bestProtocol == 0)
 							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -431,7 +450,9 @@ public class CompleteFramework {
 				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "\n";
 
 		writeSystem("1 2 " + NoT, result);
 		System.out.println(result);
@@ -507,6 +528,10 @@ public class CompleteFramework {
 						}
 						if (solver.bestProtocol == 0)
 							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -527,7 +552,9 @@ public class CompleteFramework {
 				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "\n";
 
 		writeSystem("3 2 " + NoA, result);
 		System.out.println(result);
@@ -603,6 +630,10 @@ public class CompleteFramework {
 						}
 						if (solver.bestProtocol == 0)
 							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -623,7 +654,9 @@ public class CompleteFramework {
 				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
+				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
+				+ "\n";
 
 		writeSystem("4 2 " + NoP, result);
 		System.out.println(result);

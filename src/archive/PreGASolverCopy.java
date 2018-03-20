@@ -119,27 +119,24 @@ public class PreGASolverCopy {
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 1;
 			}
-			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc,
-					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
+			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 2;
 			}
-			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc,
-					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
+			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
 
 			for (int k = 0; k < resources.size(); k++) {
 				resources.get(k).protocol = 3;
 			}
-			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc,
-					analysis.getResponseTimeBySBPO(tasksWithAlloc, resources, AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, false));
+			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
 			break;
 
 		default:
 			break;
 		}
-		
-		if(taskschedule_fifonp == null || taskschedule_fifop == null || taskschedule_mrsp== null) {
+
+		if (taskschedule_fifonp == null || taskschedule_fifop == null || taskschedule_mrsp == null) {
 			System.out.println("hahaha");
 		}
 

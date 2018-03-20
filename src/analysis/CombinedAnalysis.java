@@ -166,6 +166,97 @@ public class CombinedAnalysis {
 		return getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, btbHit, useRi, false, isprint);
 	}
 
+	public long[][] getResponseTimeBySimpleSBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
+		if (tasks == null)
+			return null;
+
+		// Default as deadline monotonic
+		tasks = new PriorityGeneator().assignPrioritiesByDM(tasks);
+
+		long npsection = 0;
+		for (int i = 0; i < resources.size(); i++) {
+			Resource resource = resources.get(i);
+			if (resource.protocol == 3 && npsection < resource.csl)
+				npsection = resources.get(i).csl;
+		}
+
+		// now we check each task. we begin from the task with largest deadline
+		for (int i = 0; i < tasks.size(); i++) {
+			ArrayList<SporadicTask> unassignedTasks = new ArrayList<>(tasks.get(i));
+			int sratingP = 500 - unassignedTasks.size() * 2;
+			int prioLevels = tasks.get(i).size();
+
+			for (int currentLevel = 0; currentLevel < prioLevels; currentLevel++) {
+
+				int startingIndex = unassignedTasks.size() - 1;
+				for (int j = startingIndex; j >= 0; j--) {
+					SporadicTask task = unassignedTasks.get(j);
+					int originalP = task.priority;
+					task.priority = sratingP;
+
+					tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+					long time = getResponseTimeForOneTask(task, tasks, resources, AnalysisUtils.MrsP_PREEMPTION_AND_MIGRATION, npsection, true);
+					task.priority = originalP;
+					tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+
+					task.addition_slack_by_newOPA = task.deadline - time;
+				}
+
+				unassignedTasks.sort((t1, t2) -> -compareSlack(t1, t2));
+
+				if (isprint) {
+					for (int k = 0; k < unassignedTasks.size(); k++) {
+						SporadicTask task = unassignedTasks.get(k);
+						System.out.print("T" + task.id + ":  " + task.addition_slack_by_newOPA + " | " + task.deadline + " 	  ");
+					}
+					System.out.println();
+				}
+
+				for (int k = 0; k < unassignedTasks.size() - 1; k++) {
+					SporadicTask task1 = unassignedTasks.get(k);
+					SporadicTask task2 = unassignedTasks.get(k + 1);
+
+					if (task1.addition_slack_by_newOPA < task2.addition_slack_by_newOPA) {
+						System.err.println("newOPA reuslt error! in Task " + task1.id + " and task " + task2.id);
+						System.exit(-1);
+					}
+
+					if (task1.addition_slack_by_newOPA == task2.addition_slack_by_newOPA && task1.deadline < task2.deadline) {
+						System.err.println("newOPA reuslt error! in Task " + task1.id + " and task " + task2.id);
+						System.exit(-1);
+					}
+
+				}
+
+				unassignedTasks.get(0).priority = sratingP;
+				tasks.get(i).sort((t1, t2) -> -Integer.compare(t1.priority, t2.priority));
+				unassignedTasks.remove(0);
+
+				sratingP += 2;
+			}
+		}
+
+		if (isprint) {
+			long[][] Ris = new long[tasks.size()][];
+			for (int i = 0; i < tasks.size(); i++) {
+				Ris[i] = new long[tasks.get(i).size()];
+			}
+			for (int i = 0; i < tasks.size(); i++) {
+				for (int j = 0; j < tasks.get(i).size(); j++) {
+					System.out.print(tasks.get(i).get(j).priority + "    ");
+					Ris[i][j] = tasks.get(i).get(j).Ri;
+				}
+				System.out.println();
+
+			}
+
+			AnalysisUtils.printResponseTime(Ris, tasks);
+		}
+
+		return getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
+	}
+	
+	
 	private int compareSlack(SporadicTask t1, SporadicTask t2) {
 		long slack1 = t1.addition_slack_by_newOPA;
 		long deadline1 = t1.deadline;
@@ -299,6 +390,38 @@ public class CombinedAnalysis {
 		return response_time_plus;
 	}
 
+	private long getResponseTimeForOneTask(SporadicTask caltask, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, double oneMig,
+			long np, boolean btbHit) {
+
+		long[][] dummy_response_time = new long[tasks.size()][];
+		for (int i = 0; i < dummy_response_time.length; i++) {
+			dummy_response_time[i] = new long[tasks.get(i).size()];
+		}
+
+		SporadicTask task = caltask;
+		long Ri = 0;
+		long newRi = task.WCET + task.pure_resource_execution_time;
+
+		if (newRi > task.deadline) {
+			return newRi;
+		}
+
+		while (Ri != newRi) {
+			if (newRi > task.deadline) {
+				return newRi;
+			}
+
+			Ri = newRi;
+			newRi = oneCalculation(task, tasks, resources, dummy_response_time, Ri, oneMig, np, btbHit, false);
+
+			if (newRi > task.deadline) {
+				return newRi;
+			}
+		}
+
+		return newRi;
+	}
+	
 	private long oneCalculation(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, long Ri,
 			double oneMig, long np, boolean btbHit, boolean useRi) {
 
