@@ -23,7 +23,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 import utils.ResultReader;
 
 public class CompleteFramework {
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
 
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
@@ -37,8 +37,8 @@ public class CompleteFramework {
 	final double RSF = 0.3;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 10;
+	public static int POPULATION = 10;
 	public static int ALLOCATION_POLICY = 8;
 	public static int PRIORITY_RULE = 2;
 
@@ -119,74 +119,86 @@ public class CompleteFramework {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
+		// int bigTest = Integer.parseInt(args[0]);
 		CompleteFramework test = new CompleteFramework();
 
-		final CountDownLatch cslendownLatch = new CountDownLatch(6);
-		for (int i = 1; i < 7; i++) {
-			final int count = i;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
-					cslendownLatch.countDown();
-				}
-			}).start();
+		int bigTest = 0;
+		if (bigTest == 1) {
+			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
+			for (int i = 1; i < 10; i++) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingWorkload(count, counter);
+						tasksdownLatch.countDown();
+					}
+				}).start();
+			}
+			tasksdownLatch.await();
 		}
-		cslendownLatch.await();
 
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingWorkload(5, counter);
+		if (bigTest == 2) {
+			final CountDownLatch cslendownLatch = new CountDownLatch(6);
+			for (int i = 1; i < 7; i++) {
+				final int count = i;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
+						cslendownLatch.countDown();
+					}
+				}).start();
+			}
+			cslendownLatch.await();
+		}
 
-		// final CountDownLatch tasksdownLatch = new CountDownLatch(9);
-		// for (int i = 1; i < 10; i++) {
-		// final int count = i;
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingWorkload(count, counter);
-		// tasksdownLatch.countDown();
-		// }
-		// }).start();
-		// }
-		// tasksdownLatch.await();
-		//
-		// final CountDownLatch accessdownLatch = new CountDownLatch(9);
-		// for (int i = 1; i < 42; i = i + 5) {
-		// final int count = i;
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingAccess(count, counter);
-		// accessdownLatch.countDown();
-		// }
-		// }).start();
-		// }
-		// accessdownLatch.await();
-		//
-		// final CountDownLatch processordownLatch = new CountDownLatch(10);
-		// for (int i = 4; i < 23; i = i + 2) {
-		// final int count = i;
-		// new Thread(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingPartitions(count, counter);
-		// processordownLatch.countDown();
-		// }
-		// }).start();
-		// }
-		// processordownLatch.await();
+		if (bigTest == 3) {
+			final CountDownLatch accessdownLatch = new CountDownLatch(9);
+			for (int i = 1; i < 42; i = i + 5) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingAccess(count, counter);
+						accessdownLatch.countDown();
+					}
+				}).start();
+			}
+			accessdownLatch.await();
+		}
+
+		if (bigTest == 4) {
+			final CountDownLatch processordownLatch = new CountDownLatch(10);
+			for (int i = 4; i < 23; i = i + 2) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingPartitions(count, counter);
+						processordownLatch.countDown();
+					}
+				}).start();
+			}
+			processordownLatch.await();
+		}
+		else {
+			Counter counter = test.new Counter();
+			counter.initResults();
+			test.parallelExperimentIncreasingWorkload(5, counter);
+		}
+		
 
 		// final CountDownLatch rsfdownLatch = new CountDownLatch(5);
 		// for (int i = 1; i < 6; i++) {

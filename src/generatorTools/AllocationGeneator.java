@@ -151,7 +151,7 @@ public class AllocationGeneator {
 				return null;
 			}
 
-			if ((double) 1 - minUtil >= task.util) {
+			if (1 - minUtil >= task.util) {
 				task.partition = target;
 				utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
 			} else
@@ -737,7 +737,7 @@ public class AllocationGeneator {
 				return null;
 			}
 
-			if ((double) 1 - minUtil >= task.util) {
+			if (1 - minUtil >= task.util) {
 				task.partition = target;
 				utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
 			} else
@@ -813,7 +813,7 @@ public class AllocationGeneator {
 				return null;
 			}
 
-			if ((double) 1 - minUtil >= task.util) {
+			if (1 - minUtil >= task.util) {
 				task.partition = target;
 				utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
 			} else
@@ -893,7 +893,7 @@ public class AllocationGeneator {
 				return null;
 			}
 
-			if ((double) 1 - minUtil >= task.util) {
+			if (1 - minUtil >= task.util) {
 				task.partition = target;
 				utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
 			} else

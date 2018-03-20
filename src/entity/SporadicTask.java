@@ -100,6 +100,7 @@ public class SporadicTask {
 				+ ", Priority = " + this.priority + ", Partition = " + this.partition + ", Util: " + Double.parseDouble(df.format(util));
 	}
 
+	@Override
 	public String toString() {
 		return "T" + this.id;
 	}

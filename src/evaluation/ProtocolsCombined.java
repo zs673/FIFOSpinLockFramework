@@ -18,9 +18,9 @@ import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
-import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
+import utils.ResultReader;
 
 /**
  * 100 100 GA Work Load 21 1.0 1.0 1.0 1.0 0.0 22 0.989 0.989 0.989 0.989 0.0 23

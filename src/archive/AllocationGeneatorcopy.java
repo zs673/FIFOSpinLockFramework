@@ -138,7 +138,7 @@ public class AllocationGeneatorcopy {
 				return null;
 			}
 
-			if ((double) 1 - minUtil >= task.util) {
+			if (1 - minUtil >= task.util) {
 				task.partition = target;
 				utilPerPartition.set(target, utilPerPartition.get(target) + task.util);
 			} else
@@ -421,7 +421,7 @@ public class AllocationGeneatorcopy {
 					return null;
 				}
 
-				if ((double) 1 - minUtil >= task.util) {
+				if (1 - minUtil >= task.util) {
 					task.partition = target;
 					alloc.get(target).add(task);
 					utilPerPartition.set(target, utilPerPartition.get(target) + task.util);

@@ -32,7 +32,7 @@ public class SystemGenerator {
 			RESOURCES_RANGE numberOfResources, int number_of_max_access, boolean print) {
 		this.minT = minT;
 		this.maxT = maxT;
-		this.totalUtil = 0.1 * (double) totalTasks;
+		this.totalUtil = 0.1 * totalTasks;
 		this.total_partitions = total_partitions;
 		this.total_tasks = totalTasks;
 		this.isLogUni = isPeriodLogUni;
@@ -56,7 +56,7 @@ public class SystemGenerator {
 			RESOURCES_RANGE numberOfResources, int number_of_max_access, long csl, boolean print) {
 		this.minT = minT;
 		this.maxT = maxT;
-		this.totalUtil = 0.1 * (double) totalTasks;
+		this.totalUtil = 0.1 * totalTasks;
 		this.total_partitions = total_partitions;
 		this.total_tasks = totalTasks;
 		this.isLogUni = isPeriodLogUni;
@@ -92,8 +92,7 @@ public class SystemGenerator {
 			// 2) == null
 			// && allocation.allocateTasks(tasks, null, total_partitions, 3) ==
 			// null))
-			if (tasks != null && allocation.allocateTasks(tasks, null, total_partitions, 0) == null
-					&& allocation.allocateTasks(tasks, null, total_partitions, 4) == null)
+			if (tasks != null /*&& allocation.allocateTasks(tasks, null, total_partitions, 0) == null*/)
 				tasks = null;
 		}
 		return tasks;

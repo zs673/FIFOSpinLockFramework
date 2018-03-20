@@ -1,6 +1,12 @@
 /native/
-/evaluationSection6/
-/evaluation2/
-/utils/
+/analysis/
 /GeneticAlgorithmFramework/
+/archive/
+/basicAnalysis/
+/entity/
+/evaluation/
+/evaluation2/
+/evaluationSection6/
 /generatorTools/
+/test/
+/utils/

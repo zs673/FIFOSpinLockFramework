@@ -21,9 +21,9 @@ import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
-import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
+import utils.ResultReader;
 
 public class DynamicTestWF {
 

@@ -17,9 +17,9 @@ import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
 import generatorTools.SystemGenerator;
 import utils.AnalysisUtils;
-import utils.ResultReader;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
+import utils.ResultReader;
 
 public class DeeperLooking {
 	public static int MAX_PERIOD = 1000;

@@ -93,7 +93,7 @@ public class FIFOPbasic {
 		long request_by_preemptions = 0;
 		for (int i = 0; i < tasks.get(task.partition).size(); i++) {
 			if (tasks.get(task.partition).get(i).priority > task.priority) {
-				preemptions += (int) Math.ceil((double) (time) / (double) tasks.get(task.partition).get(i).period);
+				preemptions += (int) Math.ceil((time) / (double) tasks.get(task.partition).get(i).period);
 			}
 		}
 
