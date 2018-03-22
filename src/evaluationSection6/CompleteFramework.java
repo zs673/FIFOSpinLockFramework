@@ -131,83 +131,101 @@ public class CompleteFramework {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		int bigTest = Integer.parseInt(args[0]);
+		
 		CompleteFramework test = new CompleteFramework();
-
-		if (bigTest == 1) {
-			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
-			for (int i = 1; i < 10; i++) {
-				final int count = i;
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						Counter counter = test.new Counter();
-						counter.initResults();
-						test.parallelExperimentIncreasingWorkload(count, counter);
-						tasksdownLatch.countDown();
-					}
-				}).start();
-			}
-			tasksdownLatch.await();
-		}
-
-		if (bigTest == 2) {
-			final CountDownLatch cslendownLatch = new CountDownLatch(6);
-			for (int i = 1; i < 7; i++) {
-				final int count = i;
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						Counter counter = test.new Counter();
-						counter.initResults();
-						test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
-						cslendownLatch.countDown();
-					}
-				}).start();
-			}
-			cslendownLatch.await();
-		}
-
-		if (bigTest == 3) {
-			final CountDownLatch accessdownLatch = new CountDownLatch(9);
-			for (int i = 1; i < 42; i = i + 5) {
-				final int count = i;
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						Counter counter = test.new Counter();
-						counter.initResults();
-						test.parallelExperimentIncreasingAccess(count, counter);
-						accessdownLatch.countDown();
-					}
-				}).start();
-			}
-			accessdownLatch.await();
-		}
-
-		if (bigTest == 4) {
-			final CountDownLatch processordownLatch = new CountDownLatch(10);
-			for (int i = 4; i < 23; i = i + 2) {
-				final int count = i;
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						Counter counter = test.new Counter();
-						counter.initResults();
-						test.parallelExperimentIncreasingPartitions(count, counter);
-						processordownLatch.countDown();
-					}
-				}).start();
-			}
-			processordownLatch.await();
-		} else {
-			Counter counter = test.new Counter();
-			counter.initResults();
-			test.parallelExperimentIncreasingWorkload(5, counter);
-		}
+		Counter counter = test.new Counter();
+		counter.initResults();
+		test.parallelExperimentIncreasingPartitions(16, counter);
+		
+		
+		counter.initResults();
+		test.parallelExperimentIncreasingPartitions(18, counter);
+		
+		
+		counter.initResults();
+		test.parallelExperimentIncreasingPartitions(20, counter);
+		
+		counter.initResults();
+		test.parallelExperimentIncreasingPartitions(22, counter);
+		
+		
+//		int bigTest = Integer.parseInt(args[0]);
+//		if (bigTest == 1) {
+//			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
+//			for (int i = 1; i < 10; i++) {
+//				final int count = i;
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						Counter counter = test.new Counter();
+//						counter.initResults();
+//						test.parallelExperimentIncreasingWorkload(count, counter);
+//						tasksdownLatch.countDown();
+//					}
+//				}).start();
+//			}
+//			tasksdownLatch.await();
+//		}
+//
+//		if (bigTest == 2) {
+//			final CountDownLatch cslendownLatch = new CountDownLatch(6);
+//			for (int i = 1; i < 7; i++) {
+//				final int count = i;
+//				new Thread(new Runnable() {
+//					@Override
+//					public void run() {
+//						Counter counter = test.new Counter();
+//						counter.initResults();
+//						test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
+//						cslendownLatch.countDown();
+//					}
+//				}).start();
+//			}
+//			cslendownLatch.await();
+//		}
+//
+//		if (bigTest == 3) {
+//			final CountDownLatch accessdownLatch = new CountDownLatch(9);
+//			for (int i = 1; i < 42; i = i + 5) {
+//				final int count = i;
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						Counter counter = test.new Counter();
+//						counter.initResults();
+//						test.parallelExperimentIncreasingAccess(count, counter);
+//						accessdownLatch.countDown();
+//					}
+//				}).start();
+//			}
+//			accessdownLatch.await();
+//		}
+//
+//		if (bigTest == 4) {
+//			final CountDownLatch processordownLatch = new CountDownLatch(10);
+//			for (int i = 4; i < 23; i = i + 2) {
+//				final int count = i;
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						Counter counter = test.new Counter();
+//						counter.initResults();
+//						test.parallelExperimentIncreasingPartitions(count, counter);
+//						processordownLatch.countDown();
+//					}
+//				}).start();
+//			}
+//			processordownLatch.await();
+//		} 
+		
+//		else {
+//			Counter counter = test.new Counter();
+//			counter.initResults();
+//			test.parallelExperimentIncreasingWorkload(5, counter);
+//		}
 
 		// final CountDownLatch rsfdownLatch = new CountDownLatch(5);
 		// for (int i = 1; i < 6; i++) {
@@ -345,12 +363,13 @@ public class CompleteFramework {
 		}
 
 		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
+
 
 		writeSystem("2 2 " + cslen, result);
 		System.out.println(result);
@@ -447,8 +466,8 @@ public class CompleteFramework {
 		}
 
 		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
@@ -549,8 +568,8 @@ public class CompleteFramework {
 		}
 
 		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
@@ -651,8 +670,8 @@ public class CompleteFramework {
 		}
 
 		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
