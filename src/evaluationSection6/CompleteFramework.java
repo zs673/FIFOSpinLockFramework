@@ -137,7 +137,9 @@ public class CompleteFramework {
 		int bigTest = Integer.parseInt(args[0]);
 		if (bigTest == 1) {
 			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
-			for (int i = 3; i < 10; i++) {
+			for (int i = 4; i < 10; i++) {
+				if(i==5)
+					continue;
 				final int count = i;
 				new Thread(new Runnable() {
 
