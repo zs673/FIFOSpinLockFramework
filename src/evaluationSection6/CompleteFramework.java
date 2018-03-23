@@ -40,7 +40,7 @@ public class CompleteFramework {
 	public static int GENERATIONS = 3;
 	public static int POPULATION = 50;
 	public static int ALLOCATION_POLICY = 8;
-	public static int PRIORITY_RULE = 2; 
+	public static int PRIORITY_RULE = 2;
 
 	public static boolean useGA = true;
 	public static boolean lazy = true;
