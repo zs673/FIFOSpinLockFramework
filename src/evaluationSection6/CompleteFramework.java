@@ -192,7 +192,7 @@ public class CompleteFramework {
 
 		if (bigTest == 4) {
 			final CountDownLatch processordownLatch = new CountDownLatch(10);
-			for (int i = 4; i < 23; i = i + 2) {
+			for (int i = 22; i < 23; i = i + 2) {
 				final int count = i;
 				new Thread(new Runnable() {
 
