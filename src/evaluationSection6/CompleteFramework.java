@@ -136,7 +136,7 @@ public class CompleteFramework {
 
 		int bigTest = Integer.parseInt(args[0]);
 		if (bigTest == 1) {
-			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
+			final CountDownLatch tasksdownLatch = new CountDownLatch(5);
 			for (int i = 4; i < 10; i++) {
 				if(i==5)
 					continue;
@@ -191,7 +191,7 @@ public class CompleteFramework {
 		}
 
 		if (bigTest == 4) {
-			final CountDownLatch processordownLatch = new CountDownLatch(10);
+			final CountDownLatch processordownLatch = new CountDownLatch(1);
 			for (int i = 22; i < 23; i = i + 2) {
 				final int count = i;
 				new Thread(new Runnable() {
