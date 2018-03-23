@@ -23,7 +23,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 import utils.ResultReader;
 
 public class CompleteFramework {
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 3;
 
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
@@ -37,8 +37,8 @@ public class CompleteFramework {
 	final double RSF = 0.3;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
-	public static int GENERATIONS = 30;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 3;
+	public static int POPULATION = 50;
 	public static int ALLOCATION_POLICY = 8;
 	public static int PRIORITY_RULE = 2;
 
@@ -131,89 +131,86 @@ public class CompleteFramework {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		
+
 		CompleteFramework test = new CompleteFramework();
-		Counter counter = test.new Counter();
-		counter.initResults();
-		test.parallelExperimentIncreasingPartitions(22, counter);
-		
-//		int bigTest = Integer.parseInt(args[0]);
-//		if (bigTest == 1) {
-//			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
-//			for (int i = 3; i < 10; i++) {
-//				final int count = i;
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						Counter counter = test.new Counter();
-//						counter.initResults();
-//						test.parallelExperimentIncreasingWorkload(count, counter);
-//						tasksdownLatch.countDown();
-//					}
-//				}).start();
-//			}
-//			tasksdownLatch.await();
-//		}
-//
-//		if (bigTest == 2) {
-//			final CountDownLatch cslendownLatch = new CountDownLatch(6);
-//			for (int i = 1; i < 7; i++) {
-//				final int count = i;
-//				new Thread(new Runnable() {
-//					@Override
-//					public void run() {
-//						Counter counter = test.new Counter();
-//						counter.initResults();
-//						test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
-//						cslendownLatch.countDown();
-//					}
-//				}).start();
-//			}
-//			cslendownLatch.await();
-//		}
-//
-//		if (bigTest == 3) {
-//			final CountDownLatch accessdownLatch = new CountDownLatch(9);
-//			for (int i = 1; i < 42; i = i + 5) {
-//				final int count = i;
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						Counter counter = test.new Counter();
-//						counter.initResults();
-//						test.parallelExperimentIncreasingAccess(count, counter);
-//						accessdownLatch.countDown();
-//					}
-//				}).start();
-//			}
-//			accessdownLatch.await();
-//		}
-//
-//		if (bigTest == 4) {
-//			final CountDownLatch processordownLatch = new CountDownLatch(10);
-//			for (int i = 4; i < 23; i = i + 2) {
-//				final int count = i;
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						Counter counter = test.new Counter();
-//						counter.initResults();
-//						test.parallelExperimentIncreasingPartitions(count, counter);
-//						processordownLatch.countDown();
-//					}
-//				}).start();
-//			}
-//			processordownLatch.await();
-//		} 
-		
-//		else {
-//			Counter counter = test.new Counter();
-//			counter.initResults();
-//			test.parallelExperimentIncreasingWorkload(5, counter);
-//		}
+
+		int bigTest = Integer.parseInt(args[0]);
+		if (bigTest == 1) {
+			final CountDownLatch tasksdownLatch = new CountDownLatch(9);
+			for (int i = 3; i < 10; i++) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingWorkload(count, counter);
+						tasksdownLatch.countDown();
+					}
+				}).start();
+			}
+			tasksdownLatch.await();
+		}
+
+		if (bigTest == 2) {
+			final CountDownLatch cslendownLatch = new CountDownLatch(6);
+			for (int i = 1; i < 7; i++) {
+				final int count = i;
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingCriticalSectionLength(count, counter);
+						cslendownLatch.countDown();
+					}
+				}).start();
+			}
+			cslendownLatch.await();
+		}
+
+		if (bigTest == 3) {
+			final CountDownLatch accessdownLatch = new CountDownLatch(9);
+			for (int i = 1; i < 42; i = i + 5) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingAccess(count, counter);
+						accessdownLatch.countDown();
+					}
+				}).start();
+			}
+			accessdownLatch.await();
+		}
+
+		if (bigTest == 4) {
+			final CountDownLatch processordownLatch = new CountDownLatch(10);
+			for (int i = 4; i < 23; i = i + 2) {
+				final int count = i;
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						Counter counter = test.new Counter();
+						counter.initResults();
+						test.parallelExperimentIncreasingPartitions(count, counter);
+						processordownLatch.countDown();
+					}
+				}).start();
+			}
+			processordownLatch.await();
+		}
+
+		// else {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingWorkload(5, counter);
+		// }
 
 		// final CountDownLatch rsfdownLatch = new CountDownLatch(5);
 		// for (int i = 1; i < 6; i++) {
@@ -231,7 +228,7 @@ public class CompleteFramework {
 		// }
 		// rsfdownLatch.await();
 
-		ResultReader.schedreader("result");
+		ResultReader.schedreader("result1");
 	}
 
 	public void parallelExperimentIncreasingCriticalSectionLength(int cslen, Counter counter) {
@@ -357,7 +354,6 @@ public class CompleteFramework {
 				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
-
 
 		writeSystem("2 2 " + cslen, result);
 		System.out.println(result);
@@ -770,7 +766,7 @@ public class CompleteFramework {
 		PrintWriter writer = null;
 
 		try {
-			writer = new PrintWriter(new FileWriter(new File("result/" + filename + ".txt"), false));
+			writer = new PrintWriter(new FileWriter(new File("result1/" + filename + ".txt"), false));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
