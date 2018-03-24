@@ -1,4 +1,4 @@
-package evaluation2;
+package evaluationGA;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -89,14 +89,14 @@ public class TestCrossover {
 					int preres = -1;
 
 					PreGASolver pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, false);
-					preres = pre.initialCheck(true);
+					preres = pre.initialCheck(true, false);
 					while (preres != 0) {
 						tasksToAlloc1 = generator.generateTasks();
 						resources1 = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc1, resources1);
 
 						pre = new PreGASolver(tasksToAlloc1, resources1, generator, 3, 1, 1, false);
-						preres = pre.initialCheck(true);
+						preres = pre.initialCheck(true,false);
 					}
 
 					final ArrayList<SporadicTask> tasksToAlloc = tasksToAlloc1;

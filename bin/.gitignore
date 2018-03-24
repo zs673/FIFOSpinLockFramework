@@ -1,13 +1,11 @@
 /native/
-/.gitignore
-/GeneticAlgorithmFramework/
-/analysis/
 /archive/
 /basicAnalysis/
 /entity/
 /evaluation/
-/evaluation2/
+/evaluationGA/
 /evaluationSection6/
 /generatorTools/
 /test/
 /utils/
+/GeneticAlgorithmFramework/

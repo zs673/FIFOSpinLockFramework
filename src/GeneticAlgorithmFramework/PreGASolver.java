@@ -34,8 +34,8 @@ public class PreGASolver {
 	public static boolean btbHit = true;
 	public static boolean testSchedulability = false;
 
-	ArrayList<Integer> allocations;
-	ArrayList<AllocatedSystem> allocatedSystems;
+	ArrayList<Integer> allocations = null;
+	ArrayList<AllocatedSystem> allocatedSystems = null;
 
 	public PreGASolver(ArrayList<SporadicTask> tasks, ArrayList<Resource> resources, SystemGenerator geneator, int PROTOCOL_NUMBER,
 			int ALLOCATION_POLICY_NUMBER, int PRIORITY_SCHEME_NUMBER, ArrayList<Integer> allocations, ArrayList<AllocatedSystem> allocatedSystems,
@@ -69,30 +69,50 @@ public class PreGASolver {
 	 * 
 	 * @return 0: needs GA; -1: not possible; 1: is feasible;
 	 */
-	public int initialCheck(boolean lazyMode) {
+	public int initialCheck(boolean lazyMode, boolean withAlloc) {
 		if (print) {
 			System.out.println("inital check started");
 		}
 		this.lazyMode = lazyMode;
 		int notpossiblecount = 0;
 
-		for (int i = 0; i < allocations.size(); i++) {
-			System.out.println("check with DMPO, allocation " + allocations.get(i));
-			int result = checkwithOneAllocationAndOnePriority(i, 0);
-			if (result == -1)
-				notpossiblecount++;
-			if (result > 0)
-				return result; // has a feasible solution
-		}
-
-		if (PRIORITY_SCHEME_NUMBER > 0) {
+		if (withAlloc) {
 			for (int i = 0; i < allocations.size(); i++) {
-				System.out.println("check with SBPO, allocation " + allocations.get(i));
-				int result = checkwithOneAllocationAndOnePriority(i, 1);
+				System.out.println("check with DMPO, allocation " + allocations.get(i));
+				int result = checkwithOneAllocationAndOnePriorityWithAlloc(i, 0);
 				if (result == -1)
 					notpossiblecount++;
 				if (result > 0)
 					return result; // has a feasible solution
+			}
+
+			if (PRIORITY_SCHEME_NUMBER > 0) {
+				for (int i = 0; i < allocations.size(); i++) {
+					System.out.println("check with SBPO, allocation " + allocations.get(i));
+					int result = checkwithOneAllocationAndOnePriorityWithAlloc(i, 1);
+					if (result == -1)
+						notpossiblecount++;
+					if (result > 0)
+						return result; // has a feasible solution
+				}
+			}
+		} else {
+			for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
+				int result = checkwithOneAllocationAndOnePriority(i, 0);
+				if (result == -1)
+					notpossiblecount++;
+				if (result > 0)
+					return result; // has a feasible solution
+			}
+
+			if (PRIORITY_SCHEME_NUMBER > 0) {
+				for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
+					int result = checkwithOneAllocationAndOnePriority(i, 1);
+					if (result == -1)
+						notpossiblecount++;
+					if (result > 0)
+						return result; // has a feasible solution
+				}
 			}
 		}
 
@@ -106,6 +126,122 @@ public class PreGASolver {
 		return 0; // need GA
 	}
 
+	private int checkwithOneAllocationAndOnePriority(int allocPolicy, int priorityPolicy) {
+		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
+		boolean isPossible = true;
+
+		ArrayList<ArrayList<SporadicTask>> tasksWithAlloc = allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, allocPolicy);
+
+		if (tasksWithAlloc == null)
+			return -1;
+
+		int[][] taskschedule_fifonp = null;
+		int[][] taskschedule_fifop = null;
+		int[][] taskschedule_mrsp = null;
+
+		switch (priorityPolicy) {
+		case 0:
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 1;
+			}
+			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByDMPO(tasksWithAlloc, resources,
+					AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, true, false));
+
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 2;
+			}
+			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByDMPO(tasksWithAlloc, resources,
+					AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, true, false));
+
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 3;
+			}
+			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeByDMPO(tasksWithAlloc, resources,
+					AnalysisUtils.extendCalForStatic, testSchedulability, btbHit, useRi, true, false));
+			break;
+
+		case 1:
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 1;
+			}
+			taskschedule_fifonp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
+
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 2;
+			}
+			taskschedule_fifop = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
+
+			for (int k = 0; k < resources.size(); k++) {
+				resources.get(k).protocol = 3;
+			}
+			taskschedule_mrsp = getTaskSchedulability(tasksWithAlloc, analysis.getResponseTimeBySimpleSBPO(tasksWithAlloc, resources, false));
+			break;
+
+		default:
+			break;
+		}
+
+		if (taskschedule_fifonp == null || taskschedule_fifop == null || taskschedule_mrsp == null) {
+			System.out.println("hahaha");
+		}
+
+		for (int i = 0; i < tasksWithAlloc.size(); i++) {
+			for (int j = 0; j < tasksWithAlloc.get(i).size(); j++) {
+				if (taskschedule_fifonp[i][j] == 0)
+					fifonp_sched++;
+				if (taskschedule_fifop[i][j] == 0)
+					fifop_sched++;
+				if (taskschedule_mrsp[i][j] == 0)
+					mrsp_sched++;
+
+				if (lazyMode && taskschedule_fifonp[i][j] == taskschedule_fifop[i][j] && taskschedule_fifop[i][j] == taskschedule_mrsp[i][j]
+						&& taskschedule_mrsp[i][j] == 0) {
+					isPossible = false;
+
+				}
+			}
+		}
+
+		/*
+		 * If the system is feasible with DM.
+		 */
+		if (mrsp_sched == 0) {
+			if (print)
+				System.out.println("mrsp schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy + 1;
+			this.protocol = 1;
+			this.priority = priorityPolicy + 1;
+			return 1;
+		}
+		if (fifonp_sched == 0) {
+			if (print)
+				System.out.println("fifonp schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy + 1;
+			this.protocol = 2;
+			this.priority = priorityPolicy + 1;
+			return 1;
+		}
+		if (fifop_sched == 0) {
+			if (print)
+				System.out.println("fifop schedulable with allocation: " + allocPolicy);
+			this.allocation = allocPolicy + 1;
+			this.protocol = 3;
+			this.priority = priorityPolicy + 1;
+			return 1;
+		}
+
+		/*
+		 * If not possible in all cases, we suggest the GA to finish.
+		 */
+		if (lazyMode && !isPossible) {
+			// if (print)
+			// System.out.println("not schedulable");
+			return -1;
+		}
+
+		return 0;
+	}
+	
 	/**
 	 * 
 	 * @param allocPolicy
@@ -113,7 +249,7 @@ public class PreGASolver {
 	 * @return 0: needs GA; -1: not possible; 1: is feasible by MrsP; 2: is
 	 *         feasible by MSRP; 1: is feasible by FIFO-P;
 	 */
-	private int checkwithOneAllocationAndOnePriority(int allocPolicy, int priorityPolicy) {
+	private int checkwithOneAllocationAndOnePriorityWithAlloc(int allocPolicy, int priorityPolicy) {
 		int fifonp_sched = 0, fifop_sched = 0, mrsp_sched = 0;
 		boolean isPossible = true;
 

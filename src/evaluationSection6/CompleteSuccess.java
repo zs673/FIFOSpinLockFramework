@@ -17,9 +17,9 @@ import generatorTools.SystemGenerator;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
-public class ProtocolsCombinedWFDMSuccessF {
+public class CompleteSuccess {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 2000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 	public static int TOTAL_PARTITIONS = 16;
@@ -32,10 +32,10 @@ public class ProtocolsCombinedWFDMSuccessF {
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
 
-	public static int GENERATIONS = 100;
+	public static int GENERATIONS = 30;
 	public static int POPULATION = 100;
-	public static int ALLOCATION_POLICY = 1;
-	public static int PRIORITY_RULE = 1;
+	public static int ALLOCATION_POLICY = 8;
+	public static int PRIORITY_RULE = 2;
 
 	public static boolean useGA = true;
 	public static boolean lazy = true;
@@ -67,7 +67,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 
 	public static void main(String[] args) throws InterruptedException {
 		final CountDownLatch downLatch = new CountDownLatch(1);
-		ProtocolsCombinedWFDMSuccessF test = new ProtocolsCombinedWFDMSuccessF();
+		CompleteSuccess test = new CompleteSuccess();
 		int bigTest = Integer.parseInt(args[0]);
 		int smallTest = Integer.parseInt(args[1]);
 
@@ -142,16 +142,16 @@ public class ProtocolsCombinedWFDMSuccessF {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
+					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
 
-					int preres = pre.initialCheck(true);
+					int preres = pre.initialCheck(true,false);
 					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
 
-						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
-						preres = pre.initialCheck(true);
+						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
+						preres = pre.initialCheck(true,false);
 					}
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
@@ -160,7 +160,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 
 					if (solver.checkSchedulability(useGA, lazy) == 1) {
 						counter.incDcombine();
-						if (solver.bestProtocol == 0) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
 							counter.incDnew();
 						}
 					}
@@ -180,7 +180,7 @@ public class ProtocolsCombinedWFDMSuccessF {
 		}
 
 		String result = "cslen-" + cslen + " " + counter.Dcombine + " " + counter.Dnew;
-		writeSystem("2 2 " + cslen, result);
+		writeSystem("Success 2 2 " + cslen, result);
 
 	}
 
@@ -200,14 +200,14 @@ public class ProtocolsCombinedWFDMSuccessF {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 
-					int preres = pre.initialCheck(true);
+					int preres = pre.initialCheck(true,false);
 					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
 
 						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
-						preres = pre.initialCheck(true);
+						preres = pre.initialCheck(true,false);
 					}
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,

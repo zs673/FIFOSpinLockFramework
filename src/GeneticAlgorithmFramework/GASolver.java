@@ -119,7 +119,7 @@ public class GASolver {
 		if (lazy) {
 			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, allocations,
 					allocatedSystems, isPrint);
-			int initial = preSovler.initialCheck(lazy);
+			int initial = preSovler.initialCheck(lazy, true);
 
 			if (initial != 0) {
 				this.bestAllocation = preSovler.allocation;

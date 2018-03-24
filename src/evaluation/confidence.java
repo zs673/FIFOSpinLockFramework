@@ -1,4 +1,4 @@
-package evaluationSection6;
+package evaluation;
 
 import java.io.File;
 import java.io.FileNotFoundException;

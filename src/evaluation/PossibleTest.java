@@ -1,4 +1,4 @@
-package evaluationSection6;
+package evaluation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -90,14 +90,14 @@ public class PossibleTest {
 			generator.generateResourceUsage(tasksToAlloc, resources);
 			PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 
-			int preres = pre.initialCheck(true);
+			int preres = pre.initialCheck(true, false);
 			while (preres == 1) {
 				tasksToAlloc = generator.generateTasks();
 				resources = generator.generateResources();
 				generator.generateResourceUsage(tasksToAlloc, resources);
 
 				pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
-				preres = pre.initialCheck(true);
+				preres = pre.initialCheck(true, false);
 			}
 
 			if (preres == 0)

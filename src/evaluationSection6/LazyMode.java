@@ -18,7 +18,7 @@ import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
-public class confidence2 {
+public class LazyMode {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 
@@ -29,6 +29,7 @@ public class confidence2 {
 	public static boolean btbHit = true;
 
 	class Counter {
+		int typical = 0;
 		int basicS = 0;
 		int newS = 0;
 		int newAllocation = 0;
@@ -36,6 +37,10 @@ public class confidence2 {
 
 		int count = 0;
 
+		public synchronized void inctypical() {
+			typical++;
+		}
+		
 		public synchronized void incbasicS() {
 			basicS++;
 		}
@@ -57,6 +62,8 @@ public class confidence2 {
 		}
 
 		public synchronized void initResults() {
+			typical = 0;
+			
 			basicS = 0;
 			newS = 0;
 			newAllocation = 0;
@@ -67,7 +74,7 @@ public class confidence2 {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		confidence2 test = new confidence2();
+		LazyMode test = new LazyMode();
 
 		Counter counter = test.new Counter();
 		counter.initResults();

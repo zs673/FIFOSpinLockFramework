@@ -1,4 +1,4 @@
-package evaluation2;
+package evaluationGA;
 
 import java.io.File;
 import java.io.FileNotFoundException;
