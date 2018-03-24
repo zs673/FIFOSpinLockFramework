@@ -80,12 +80,12 @@ public class TypicalApproach {
 					Counter counter = test.new Counter();
 					counter.initResults();
 					test.parallelExperimentIncreasingWorkload(i, counter);
-					
+
 				}
 				tasksdownLatch.countDown();
 			}
 		}).start();
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -93,12 +93,12 @@ public class TypicalApproach {
 					Counter counter = test.new Counter();
 					counter.initResults();
 					test.parallelExperimentIncreasingCriticalSectionLength(i, counter);
-					
+
 				}
 				tasksdownLatch.countDown();
 			}
 		}).start();
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -106,12 +106,12 @@ public class TypicalApproach {
 					Counter counter = test.new Counter();
 					counter.initResults();
 					test.parallelExperimentIncreasingAccess(i, counter);
-					
+
 				}
 				tasksdownLatch.countDown();
 			}
 		}).start();
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -119,7 +119,7 @@ public class TypicalApproach {
 					Counter counter = test.new Counter();
 					counter.initResults();
 					test.parallelExperimentIncreasingPartitions(i, counter);
-					
+
 				}
 				tasksdownLatch.countDown();
 			}

@@ -19,7 +19,7 @@ public class Resource {
 		this.isGlobal = isGlobal;
 		this.partitions = new ArrayList<>(partitions);
 		this.requested_tasks = new ArrayList<>();
-		
+
 		for (int i = 0; i < requested_tasks.size(); i++) {
 			int tid = requested_tasks.get(i).id;
 			for (int j = 0; j < tasks.size(); j++) {

@@ -184,8 +184,7 @@ public class TestCrossover {
 
 					sched_count = sched_count.replace("[", "").replace("]", "").replace(",", "");
 					sched_count += "\n";
-					
-					
+
 					sched_count += "" + cross1[0] + " " + cross1[1] + " " + cross1[2] + " " + cross1[0] + " " + cross1[1] + " " + cross1[2] + "\n";
 
 					sched_count += recorder4_1.toString() + "\n";
@@ -194,8 +193,6 @@ public class TestCrossover {
 					sched_count += recorder4_2.toString() + "\n";
 					sched_count += recorder6_2.toString() + "\n";
 					sched_count += recorder8_2.toString() + "\n";
-					
-					
 
 					writeSystem("1 2 " + (fatherindex), sched_count);
 

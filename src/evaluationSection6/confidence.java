@@ -47,7 +47,6 @@ public class confidence {
 	public static boolean useGA = true;
 	public static boolean lazy = true;
 	public static boolean record = false;
-	
 
 	class Counter {
 		int fnp = 0;
@@ -118,8 +117,8 @@ public class confidence {
 		}
 
 		downLatch.await();
-		
-		ResultReader.readsuccessF("result", bigTest, smallTest );
+
+		ResultReader.readsuccessF("result", bigTest, smallTest);
 		System.out.println("FINISHED!!!");
 	}
 

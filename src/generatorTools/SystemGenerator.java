@@ -92,7 +92,7 @@ public class SystemGenerator {
 			// 2) == null
 			// && allocation.allocateTasks(tasks, null, total_partitions, 3) ==
 			// null))
-			
+
 			if (tasks != null && allocation.allocateTasks(tasks, null, total_partitions, 0) == null)
 				tasks = null;
 		}

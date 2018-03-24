@@ -154,7 +154,6 @@ public class ProtocolsCombinedWFDMSuccessF {
 						preres = pre.initialCheck(true);
 					}
 
-
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
 							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();

@@ -255,8 +255,7 @@ public class CombinedAnalysis {
 
 		return getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
 	}
-	
-	
+
 	private int compareSlack(SporadicTask t1, SporadicTask t2) {
 		long slack1 = t1.addition_slack_by_newOPA;
 		long deadline1 = t1.deadline;
@@ -421,7 +420,7 @@ public class CombinedAnalysis {
 
 		return newRi;
 	}
-	
+
 	private long oneCalculation(SporadicTask task, ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, long[][] response_time, long Ri,
 			double oneMig, long np, boolean btbHit, boolean useRi) {
 

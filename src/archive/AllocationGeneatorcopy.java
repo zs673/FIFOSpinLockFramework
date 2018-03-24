@@ -9,7 +9,7 @@ public class AllocationGeneatorcopy {
 	public ArrayList<ArrayList<SporadicTask>> allocateTasks(ArrayList<SporadicTask> tasksToAllocate, ArrayList<Resource> resources, int total_partitions,
 			int policy) {
 
-		double totalUtil = 0.1 * (double) tasksToAllocate.size();
+		double totalUtil = 0.1 * tasksToAllocate.size();
 		double maxUtilPerCore = 0;
 		if (totalUtil / total_partitions <= 0.5)
 			maxUtilPerCore = 0.5;

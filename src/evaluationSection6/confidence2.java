@@ -21,6 +21,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 public class confidence2 {
 
 	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
+
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 
@@ -30,6 +31,8 @@ public class confidence2 {
 	class Counter {
 		int basicS = 0;
 		int newS = 0;
+		int newAllocation = 0;
+		int newPriority = 0;
 
 		int count = 0;
 
@@ -41,6 +44,14 @@ public class confidence2 {
 			newS++;
 		}
 
+		public synchronized void incnewA() {
+			newAllocation++;
+		}
+
+		public synchronized void incnewP() {
+			newPriority++;
+		}
+
 		public synchronized void incCount() {
 			count++;
 		}
@@ -48,6 +59,8 @@ public class confidence2 {
 		public synchronized void initResults() {
 			basicS = 0;
 			newS = 0;
+			newAllocation = 0;
+			newPriority = 0;
 
 			count = 0;
 		}
@@ -55,9 +68,11 @@ public class confidence2 {
 
 	public static void main(String[] args) throws InterruptedException {
 		confidence2 test = new confidence2();
+
 		Counter counter = test.new Counter();
 		counter.initResults();
 		test.test22(counter);
+
 		System.out.println("FINISHED!!!");
 	}
 
@@ -94,11 +109,13 @@ public class confidence2 {
 
 					boolean isBasicSchedulable = false;
 					boolean isNewSchedulable = false;
+					boolean isNewAllocation = false;
+					boolean isNewpriority = false;
 
 					for (int i = 0; i < 5; i++) {
 						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
 								generator.total_partitions, i);
-						
+
 						for (int j = 0; j < resources.size(); j++) {
 							resources.get(j).protocol = 1;
 						}
@@ -128,48 +145,17 @@ public class confidence2 {
 					}
 
 					if (!isBasicSchedulable) {
-						for (int i = 0; i < 5; i++) {
-							ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
-									generator.total_partitions, i);
-
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 1;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 2;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 3;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-						}
-
 						for (int i = 5; i < 8; i++) {
 							ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
 									generator.total_partitions, i);
-							
+
 							for (int j = 0; j < resources.size(); j++) {
 								resources.get(j).protocol = 1;
 							}
 							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
+								isNewAllocation = true;
 								break;
 							}
 
@@ -179,6 +165,7 @@ public class confidence2 {
 							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
+								isNewAllocation = true;
 								break;
 							}
 
@@ -188,39 +175,51 @@ public class confidence2 {
 							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
-								break;
-							}
-							
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 1;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 2;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-
-							for (int j = 0; j < resources.size(); j++) {
-								resources.get(j).protocol = 3;
-							}
-							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
+								isNewAllocation = true;
 								break;
 							}
 						}
 					}
 
-					int newsched = 0, oldsched = 0;
+					if (!isBasicSchedulable && !isNewSchedulable) {
+						for (int i = 7; i > -1; i--) {
+							ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+									generator.total_partitions, i);
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 1;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								isNewpriority = true;
+								break;
+							}
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								isNewpriority = true;
+								break;
+							}
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								isNewpriority = true;
+								break;
+							}
+						}
+
+					}
+
+					int newsched = 0, oldsched = 0, newAllocation = 0, newPrio = 0;
 					if (isBasicSchedulable) {
 						counter.incbasicS();
 						oldsched = 1;
@@ -229,6 +228,15 @@ public class confidence2 {
 						counter.incnewS();
 						newsched = 1;
 					}
+					if (isNewAllocation) {
+						newAllocation = 1;
+						counter.incnewA();
+					}
+					if (isNewpriority) {
+						newPrio = 1;
+						counter.incnewP();
+					}
+
 					if (isBasicSchedulable && isNewSchedulable) {
 						System.out.println("ERROR!");
 						System.exit(-1);
@@ -237,7 +245,7 @@ public class confidence2 {
 					counter.incCount();
 					System.out.println(Thread.currentThread().getName() + " F, count: " + counter.count);
 
-					String result = oldsched + " " + newsched;
+					String result = oldsched + " " + newsched + " " + newAllocation + " " + newPrio;
 					writeSystem((2 + " " + 1 + " " + index), result);
 
 					downLatch.countDown();
@@ -253,7 +261,9 @@ public class confidence2 {
 		}
 
 		String result = (double) counter.basicS / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newS / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.newAllocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newPriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
+
 		System.out.println(result);
 	}
 

@@ -88,16 +88,17 @@ public class GASolverCopy {
 	 *         within the given generation and population size.
 	 */
 	public int checkSchedulability(boolean useGA) {
-//		PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, 1, isPrint);
-//		int initial = preSovler.initialCheck(false);
-//
-//		if (initial != 0) {
-//			this.allocation = preSovler.allocation;
-//			this.bestPriority = preSovler.priority;
-//			this.protocol = preSovler.protocol;
-//			return initial;
-//		}
-//
+		// PreGASolver preSovler = new PreGASolver(tasks, resources, geneator,
+		// PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, 1, isPrint);
+		// int initial = preSovler.initialCheck(false);
+		//
+		// if (initial != 0) {
+		// this.allocation = preSovler.allocation;
+		// this.bestPriority = preSovler.priority;
+		// this.protocol = preSovler.protocol;
+		// return initial;
+		// }
+		//
 		for (int i = 0; i < ALLOCATION_POLICY_NUMBER; i++) {
 			if (allocGeneator.allocateTasks(tasks, resources, geneator.total_partitions, i) != null) {
 				allocations.add(i);

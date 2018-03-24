@@ -115,22 +115,20 @@ public class TestToumament {
 								}
 
 								GASolver solver = null;
-								
-								if(index == 0) {
-									solver =new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-											0.01, 2, 5, record, true);
+
+								if (index == 0) {
+									solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8, 0.01, 2,
+											5, record, true);
+								} else {
+									solver = new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8, 0.01, 2,
+											2, record, true);
 								}
-								else {
-									solver =new GASolver(tasks, res, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-											0.01, 2, 2, record, true);
-								}
-								
+
 								solver.name = "Thread: " + fatherindex + "." + index;
 								if (solver.checkSchedulability(useGA, lazy) == 1) {
 									toumament[index] = toumament[index] + 1;
 								}
 
-								
 								down.countDown();
 							}
 						});

@@ -118,7 +118,7 @@ public class GASolver {
 
 		if (lazy) {
 			PreGASolver preSovler = new PreGASolver(tasks, resources, geneator, PROTOCOL_SIZE, ALLOCATION_POLICY_NUMBER, PRIORITY_SCHEME_NUMBER, allocations,
-					allocatedSystems , isPrint);
+					allocatedSystems, isPrint);
 			int initial = preSovler.initialCheck(lazy);
 
 			if (initial != 0) {
@@ -138,7 +138,6 @@ public class GASolver {
 		getFirstGene();
 		getFitness(nextGenes, schedFitness, rtFitness);
 		if (bestGene != null) {
-
 
 			bestProtocol = 1;
 			int firstchorm = bestGene[0];
@@ -301,7 +300,6 @@ public class GASolver {
 			getFitness(nextGenes, sched_temp, rt_temp);
 
 			if (bestGene != null) {
-
 
 				bestProtocol = 1;
 				int firstchorm = bestGene[0];

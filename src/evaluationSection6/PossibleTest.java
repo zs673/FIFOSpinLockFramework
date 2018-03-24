@@ -29,18 +29,18 @@ public class PossibleTest {
 	public static void main(String[] args) throws InterruptedException {
 		PossibleTest possible = new PossibleTest();
 		CountDownLatch down = new CountDownLatch(3);
-//		for (int i = 1; i < 7; i++) {
-//			final int cslen = i;
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					possible.test(cslen, 3);
-//					down.countDown();
-//				}
-//			}).start();
-//		}
-		
-		for (int i = 31; i < 42; i+=5) {
+		// for (int i = 1; i < 7; i++) {
+		// final int cslen = i;
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// possible.test(cslen, 3);
+		// down.countDown();
+		// }
+		// }).start();
+		// }
+
+		for (int i = 31; i < 42; i += 5) {
 			final int access = i;
 			new Thread(new Runnable() {
 				@Override
@@ -50,7 +50,7 @@ public class PossibleTest {
 				}
 			}).start();
 		}
-		
+
 		down.await();
 	}
 
