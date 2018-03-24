@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import analysis.CombinedAnalysis;
-import analysis.FIFONP;
-import analysis.FIFOP;
-import analysis.MrsP;
 import entity.Resource;
 import entity.SporadicTask;
 import generatorTools.AllocationGeneator;
@@ -21,23 +18,14 @@ import utils.AnalysisUtils;
 import utils.GeneatorUtils.CS_LENGTH_RANGE;
 import utils.GeneatorUtils.RESOURCES_RANGE;
 
-public class dominance {
+public class confidence2 {
 
-	public static int MAX_PERIOD = 1000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int MIN_PERIOD = 1;
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 10;
+	public static int MAX_PERIOD = 1000;
 
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
-
-	public static void main(String[] args) throws InterruptedException {
-		dominance test = new dominance();
-
-		Counter counter = test.new Counter();
-		counter.initResults();
-		test.test22(counter);
-
-	}
 
 	class Counter {
 		int basicS = 0;
@@ -65,10 +53,19 @@ public class dominance {
 		}
 	}
 
+	public static void main(String[] args) throws InterruptedException {
+		confidence2 test = new confidence2();
+		Counter counter = test.new Counter();
+		counter.initResults();
+		test.test22(counter);
+		System.out.println("FINISHED!!!");
+	}
+
 	public void test22(Counter counter) {
 		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			final int index = i;
 			Thread worker = new Thread(new Runnable() {
 
 				public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
@@ -93,9 +90,6 @@ public class dominance {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 
 					long[][] Ris;
-					MrsP mrsp = new MrsP();
-					FIFOP fp = new FIFOP();
-					FIFONP fnp = new FIFONP();
 					CombinedAnalysis analysis = new CombinedAnalysis();
 
 					boolean isBasicSchedulable = false;
@@ -104,19 +98,29 @@ public class dominance {
 					for (int i = 0; i < 5; i++) {
 						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
 								generator.total_partitions, i);
-						Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+						
+						for (int j = 0; j < resources.size(); j++) {
+							resources.get(j).protocol = 1;
+						}
+						Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 						if (isSystemSchedulable(allocTask, Ris)) {
 							isBasicSchedulable = true;
 							break;
 						}
 
-						Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+						for (int j = 0; j < resources.size(); j++) {
+							resources.get(j).protocol = 2;
+						}
+						Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 						if (isSystemSchedulable(allocTask, Ris)) {
 							isBasicSchedulable = true;
 							break;
 						}
 
-						Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+						for (int j = 0; j < resources.size(); j++) {
+							resources.get(j).protocol = 3;
+						}
+						Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 						if (isSystemSchedulable(allocTask, Ris)) {
 							isBasicSchedulable = true;
 							break;
@@ -124,47 +128,91 @@ public class dominance {
 					}
 
 					if (!isBasicSchedulable) {
+						for (int i = 0; i < 5; i++) {
+							ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+									generator.total_partitions, i);
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 1;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								break;
+							}
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								break;
+							}
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								break;
+							}
+						}
+
 						for (int i = 5; i < 8; i++) {
 							ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
 									generator.total_partitions, i);
-							Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 1;
+							}
+							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
 								break;
 							}
 
-							Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
 								break;
 							}
 
-							Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = analysis.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, true, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isNewSchedulable = true;
+								break;
+							}
+							
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 1;
+							}
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
 								break;
 							}
 
-							for (int k = 0; k < resources.size(); k++) {
-								resources.get(k).protocol = 1;
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
 							}
-							Ris = analysis.getResponseTimeBySBPO(allocTask, resources, AnalysisUtils.extendCalForSBPO, true, true, true, false);
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
 								break;
 							}
-							for (int k = 0; k < resources.size(); k++) {
-								resources.get(k).protocol = 2;
+
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
 							}
-							Ris = analysis.getResponseTimeBySBPO(allocTask, resources, AnalysisUtils.extendCalForSBPO, true, true, true, false);
-							if (isSystemSchedulable(allocTask, Ris)) {
-								isNewSchedulable = true;
-								break;
-							}
-							for (int k = 0; k < resources.size(); k++) {
-								resources.get(k).protocol = 3;
-							}
-							Ris = analysis.getResponseTimeBySBPO(allocTask, resources, AnalysisUtils.extendCalForSBPO, true, true, true, false);
+							Ris = analysis.getResponseTimeBySimpleSBPO(allocTask, resources, false);
 							if (isSystemSchedulable(allocTask, Ris)) {
 								isNewSchedulable = true;
 								break;
@@ -172,13 +220,26 @@ public class dominance {
 						}
 					}
 
-					if (isBasicSchedulable)
+					int newsched = 0, oldsched = 0;
+					if (isBasicSchedulable) {
 						counter.incbasicS();
-					else if (isNewSchedulable)
+						oldsched = 1;
+					}
+					if (isNewSchedulable) {
 						counter.incnewS();
+						newsched = 1;
+					}
+					if (isBasicSchedulable && isNewSchedulable) {
+						System.out.println("ERROR!");
+						System.exit(-1);
+					}
 
 					counter.incCount();
 					System.out.println(Thread.currentThread().getName() + " F, count: " + counter.count);
+
+					String result = oldsched + " " + newsched;
+					writeSystem((2 + " " + 1 + " " + index), result);
+
 					downLatch.countDown();
 				}
 			});
@@ -196,18 +257,9 @@ public class dominance {
 		System.out.println(result);
 	}
 
-	public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
-		for (int i = 0; i < tasks.size(); i++) {
-			for (int j = 0; j < tasks.get(i).size(); j++) {
-				if (tasks.get(i).get(j).deadline < Ris[i][j])
-					return false;
-			}
-		}
-		return true;
-	}
-
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
+
 		try {
 			writer = new PrintWriter(new FileWriter(new File("result/" + filename + ".txt"), false));
 		} catch (FileNotFoundException e) {
@@ -221,4 +273,5 @@ public class dominance {
 		writer.println(result);
 		writer.close();
 	}
+
 }
