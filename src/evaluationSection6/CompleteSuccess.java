@@ -87,80 +87,100 @@ public class CompleteSuccess {
 
 	public static void main(String[] args) throws InterruptedException {
 		CompleteSuccess test = new CompleteSuccess();
+		
+		final CountDownLatch downLatch = new CountDownLatch(6);
 
-		// final CountDownLatch downLatch = new CountDownLatch(4);
-		//
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(3, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(4, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(5, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		// new Thread(new Runnable() {
-		// @Override
-		// public void run() {
-		// Counter counter = test.new Counter();
-		// counter.initResults();
-		// test.parallelExperimentIncreasingCriticalSectionLength(6, counter);
-		// downLatch.countDown();
-		// }
-		// }).start();
-		//
-		// downLatch.await();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(1, counter);
+				downLatch.countDown();
+			}
+		}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(2, counter);
+				downLatch.countDown();
+			}
+		}).start();
 
-		final CountDownLatch downLatch = new CountDownLatch(1);
-
-		int bigTest = Integer.parseInt(args[0]);
-		int smallTest = Integer.parseInt(args[1]);
-
-		switch (bigTest) {
-		case 2:
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingCriticalSectionLength(smallTest, counter);
-					downLatch.countDown();
-				}
-			}).start();
-			break;
-		case 3:
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Counter counter = test.new Counter();
-					counter.initResults();
-					test.parallelExperimentIncreasingAccess(smallTest, counter);
-					downLatch.countDown();
-				}
-			}).start();
-		default:
-			break;
-		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(3, counter);
+				downLatch.countDown();
+			}
+		}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(4, counter);
+				downLatch.countDown();
+			}
+		}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(5, counter);
+				downLatch.countDown();
+			}
+		}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Counter counter = test.new Counter();
+				counter.initResults();
+				test.parallelExperimentIncreasingCriticalSectionLength(6, counter);
+				downLatch.countDown();
+			}
+		}).start();
 
 		downLatch.await();
+
+		// final CountDownLatch downLatch = new CountDownLatch(1);
+		//
+		// int bigTest = Integer.parseInt(args[0]);
+		// int smallTest = Integer.parseInt(args[1]);
+		//
+		// switch (bigTest) {
+		// case 2:
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(smallTest,
+		// counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// break;
+		// case 3:
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingAccess(smallTest, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// default:
+		// break;
+		// }
+		//
+		// downLatch.await();
 
 		System.out.println("FINISHED!!!");
 	}
@@ -240,7 +260,7 @@ public class CompleteSuccess {
 				}
 			});
 			worker.setName("2 " + cslen + " numbers: " + childindex);
-			worker.start();
+			worker.run();
 		}
 
 		try {
