@@ -240,7 +240,7 @@ public class CompleteSuccess {
 				}
 			});
 			worker.setName("2 " + cslen + " numbers: " + childindex);
-			worker.run();
+			worker.start();
 		}
 
 		try {
