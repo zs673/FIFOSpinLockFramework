@@ -47,15 +47,11 @@ public class CompleteFramework {
 	public static boolean record = false;
 
 	class Counter {
-		int fnpWF = 0;
-		int fpWF = 0;
-		int mrspWF = 0;
+		int fnp = 0;
+		int fp = 0;
+		int mrsp = 0;
 
-		int fnpSPA = 0;
-		int fpSPA = 0;
-		int mrspSPA = 0;
-
-		int Dcombine = 0;
+		int Dtypical = 0;
 		int Dnew = 0;
 		int newResourceControl = 0;
 		int newallocation = 0;
@@ -63,32 +59,20 @@ public class CompleteFramework {
 
 		int count = 0;
 
-		public synchronized void incfnpWF() {
-			fnpWF++;
+		public synchronized void incfnp() {
+			fnp++;
 		}
 
-		public synchronized void incfpWF() {
-			fpWF++;
+		public synchronized void incfp() {
+			fp++;
 		}
 
-		public synchronized void incmrspWF() {
-			mrspWF++;
+		public synchronized void incmrsp() {
+			mrsp++;
 		}
 
-		public synchronized void incfnpSPA() {
-			fnpSPA++;
-		}
-
-		public synchronized void incfpSPA() {
-			fpSPA++;
-		}
-
-		public synchronized void incmrspSPA() {
-			mrspSPA++;
-		}
-
-		public synchronized void incDcombine() {
-			Dcombine++;
+		public synchronized void incTypical() {
+			Dtypical++;
 		}
 
 		public synchronized void incDnew() {
@@ -112,15 +96,11 @@ public class CompleteFramework {
 		}
 
 		public synchronized void initResults() {
-			mrspWF = 0;
-			fpWF = 0;
-			fnpWF = 0;
+			mrsp = 0;
+			fp = 0;
+			fnp = 0;
 
-			fnpSPA = 0;
-			fpSPA = 0;
-			mrspSPA = 0;
-
-			Dcombine = 0;
+			Dtypical = 0;
 			Dnew = 0;
 			newResourceControl = 0;
 			newallocation = 0;
@@ -295,44 +275,63 @@ public class CompleteFramework {
 							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
-					ArrayList<ArrayList<SporadicTask>> tasksWF = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-					Ris = mrsp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incmrspWF();
+					boolean isfnpS = false;
+					boolean isfpS = false;
+					boolean ismrspS = false;
 
-					Ris = fnp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfnpWF();
+					for (int i = 0; i < 5; i++) {
+						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+								generator.total_partitions, i);
 
-					Ris = fp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfpWF();
-
-					ArrayList<ArrayList<SporadicTask>> tasksSPA = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,
-							4);
-					Ris = mrsp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incmrspSPA();
-
-					Ris = fnp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfnpSPA();
-
-					Ris = fp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfpSPA();
-
-					if (solver.checkSchedulability(useGA, lazy) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
-							counter.incDnew();
+						if (!isfnpS) {
+							Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfnpS = true;
+								counter.incfnp();
+							}
 						}
-						if (solver.bestProtocol == 0)
-							counter.incNewResourceControl();
-						if (solver.bestAllocation > 4)
-							counter.incNewAllocation();
-						if (solver.bestPriority > 0)
-							counter.incNewPriority();
+
+						if (!isfpS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfpS = true;
+								counter.incfp();
+							}
+						}
+
+						if (!ismrspS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								ismrspS = true;
+								counter.incmrsp();
+							}
+						}
+
+						if (isfnpS && isfpS && ismrspS)
+							break;
+					}
+
+					if (isfnpS || isfpS || ismrspS) {
+						counter.incTypical();
+					} else {
+						if (solver.checkSchedulability(useGA, lazy) == 1) {
+							counter.incTypical();
+							if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
+								counter.incDnew();
+							}
+							if (solver.bestProtocol == 0)
+								counter.incNewResourceControl();
+							if (solver.bestAllocation > 4)
+								counter.incNewAllocation();
+							if (solver.bestPriority > 0)
+								counter.incNewPriority();
+						}
 					}
 
 					counter.incCount();
@@ -349,11 +348,9 @@ public class CompleteFramework {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dtypical / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
 
@@ -397,45 +394,65 @@ public class CompleteFramework {
 							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
-					ArrayList<ArrayList<SporadicTask>> tasksWF = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-					Ris = mrsp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incmrspWF();
+					boolean isfnpS = false;
+					boolean isfpS = false;
+					boolean ismrspS = false;
 
-					Ris = fnp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfnpWF();
+					for (int i = 0; i < 5; i++) {
+						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+								generator.total_partitions, i);
 
-					Ris = fp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfpWF();
-
-					ArrayList<ArrayList<SporadicTask>> tasksSPA = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,
-							4);
-					Ris = mrsp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incmrspSPA();
-
-					Ris = fnp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfnpSPA();
-
-					Ris = fp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfpSPA();
-
-					if (solver.checkSchedulability(useGA, lazy) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
-							counter.incDnew();
+						if (!isfnpS) {
+							Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfnpS = true;
+								counter.incfnp();
+							}
 						}
-						if (solver.bestProtocol == 0)
-							counter.incNewResourceControl();
-						if (solver.bestAllocation > 4)
-							counter.incNewAllocation();
-						if (solver.bestPriority > 0)
-							counter.incNewPriority();
+
+						if (!isfpS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfpS = true;
+								counter.incfp();
+							}
+						}
+
+						if (!ismrspS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								ismrspS = true;
+								counter.incmrsp();
+							}
+						}
+
+						if (isfnpS && isfpS && ismrspS)
+							break;
 					}
+
+					if (isfnpS || isfpS || ismrspS) {
+						counter.incTypical();
+					} else {
+						if (solver.checkSchedulability(useGA, lazy) == 1) {
+							counter.incTypical();
+							if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
+								counter.incDnew();
+							}
+							if (solver.bestProtocol == 0)
+								counter.incNewResourceControl();
+							if (solver.bestAllocation > 4)
+								counter.incNewAllocation();
+							if (solver.bestPriority > 0)
+								counter.incNewPriority();
+						}
+					}
+
 
 					counter.incCount();
 					System.out.println(Thread.currentThread().getName() + " F, count: " + counter.count);
@@ -451,11 +468,9 @@ public class CompleteFramework {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dtypical / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
 
@@ -499,45 +514,65 @@ public class CompleteFramework {
 							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
-					ArrayList<ArrayList<SporadicTask>> tasksWF = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-					Ris = mrsp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incmrspWF();
+					boolean isfnpS = false;
+					boolean isfpS = false;
+					boolean ismrspS = false;
 
-					Ris = fnp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfnpWF();
+					for (int i = 0; i < 5; i++) {
+						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+								generator.total_partitions, i);
 
-					Ris = fp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfpWF();
-
-					ArrayList<ArrayList<SporadicTask>> tasksSPA = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,
-							4);
-					Ris = mrsp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incmrspSPA();
-
-					Ris = fnp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfnpSPA();
-
-					Ris = fp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfpSPA();
-
-					if (solver.checkSchedulability(useGA, lazy) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
-							counter.incDnew();
+						if (!isfnpS) {
+							Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfnpS = true;
+								counter.incfnp();
+							}
 						}
-						if (solver.bestProtocol == 0)
-							counter.incNewResourceControl();
-						if (solver.bestAllocation > 4)
-							counter.incNewAllocation();
-						if (solver.bestPriority > 0)
-							counter.incNewPriority();
+
+						if (!isfpS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfpS = true;
+								counter.incfp();
+							}
+						}
+
+						if (!ismrspS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								ismrspS = true;
+								counter.incmrsp();
+							}
+						}
+
+						if (isfnpS && isfpS && ismrspS)
+							break;
 					}
+
+					if (isfnpS || isfpS || ismrspS) {
+						counter.incTypical();
+					} else {
+						if (solver.checkSchedulability(useGA, lazy) == 1) {
+							counter.incTypical();
+							if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
+								counter.incDnew();
+							}
+							if (solver.bestProtocol == 0)
+								counter.incNewResourceControl();
+							if (solver.bestAllocation > 4)
+								counter.incNewAllocation();
+							if (solver.bestPriority > 0)
+								counter.incNewPriority();
+						}
+					}
+
 
 					counter.incCount();
 					System.out.println(Thread.currentThread().getName() + " F, count: " + counter.count);
@@ -553,11 +588,9 @@ public class CompleteFramework {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dtypical / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
 
@@ -601,45 +634,65 @@ public class CompleteFramework {
 							0.01, 2, 2, record, true);
 					solver.name = "GA: " + Thread.currentThread().getName();
 
-					ArrayList<ArrayList<SporadicTask>> tasksWF = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-					Ris = mrsp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incmrspWF();
+					boolean isfnpS = false;
+					boolean isfpS = false;
+					boolean ismrspS = false;
 
-					Ris = fnp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfnpWF();
+					for (int i = 0; i < 5; i++) {
+						ArrayList<ArrayList<SporadicTask>> allocTask = new AllocationGeneator().allocateTasks(tasksToAlloc, resources,
+								generator.total_partitions, i);
 
-					Ris = fp.getResponseTimeByDMPO(tasksWF, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksWF, Ris))
-						counter.incfpWF();
-
-					ArrayList<ArrayList<SporadicTask>> tasksSPA = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions,
-							4);
-					Ris = mrsp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incmrspSPA();
-
-					Ris = fnp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfnpSPA();
-
-					Ris = fp.getResponseTimeByDMPO(tasksSPA, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasksSPA, Ris))
-						counter.incfpSPA();
-
-					if (solver.checkSchedulability(useGA, lazy) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
-							counter.incDnew();
+						if (!isfnpS) {
+							Ris = fnp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfnpS = true;
+								counter.incfnp();
+							}
 						}
-						if (solver.bestProtocol == 0)
-							counter.incNewResourceControl();
-						if (solver.bestAllocation > 4)
-							counter.incNewAllocation();
-						if (solver.bestPriority > 0)
-							counter.incNewPriority();
+
+						if (!isfpS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 2;
+							}
+							Ris = fp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								isfpS = true;
+								counter.incfp();
+							}
+						}
+
+						if (!ismrspS) {
+							for (int j = 0; j < resources.size(); j++) {
+								resources.get(j).protocol = 3;
+							}
+							Ris = mrsp.getResponseTimeByDMPO(allocTask, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
+							if (isSystemSchedulable(allocTask, Ris)) {
+								ismrspS = true;
+								counter.incmrsp();
+							}
+						}
+
+						if (isfnpS && isfpS && ismrspS)
+							break;
 					}
+
+					if (isfnpS || isfpS || ismrspS) {
+						counter.incTypical();
+					} else {
+						if (solver.checkSchedulability(useGA, lazy) == 1) {
+							counter.incTypical();
+							if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
+								counter.incDnew();
+							}
+							if (solver.bestProtocol == 0)
+								counter.incNewResourceControl();
+							if (solver.bestAllocation > 4)
+								counter.incNewAllocation();
+							if (solver.bestPriority > 0)
+								counter.incNewPriority();
+						}
+					}
+
 
 					counter.incCount();
 					System.out.println(Thread.currentThread().getName() + " F, count: " + counter.count);
@@ -655,115 +708,16 @@ public class CompleteFramework {
 		} catch (InterruptedException e) {
 		}
 
-		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fnpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.fpSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.mrspSPA / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+		String result = (double) counter.fnp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fp / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.mrsp / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dtypical / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
+				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newResourceControl / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
 				+ (double) counter.newallocation / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.newpriority / (double) TOTAL_NUMBER_OF_SYSTEMS
 				+ "\n";
 
 		writeSystem("4 2 " + NoP, result);
 		System.out.println(result);
 	}
-
-	public void parallelExperimentIncreasingrsf(int resourceSharingFactor, Counter counter) {
-		final CountDownLatch downLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
-
-		double rsf;
-		switch (resourceSharingFactor) {
-		case 1:
-			rsf = 0.2;
-			break;
-		case 2:
-			rsf = 0.3;
-			break;
-		case 3:
-			rsf = 0.4;
-			break;
-		case 4:
-			rsf = 0.5;
-			break;
-		case 5:
-			rsf = 0.6;
-			break;
-		default:
-			rsf = 0;
-			break;
-		}
-
-		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
-			Thread worker = new Thread(new Runnable() {
-
-				public boolean isSystemSchedulable(ArrayList<ArrayList<SporadicTask>> tasks, long[][] Ris) {
-					for (int i = 0; i < tasks.size(); i++) {
-						for (int j = 0; j < tasks.get(i).size(); j++) {
-							if (tasks.get(i).get(j).deadline < Ris[i][j])
-								return false;
-						}
-					}
-					return true;
-				}
-
-				@Override
-				public void run() {
-					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, TOTAL_PARTITIONS,
-							TOTAL_PARTITIONS * NUMBER_OF_TASKS_ON_EACH_PARTITION, rsf, range, RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE,
-							false);
-					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
-					ArrayList<Resource> resources = generator.generateResources();
-					generator.generateResourceUsage(tasksToAlloc, resources);
-					ArrayList<ArrayList<SporadicTask>> tasks = new AllocationGeneator().allocateTasks(tasksToAlloc, resources, generator.total_partitions, 0);
-
-					long[][] Ris;
-					MrsP mrsp = new MrsP();
-					FIFOP fp = new FIFOP();
-					FIFONP fnp = new FIFONP();
-
-					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
-							0.01, 2, 2, record, true);
-					solver.name = "GA: " + Thread.currentThread().getName();
-
-					Ris = mrsp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incmrspWF();
-
-					Ris = fnp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incfnpWF();
-
-					Ris = fp.getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, btbHit, useRi, false);
-					if (isSystemSchedulable(tasks, Ris))
-						counter.incfpWF();
-
-					if (solver.checkSchedulability(useGA, lazy) == 1) {
-						counter.incDcombine();
-						if (solver.bestProtocol == 0) {
-							counter.incDnew();
-						}
-					}
-
-					System.out.println(Thread.currentThread().getName() + " F");
-					downLatch.countDown();
-				}
-			});
-			worker.setName("5 " + resourceSharingFactor + " " + i);
-			worker.start();
-		}
-
-		try {
-			downLatch.await();
-		} catch (InterruptedException e) {
-		}
-
-		String result = (double) counter.fnpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.fpWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.mrspWF / (double) TOTAL_NUMBER_OF_SYSTEMS + " " + (double) counter.Dcombine / (double) TOTAL_NUMBER_OF_SYSTEMS + " "
-				+ (double) counter.Dnew / (double) TOTAL_NUMBER_OF_SYSTEMS + "\n";
-
-		writeSystem("5 2 " + resourceSharingFactor, result);
-		System.out.println(result);
-	}
-
+	
 	public void writeSystem(String filename, String result) {
 		PrintWriter writer = null;
 

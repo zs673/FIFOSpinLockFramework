@@ -175,6 +175,18 @@ public class CompleteSuccess {
 					downLatch.countDown();
 				}
 			}).start();
+			break;
+		case 4:
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Counter counter = test.new Counter();
+					counter.initResults();
+					test.parallelExperimentIncreasingParallelism(smallTest, counter);
+					downLatch.countDown();
+				}
+			}).start();
+			break;
 		default:
 			break;
 		}
@@ -273,6 +285,68 @@ public class CompleteSuccess {
 
 	}
 
+	public void parallelExperimentIncreasingParallelism(int NoP, Counter counter) {
+		CountDownLatch numbersdownLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
+		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
+			final int childindex = i;
+			Thread worker = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					SystemGenerator generator = new SystemGenerator(MIN_PERIOD, MAX_PERIOD, true, NoP, NoP * NUMBER_OF_TASKS_ON_EACH_PARTITION, RSF, range,
+							RESOURCES_RANGE.PARTITIONS, NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE, false);
+
+					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
+					ArrayList<Resource> resources = generator.generateResources();
+					generator.generateResourceUsage(tasksToAlloc, resources);
+					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
+
+					int preres = pre.initialCheck(true, false);
+					while (preres == 1) {
+						tasksToAlloc = generator.generateTasks();
+						resources = generator.generateResources();
+						generator.generateResourceUsage(tasksToAlloc, resources);
+
+						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
+						preres = pre.initialCheck(true, false);
+					}
+
+					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
+							0.01, 2, 2, record, true);
+					solver.name = "GA: " + Thread.currentThread().getName();
+
+					if (solver.checkSchedulability(useGA, lazy) == 1) {
+						counter.incDcombine();
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
+							counter.incDnew();
+						}
+						if (solver.bestProtocol == 0)
+							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
+					}
+
+					counter.incCount();
+					System.out.println(Thread.currentThread().getName() + " Finish. count: " + counter.count);
+					numbersdownLatch.countDown();
+				}
+			});
+			worker.setName("4 " + NoP + " numbers: " + childindex);
+			worker.start();
+		}
+
+		try {
+			numbersdownLatch.await();
+		} catch (InterruptedException e) {
+		}
+
+		String result = "processor-" + NoP + " " + counter.Dcombine + " " + counter.Dnew + " " + counter.newResourceControl + " " + counter.newallocation + " "
+				+ counter.newpriority;
+		writeSystem("Success 4 2 " + NoP, result);
+	}
+
 	public void parallelExperimentIncreasingAccess(int NoA, Counter counter) {
 		CountDownLatch numbersdownLatch = new CountDownLatch(TOTAL_NUMBER_OF_SYSTEMS);
 		for (int i = 0; i < TOTAL_NUMBER_OF_SYSTEMS; i++) {
@@ -287,7 +361,7 @@ public class CompleteSuccess {
 					ArrayList<SporadicTask> tasksToAlloc = generator.generateTasks();
 					ArrayList<Resource> resources = generator.generateResources();
 					generator.generateResourceUsage(tasksToAlloc, resources);
-					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
+					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
 
 					int preres = pre.initialCheck(true, false);
 					while (preres == 1) {
@@ -295,7 +369,7 @@ public class CompleteSuccess {
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
 
-						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
+						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
 						preres = pre.initialCheck(true, false);
 					}
 
@@ -305,9 +379,15 @@ public class CompleteSuccess {
 
 					if (solver.checkSchedulability(useGA, lazy) == 1) {
 						counter.incDcombine();
-						if (solver.bestProtocol == 0) {
+						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
 							counter.incDnew();
 						}
+						if (solver.bestProtocol == 0)
+							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -324,8 +404,9 @@ public class CompleteSuccess {
 		} catch (InterruptedException e) {
 		}
 
-		String result = "access-" + NoA + " " + counter.Dcombine + " " + counter.Dnew;
-		writeSystem("3 2 " + NoA, result);
+		String result = "access-" + NoA + " " + counter.Dcombine + " " + counter.Dnew + " " + counter.newResourceControl + " " + counter.newallocation + " "
+				+ counter.newpriority;
+		writeSystem("Success 3 2 " + NoA, result);
 	}
 
 	public void writeSystem(String filename, String result) {
