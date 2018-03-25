@@ -45,6 +45,9 @@ public class CompleteSuccess {
 		int count = 0;
 		int Dcombine = 0;
 		int Dnew = 0;
+		int newResourceControl = 0;
+		int newallocation = 0;
+		int newpriority = 0;
 
 		public synchronized void incDcombine() {
 			Dcombine++;
@@ -54,6 +57,18 @@ public class CompleteSuccess {
 			Dnew++;
 		}
 
+		public synchronized void incNewResourceControl() {
+			newResourceControl++;
+		}
+
+		public synchronized void incNewAllocation() {
+			newallocation++;
+		}
+
+		public synchronized void incNewPriority() {
+			newpriority++;
+		}
+
 		public synchronized void incCount() {
 			count++;
 		}
@@ -61,13 +76,61 @@ public class CompleteSuccess {
 		public synchronized void initResults() {
 			Dcombine = 0;
 			Dnew = 0;
+
+			newResourceControl = 0;
+			newallocation = 0;
+			newpriority = 0;
+
 			count = 0;
 		}
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		final CountDownLatch downLatch = new CountDownLatch(1);
 		CompleteSuccess test = new CompleteSuccess();
+
+		// final CountDownLatch downLatch = new CountDownLatch(4);
+		//
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(3, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(4, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(5, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		// new Thread(new Runnable() {
+		// @Override
+		// public void run() {
+		// Counter counter = test.new Counter();
+		// counter.initResults();
+		// test.parallelExperimentIncreasingCriticalSectionLength(6, counter);
+		// downLatch.countDown();
+		// }
+		// }).start();
+		//
+		// downLatch.await();
+
+		final CountDownLatch downLatch = new CountDownLatch(1);
+
 		int bigTest = Integer.parseInt(args[0]);
 		int smallTest = Integer.parseInt(args[1]);
 
@@ -144,14 +207,14 @@ public class CompleteSuccess {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
 
-					int preres = pre.initialCheck(true,false);
+					int preres = pre.initialCheck(true, false);
 					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
 
 						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 5, 1, false);
-						preres = pre.initialCheck(true,false);
+						preres = pre.initialCheck(true, false);
 					}
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
@@ -163,6 +226,12 @@ public class CompleteSuccess {
 						if (solver.bestProtocol == 0 || solver.bestAllocation > 4 || solver.bestPriority > 0) {
 							counter.incDnew();
 						}
+						if (solver.bestProtocol == 0)
+							counter.incNewResourceControl();
+						if (solver.bestAllocation > 4)
+							counter.incNewAllocation();
+						if (solver.bestPriority > 0)
+							counter.incNewPriority();
 					}
 
 					counter.incCount();
@@ -171,7 +240,7 @@ public class CompleteSuccess {
 				}
 			});
 			worker.setName("2 " + cslen + " numbers: " + childindex);
-			worker.start();
+			worker.run();
 		}
 
 		try {
@@ -179,7 +248,8 @@ public class CompleteSuccess {
 		} catch (InterruptedException e) {
 		}
 
-		String result = "cslen-" + cslen + " " + counter.Dcombine + " " + counter.Dnew;
+		String result = "cslen-" + cslen + " " + counter.Dcombine + " " + counter.Dnew + " " + counter.newResourceControl + " " + counter.newallocation + " "
+				+ counter.newpriority;
 		writeSystem("Success 2 2 " + cslen, result);
 
 	}
@@ -200,14 +270,14 @@ public class CompleteSuccess {
 					generator.generateResourceUsage(tasksToAlloc, resources);
 					PreGASolver pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
 
-					int preres = pre.initialCheck(true,false);
+					int preres = pre.initialCheck(true, false);
 					while (preres == 1) {
 						tasksToAlloc = generator.generateTasks();
 						resources = generator.generateResources();
 						generator.generateResourceUsage(tasksToAlloc, resources);
 
 						pre = new PreGASolver(tasksToAlloc, resources, generator, 3, 1, 1, false);
-						preres = pre.initialCheck(true,false);
+						preres = pre.initialCheck(true, false);
 					}
 
 					GASolver solver = new GASolver(tasksToAlloc, resources, generator, ALLOCATION_POLICY, PRIORITY_RULE, POPULATION, GENERATIONS, 2, 2, 0.8,
