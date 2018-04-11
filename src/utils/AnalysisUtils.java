@@ -7,8 +7,8 @@ import entity.SporadicTask;
 public class AnalysisUtils {
 	// public static Random ran = new Random(System.currentTimeMillis());
 
-	public static int extendCalForSBPO = 3;
-	public static int extendCalForGA = 3;
+	public static int extendCalForSBPO = 5;
+	public static int extendCalForGA = 5;
 	public static int extendCalForStatic = 1;
 
 	public static double FIFONP_LOCK = (double) (501 + 259 + 219) / (double) 1000;

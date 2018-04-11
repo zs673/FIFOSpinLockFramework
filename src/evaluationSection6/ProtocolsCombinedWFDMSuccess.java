@@ -19,7 +19,7 @@ import utils.GeneatorUtils.RESOURCES_RANGE;
 
 public class ProtocolsCombinedWFDMSuccess {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 2000;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int MIN_PERIOD = 1;
 	public static int MAX_PERIOD = 1000;
 	public static int TOTAL_PARTITIONS = 16;
@@ -32,8 +32,8 @@ public class ProtocolsCombinedWFDMSuccess {
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
 
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 500;
+	public static int POPULATION = 500;
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
 

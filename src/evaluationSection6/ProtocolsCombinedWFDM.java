@@ -37,8 +37,8 @@ public class ProtocolsCombinedWFDM {
 	final double RSF = 0.3;
 	int NUMBER_OF_MAX_ACCESS_TO_ONE_RESOURCE = 3;
 
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 500;
+	public static int POPULATION = 500;
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
 

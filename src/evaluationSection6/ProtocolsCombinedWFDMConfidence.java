@@ -25,7 +25,7 @@ import utils.ResultReader;
 
 public class ProtocolsCombinedWFDMConfidence {
 
-	public static int TOTAL_NUMBER_OF_SYSTEMS = 100;
+	public static int TOTAL_NUMBER_OF_SYSTEMS = 1000;
 	public static int NUMBER_OF_TIMES = 30;
 
 	public static int MIN_PERIOD = 1;
@@ -40,8 +40,8 @@ public class ProtocolsCombinedWFDMConfidence {
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
 
-	public static int GENERATIONS = 100;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 500;
+	public static int POPULATION = 500;
 	public static int ALLOCATION_POLICY = 1;
 	public static int PRIORITY_RULE = 1;
 

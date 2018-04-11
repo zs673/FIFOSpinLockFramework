@@ -589,7 +589,7 @@ public class GASolver {
 		}
 
 		// Get 1st Fitness Values.
-		long[][] Ris = framework.getResponseTimeBySimpleSBPO(tasksWithAllocation, resources, false);
+		long[][] Ris = framework.getResponseTimeBySBPO(tasksWithAllocation, resources, false);
 		int sched_fitness = 0;
 		for (int i = 0; i < tasksWithAllocation.size(); i++) {
 			for (int j = 0; j < tasksWithAllocation.get(i).size(); j++) {

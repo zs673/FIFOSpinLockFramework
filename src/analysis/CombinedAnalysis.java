@@ -9,8 +9,7 @@ import utils.AnalysisUtils;
 
 public class CombinedAnalysis {
 
-	public long[][] getResponseTimeBySBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, int extendCal, boolean testSchedulability,
-			boolean btbHit, boolean useRi, boolean isprint) {
+	public long[][] getResponseTimeBySBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {
 		if (tasks == null)
 			return null;
 
@@ -163,7 +162,7 @@ public class CombinedAnalysis {
 			}
 		}
 
-		return getResponseTimeByDMPO(tasks, resources, extendCal, testSchedulability, btbHit, useRi, false, isprint);
+		return getResponseTimeByDMPO(tasks, resources, AnalysisUtils.extendCalForStatic, true, true, true, false, isprint);
 	}
 
 	public long[][] getResponseTimeBySimpleSBPO(ArrayList<ArrayList<SporadicTask>> tasks, ArrayList<Resource> resources, boolean isprint) {

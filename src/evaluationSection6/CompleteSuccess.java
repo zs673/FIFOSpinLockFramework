@@ -32,8 +32,8 @@ public class CompleteSuccess {
 	public static boolean useRi = true;
 	public static boolean btbHit = true;
 
-	public static int GENERATIONS = 30;
-	public static int POPULATION = 100;
+	public static int GENERATIONS = 500;
+	public static int POPULATION = 500;
 	public static int ALLOCATION_POLICY = 8;
 	public static int PRIORITY_RULE = 2;
 
